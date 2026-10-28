@@ -26,48 +26,32 @@
   "changed": {
     "control": "smc"
   },
-  "episodes": 20,
-  "success": 18,
-  "rate": 0.9,
+  "episodes": 4,
+  "success": 3,
+  "rate": 0.75,
   "wilson95": [
-    0.6989663528135878,
-    0.9721335190383086
+    0.3006418400969081,
+    0.954412739704631
   ],
-  "mean_stage": 4.5,
+  "mean_stage": 3.75,
   "stages": [
-    5,
-    0,
-    5,
-    5,
-    5,
-    5,
-    5,
-    5,
-    5,
-    5,
-    5,
-    5,
-    5,
-    5,
-    5,
-    5,
     5,
     0,
     5,
     5
   ],
-  "post_contact_rate": 0.4,
-  "plan_fail_rate": 0.1,
-  "plan_time_s": 2.440923511981964,
-  "path_len_rad": 4.604967003007245,
-  "ik_err_mm": 3.4865552965751224e-08,
-  "track_rms_rad": 0.02141478810231491,
-  "sat_frac": 0.0013314520519699404,
+  "post_contact_rate": 0.25,
+  "plan_fail_rate": 0.25,
+  "plan_time_s": 2.8947765231132507,
+  "path_len_rad": 3.5034908552522657,
+  "ik_err_mm": 3.2814294012685205e-08,
+  "track_rms_rad": 0.05838898452134223,
+  "sat_frac": 0.0,
   "not_applicable": "",
   "fail_layers": {
     "perception": 0,
-    "planning": 2,
+    "planning": 1,
     "execution": 0
   },
-  "sec_per_episode": 5.46889146566391
+  "sec_per_episode": 6.756922364234924
 }

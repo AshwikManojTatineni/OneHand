@@ -26,38 +26,32 @@
   "changed": {
     "control": "mpc"
   },
-  "episodes": 10,
-  "success": 0,
-  "rate": 0.0,
+  "episodes": 4,
+  "success": 2,
+  "rate": 0.5,
   "wilson95": [
-    0.0,
-    0.2775328030260577
+    0.15003898774401986,
+    0.8499610122559802
   ],
-  "mean_stage": 0.7,
+  "mean_stage": 4.0,
   "stages": [
-    1,
-    1,
-    0,
-    1,
-    1,
-    1,
-    0,
-    1,
-    0,
-    1
+    3,
+    3,
+    5,
+    5
   ],
-  "post_contact_rate": 0.9,
+  "post_contact_rate": 0.0,
   "plan_fail_rate": 0.0,
-  "plan_time_s": 1.2514890670776366,
-  "path_len_rad": 5.299708765230855,
-  "ik_err_mm": 3.907485788186044e-08,
-  "track_rms_rad": 0.15292582559936602,
-  "sat_frac": 0.16537564528961807,
+  "plan_time_s": 1.3450167775154114,
+  "path_len_rad": 6.90221569792774,
+  "ik_err_mm": 2.586299560224954e-08,
+  "track_rms_rad": 0.021785031295274346,
+  "sat_frac": 0.010906862745097994,
   "not_applicable": "",
   "fail_layers": {
     "perception": 0,
     "planning": 0,
     "execution": 0
   },
-  "sec_per_episode": 52.77669689655304
+  "sec_per_episode": 109.01048284769058
 }

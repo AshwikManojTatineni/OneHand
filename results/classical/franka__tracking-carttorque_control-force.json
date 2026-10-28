@@ -27,48 +27,32 @@
     "tracking": "carttorque",
     "control": "force"
   },
-  "episodes": 20,
-  "success": 0,
-  "rate": 0.0,
+  "episodes": 4,
+  "success": 2,
+  "rate": 0.5,
   "wilson95": [
-    0.0,
-    0.16112516018512965
+    0.15003898774401986,
+    0.8499610122559802
   ],
-  "mean_stage": 0.4,
+  "mean_stage": 4.0,
   "stages": [
-    1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    1,
-    0,
-    1,
-    1,
-    1,
-    0,
-    1,
-    0,
-    1,
-    0,
-    0,
-    0,
-    0
+    5,
+    3,
+    3,
+    5
   ],
-  "post_contact_rate": 0.55,
+  "post_contact_rate": 0.0,
   "plan_fail_rate": 0.0,
-  "plan_time_s": 1.0067830443382264,
-  "path_len_rad": 5.304479220866714,
-  "ik_err_mm": 4.126025940418241e-08,
-  "track_rms_rad": 0.7882688702994002,
-  "sat_frac": 0.06648935835025122,
+  "plan_time_s": 2.387941539287567,
+  "path_len_rad": 6.90221569792774,
+  "ik_err_mm": 2.586299560224954e-08,
+  "track_rms_rad": 0.23810325346821104,
+  "sat_frac": 0.012289121741540886,
   "not_applicable": "",
   "fail_layers": {
     "perception": 0,
     "planning": 0,
     "execution": 0
   },
-  "sec_per_episode": 7.657219076156617
+  "sec_per_episode": 14.771673262119293
 }
