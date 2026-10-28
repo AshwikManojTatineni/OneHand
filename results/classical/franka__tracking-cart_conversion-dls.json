@@ -59,7 +59,7 @@
   ],
   "post_contact_rate": 0.0,
   "plan_fail_rate": 0.0,
-  "plan_time_s": 1.3741908431053163,
+  "plan_time_s": 0.9480779647827149,
   "path_len_rad": 5.328095694824531,
   "ik_err_mm": 4.126025940418241e-08,
   "track_rms_rad": 0.16744015055822456,
@@ -70,5 +70,5 @@
     "planning": 0,
     "execution": 0
   },
-  "sec_per_episode": 10.657481825351715
+  "sec_per_episode": 6.743301010131836
 }
