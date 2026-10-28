@@ -5,21 +5,21 @@
   "interface": "K+P",
   "mpc": false,
   "naive_gripper": false,
-  "episodes": 10,
-  "success": 2,
-  "rate": 0.2,
+  "episodes": 50,
+  "success": 3,
+  "rate": 0.06,
   "wilson95": [
-    0.05668215093776685,
-    0.5098375308778678
+    0.020614970188436152,
+    0.16217091796874428
   ],
   "stage_hist": {
     "0": 0,
-    "1": 5,
-    "2": 0,
-    "3": 3,
-    "4": 2
+    "1": 38,
+    "2": 1,
+    "3": 8,
+    "4": 3
   },
-  "mean_stage": 2.2,
-  "sec_per_episode": 0.5265806198120118,
+  "mean_stage": 1.52,
+  "sec_per_episode": 0.5351871967315673,
   "stage_key": "0 none, 1 reach (<3 cm), 2 grasp (2 steps), 3 at goal while grasped, 4 env success"
 }

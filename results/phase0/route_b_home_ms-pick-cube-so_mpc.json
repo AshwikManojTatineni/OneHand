@@ -1,0 +1,13 @@
+{
+  "task": "ms-pick-cube-so",
+  "mpc": true,
+  "episodes": 50,
+  "success": 50,
+  "rate": 1.0,
+  "wilson95": [
+    0.9286523998213857,
+    0.9999999999999999
+  ],
+  "sec_per_episode": 25.669263777732848,
+  "seed_base": 20261028
+}
