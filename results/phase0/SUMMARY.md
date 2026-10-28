@@ -19,20 +19,24 @@ Stages: 0 none, 1 reach, 2 grasp, 3 at goal while grasped, 4 success.
 | R6 SO100 K+P dls no frame shift (prior) | 0/50 (0-7%) | 0.42 | 0.00 | 0.10 |
 | R6 SO100 K dls (planning on) | 0/20 (0-16%) | 0.00 | 0.00 | 0.00 |
 | R6 SO100 K+P dls (planning on) | 0/20 (0-16%) | 0.30 | 0.00 | 0.07 |
-| R3 xArm6 K (planning on) | 1/43 (0-12%) | 1.58 | 0.02 | 0.40 |
+| R3 xArm6 K (planning on) | 2/50 (1-13%) | 1.60 | 0.04 | 0.40 |
+| R3 xArm6 K+P (planning on) | 11/50 (13-35%) | 1.86 | 0.22 | 0.47 |
+| R3 xArm6 K+P naive gripper (planning on) | 0/50 (0-7%) | 0.88 | 0.00 | 0.22 |
 
 Tests (exact McNemar on success and Wilcoxon on stage reached for paired rows; Fisher and Mann-Whitney for the unpaired row; Holm-adjusted stage p):
 
 | Comparison | Paired episodes | Success | Mean stage | McNemar p | Wilcoxon p (Holm) |
 | --- | --- | --- | --- | --- | --- |
-| P (virtual twin), R6 | 50 | 0.00 vs 0.00 | 0.94 vs 0.86 | 1 | 0.102 (0.391) |
-| IK conversion dls vs hqp-axis, R6 | 50 | 0.00 vs 0.00 | 0.86 vs 0.78 | 1 | 0.102 (0.391) |
-| Frame alignment, R6 | 50 | 0.00 vs 0.00 | 0.86 vs 0.42 | 1 | 1.6e-05 (0.000128) |
-| P (virtual twin), R3 | 50 | 0.06 vs 0.06 | 1.84 vs 1.52 | 1 | 0.153 (0.391) |
-| Gripper map in K, R3 | 50 | 0.06 vs 0.02 | 1.52 vs 0.84 | 0.625 | 0.000419 (0.00251) |
-| Rung R3 vs R6 (different envs: unpaired tests) | 50 | 0.06 vs 0.00 | 1.52 vs 0.86 | 0.242 | 2.83e-05 (0.000198) |
-| Planning on vs off, R6 (first 20 seeds) | 20 | 0.00 vs 0.00 | 0.90 vs 0.30 | 1 | 0.00134 (0.0067) |
-| Planning on vs off, R3 | 43 | 0.07 vs 0.02 | 1.88 vs 1.58 | 0.5 | 0.0978 (0.391) |
+| P (virtual twin), R6 | 50 | 0.00 vs 0.00 | 0.94 vs 0.86 | 1 | 0.102 (0.615) |
+| IK conversion dls vs hqp-axis, R6 | 50 | 0.00 vs 0.00 | 0.86 vs 0.78 | 1 | 0.102 (0.615) |
+| Frame alignment, R6 | 50 | 0.00 vs 0.00 | 0.86 vs 0.42 | 1 | 1.6e-05 (0.00016) |
+| P (virtual twin), R3 | 50 | 0.06 vs 0.06 | 1.84 vs 1.52 | 1 | 0.153 (0.615) |
+| Gripper map in K, R3 | 50 | 0.06 vs 0.02 | 1.52 vs 0.84 | 0.625 | 0.000419 (0.00335) |
+| Rung R3 vs R6 (different envs: unpaired tests) | 50 | 0.06 vs 0.00 | 1.52 vs 0.86 | 0.242 | 2.83e-05 (0.000255) |
+| Planning on vs off, R6 (first 20 seeds) | 20 | 0.00 vs 0.00 | 0.90 vs 0.30 | 1 | 0.00134 (0.00938) |
+| Planning on vs off, R3 | 50 | 0.06 vs 0.04 | 1.84 vs 1.60 | 1 | 0.159 (0.615) |
+| Planning on vs off, R3 with P | 50 | 0.06 vs 0.22 | 1.52 vs 1.86 | 0.0386 | 0.116 (0.615) |
+| P (virtual twin), R3 with planning | 50 | 0.04 vs 0.22 | 1.60 vs 1.86 | 0.00391 | 0.185 (0.615) |
 
 ## S1 classical variants (MuJoCo, Menagerie Franka and SO-101)
 

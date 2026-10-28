@@ -63,6 +63,7 @@ def main():
         "R6 SO100 K+P dls (planning on)": "log_transfer_K+P_dls_mpc20.txt",
         "R3 xArm6 K (planning on)": "log_r3_K_mpc.txt",
         "R3 xArm6 K+P (planning on)": "log_r3_K+P_mpc.txt",
+        "R3 xArm6 K+P naive gripper (planning on)": "log_r3_K+P_--naive-gripper_mpc.txt",
     }
     cells = {k: cell(k, episodes_from_log(R / v), 4) for k, v in B.items() if (R / v).exists() and episodes_from_log(R / v)}
     src = cells["R0 Franka home (prior)"]
@@ -81,7 +82,9 @@ def main():
              ("R3 xArm6 K+P (prior)", "R3 xArm6 K+P naive gripper (prior)", "Gripper map in K, R3"),
              ("R3 xArm6 K+P (prior)", "R6 SO100 K+P dls (prior)", "Rung R3 vs R6 (different envs: unpaired tests)"),
              ("R6 SO100 K+P dls (prior)", "R6 SO100 K+P dls (planning on)", "Planning on vs off, R6 (first 20 seeds)"),
-             ("R3 xArm6 K (prior)", "R3 xArm6 K (planning on)", "Planning on vs off, R3")]
+             ("R3 xArm6 K (prior)", "R3 xArm6 K (planning on)", "Planning on vs off, R3"),
+             ("R3 xArm6 K+P (prior)", "R3 xArm6 K+P (planning on)", "Planning on vs off, R3 with P"),
+             ("R3 xArm6 K (planning on)", "R3 xArm6 K+P (planning on)", "P (virtual twin), R3 with planning")]
     rows, pv = [], []
     for a, b, label in pairs:
         if a in cells and b in cells:

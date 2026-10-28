@@ -156,17 +156,45 @@
     },
     "R3 xArm6 K (planning on)": {
       "cell": "R3 xArm6 K (planning on)",
-      "n": 43,
-      "success": 1,
-      "rate": 0.023255813953488372,
+      "n": 50,
+      "success": 2,
+      "rate": 0.04,
       "wilson95": [
-        0.004117087228789965,
-        0.12058993558403963
+        0.011038884228173514,
+        0.13460090793615148
       ],
-      "mean_stage": 1.5813953488372092,
+      "mean_stage": 1.6,
       "max_stage": 4,
-      "retention": 0.023255813953488372,
-      "stage_retention": 0.3953488372093023
+      "retention": 0.04,
+      "stage_retention": 0.4
+    },
+    "R3 xArm6 K+P (planning on)": {
+      "cell": "R3 xArm6 K+P (planning on)",
+      "n": 50,
+      "success": 11,
+      "rate": 0.22,
+      "wilson95": [
+        0.1275391591451957,
+        0.35241549695482816
+      ],
+      "mean_stage": 1.86,
+      "max_stage": 4,
+      "retention": 0.22,
+      "stage_retention": 0.465
+    },
+    "R3 xArm6 K+P naive gripper (planning on)": {
+      "cell": "R3 xArm6 K+P naive gripper (planning on)",
+      "n": 50,
+      "success": 0,
+      "rate": 0.0,
+      "wilson95": [
+        0.0,
+        0.07134760017861413
+      ],
+      "mean_stage": 0.88,
+      "max_stage": 4,
+      "retention": 0.0,
+      "stage_retention": 0.22
     }
   },
   "s1": {
