@@ -26,32 +26,38 @@
   "changed": {
     "control": "lqg"
   },
-  "episodes": 4,
-  "success": 3,
-  "rate": 0.75,
+  "episodes": 10,
+  "success": 9,
+  "rate": 0.9,
   "wilson95": [
-    0.3006418400969081,
-    0.954412739704631
+    0.5958499704752279,
+    0.982123787103926
   ],
-  "mean_stage": 3.75,
+  "mean_stage": 4.5,
   "stages": [
     5,
     0,
     5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
     5
   ],
-  "post_contact_rate": 0.25,
-  "plan_fail_rate": 0.25,
-  "plan_time_s": 3.7831987738609314,
-  "path_len_rad": 3.5034908552522657,
-  "ik_err_mm": 3.2814294012685205e-08,
-  "track_rms_rad": 0.025051156348806572,
-  "sat_frac": 0.009296482412060322,
+  "post_contact_rate": 0.3,
+  "plan_fail_rate": 0.1,
+  "plan_time_s": 4.300139570236206,
+  "path_len_rad": 3.8679852945071205,
+  "ik_err_mm": 2.992700973891736e-08,
+  "track_rms_rad": 0.022677013270303394,
+  "sat_frac": 0.006863430284695488,
   "not_applicable": "",
   "fail_layers": {
     "perception": 0,
     "planning": 1,
     "execution": 0
   },
-  "sec_per_episode": 11.077645242214203
+  "sec_per_episode": 12.484126591682434
 }

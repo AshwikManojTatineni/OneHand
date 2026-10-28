@@ -73,8 +73,8 @@ stage 5 (cube resting on the plate, jaws open). Retention = SO-101 success / Fra
 
 | Method | Franka | SO-101 | Retention | Mean stage F / S | Post contact F / S | vs default p (F / S) | Note |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| admittance | - | 8/20 | - | - | - |  / 0.0039 |  |
-| cart | - | 9/20 | - | - | - |  / 0.0078 |  |
+| admittance | 14/20 | 8/20 | 0.57 | 4.5 / 2.8 | 0.05 / 0.35 | 1 / 0.0039 |  |
+| cart | 14/20 | 9/20 | 0.64 | 4.5 / 3.3 | 0.00 / 0.15 | 1 / 0.0078 |  |
 | carttorque | 16/20 | 9/20 | 0.56 | 4.6 / 3.2 | 0.00 / 0.55 | 1 / 0.0078 | SO-101 torque: sim-only counterfactual |
 | ibvs | 17/20 | 2/20 | 0.12 | 4.7 / 1.9 | 0.00 / 0.40 | 0.5 / 6.1e-05 |  |
 | pbvs | 14/20 | 7/20 | 0.50 | 4.5 / 2.8 | 0.00 / 0.40 | 1 / 0.002 |  |
@@ -84,12 +84,12 @@ stage 5 (cube resting on the plate, jaws open). Retention = SO-101 success / Fra
 
 | Method | Franka | SO-101 | Retention | Mean stage F / S | Post contact F / S | vs default p (F / S) | Note |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| cbf | - | 11/20 | - | - | - |  / 0.031 |  |
+| cbf | 15/20 | 10/20 | 0.67 | 4.5 / 3.5 | 0.00 / 0.10 | 1 / 0.016 |  |
 | dls | 15/20 | 9/20 | 0.60 | 4.5 / 3.3 | 0.00 / 0.15 | 1 / 0.0078 |  |
 | jinv | n/a | 1/20 | - | 0.0 / 1.7 | 0.00 / 0.45 | 6.1e-05 / 3.1e-05 | conversion jinv cannot run on this arm |
 | jtrans | 14/20 | 0/20 | 0.00 | 4.4 / 1.1 | 0.10 / 0.40 | 1 / 1.5e-05 |  |
 | pinv | 15/20 | 0/20 | 0.00 | 4.5 / 1.9 | 0.00 / 0.75 | 1 / 1.5e-05 |  |
-| qp | - | 7/20 | - | - | - |  / 0.002 |  |
+| qp | 15/20 | 7/20 | 0.47 | 4.5 / 3.1 | 0.05 / 0.10 | 1 / 0.002 |  |
 
 ## 8 Control
 
@@ -98,23 +98,23 @@ stage 5 (cube resting on the plate, jaws open). Retention = SO-101 success / Fra
 | backstep | 15/20 | 18/20 | 1.20 | 4.5 / 4.5 | 0.00 / 0.40 | 1 / 1 | SO-101 torque: sim-only counterfactual |
 | cimp (task space) | 16/20 | 7/20 | 0.44 | 4.6 / 3.0 | 0.00 / 0.70 | 1 / 0.002 | SO-101 torque: sim-only counterfactual |
 | ct | 15/20 | 18/20 | 1.20 | 4.5 / 4.5 | 0.00 / 0.40 | 1 / 1 | SO-101 torque: sim-only counterfactual |
-| force (task space) | 0/20 | 0/20 | - | 0.4 / 1.8 | 0.55 / 0.20 | 6.1e-05 / 1.5e-05 | SO-101 torque: sim-only counterfactual |
+| force (task space) | 16/20 | 8/20 | 0.50 | 4.6 / 3.0 | 0.00 / 0.55 | 1 / 0.0039 | SO-101 torque: sim-only counterfactual |
 | hinf | 15/20 | 18/20 | 1.20 | 4.5 / 4.5 | 0.00 / 0.40 | 1 / 1 | SO-101 torque: sim-only counterfactual |
-| hybrid (task space) | 0/20 | 0/20 | - | 0.4 / 1.8 | 0.55 / 0.20 | 6.1e-05 / 1.5e-05 | SO-101 torque: sim-only counterfactual |
+| hybrid (task space) | 16/20 | 8/20 | 0.50 | 4.6 / 3.0 | 0.00 / 0.55 | 1 / 0.0039 | SO-101 torque: sim-only counterfactual |
 | jimp | 15/20 | 18/20 | 1.20 | 4.5 / 4.5 | 0.00 / 0.40 | 1 / 1 | SO-101 torque: sim-only counterfactual |
-| lqg | 0/10 | 0/10 | - | 1.0 / 1.0 | 0.10 / 0.40 | 0.016 / 0.0039 | SO-101 torque: sim-only counterfactual |
+| lqg | 7/10 | 9/10 | 1.29 | 4.4 / 4.5 | 0.00 / 0.30 | 1 / 1 | SO-101 torque: sim-only counterfactual |
 | lqr | 15/20 | 18/20 | 1.20 | 4.5 / 4.5 | 0.00 / 0.40 | 1 / 1 | SO-101 torque: sim-only counterfactual |
-| mpc | 0/10 | 9/10 | - | 0.7 / 4.5 | 0.90 / 0.30 | 0.016 / 1 | SO-101 torque: sim-only counterfactual |
+| mpc | 7/10 | 9/10 | 1.29 | 4.4 / 4.5 | 0.00 / 0.30 | 1 / 1 | SO-101 torque: sim-only counterfactual |
 | mrac | 16/20 | 18/20 | 1.12 | 4.6 / 4.5 | 0.05 / 0.40 | 1 / 1 | SO-101 torque: sim-only counterfactual |
-| nmpc | 0/10 | 4/10 | - | 0.4 / 2.2 | 0.70 / 0.20 | 0.016 / 0.062 | SO-101 torque: sim-only counterfactual |
+| nmpc | 5/10 | 8/10 | 1.60 | 4.1 / 4.1 | 0.00 / 0.30 | 0.5 / 1 | SO-101 torque: sim-only counterfactual |
 | p | 5/20 | 18/20 | 3.60 | 2.8 / 4.5 | 0.10 / 0.40 | 0.0063 / 1 |  |
 | passivity | 15/20 | 18/20 | 1.20 | 4.5 / 4.5 | 0.00 / 0.40 | 1 / 1 | SO-101 torque: sim-only counterfactual |
 | pd | 13/20 | 17/20 | 1.31 | 4.2 / 4.5 | 0.00 / 0.40 | 0.62 / 1 |  |
 | pdg | 15/20 | 18/20 | 1.20 | 4.5 / 4.5 | 0.00 / 0.40 | 1 / 1 | SO-101 torque: sim-only counterfactual |
 | pid | 15/20 | 16/20 | 1.07 | 4.5 / 4.3 | 0.05 / 0.40 | 1 / 1 |  |
-| ptask (task space) | 0/20 | 0/20 | - | 0.0 / 1.4 | 0.00 / 0.30 | 6.1e-05 / 1.5e-05 | SO-101 torque: sim-only counterfactual |
+| ptask (task space) | 16/20 | 9/20 | 0.56 | 4.6 / 3.1 | 0.00 / 0.55 | 1 / 0.0078 | SO-101 torque: sim-only counterfactual |
 | slotine | 17/20 | 18/20 | 1.06 | 4.7 / 4.5 | 0.00 / 0.40 | 0.5 / 1 | SO-101 torque: sim-only counterfactual |
-| smc | 2/20 | 18/20 | 9.00 | 2.5 / 4.5 | 0.00 / 0.40 | 0.00024 / 1 | SO-101 torque: sim-only counterfactual |
+| smc | 15/20 | 17/20 | 1.13 | 4.5 / 4.3 | 0.00 / 0.45 | 1 / 1 | SO-101 torque: sim-only counterfactual |
 
 ## 9 Actuator
 
