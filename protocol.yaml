@@ -1,0 +1,46 @@
+# Frozen protocol for the zero-training Franka -> SO-101 cross-body benchmark.
+# Phase 0 freezes this file. Any change after Gate 1 reruns every affected cell.
+version: 0.1.0
+frozen: false            # set true at the end of Phase 0
+
+no_training_rule:
+  network_weight_updates: banned
+  classical_calibration: allowed_pending_decision   # open decision 1
+  closed_form_probes: banned                         # open decision 2
+  test_time_search: allowed
+  in_context_demos: allowed
+
+task:
+  name: pick_and_place
+  object: {shape: cube, edge_m: 0.03, mass_kg: 0.03}
+  container: {shape: plate, radius_m: 0.06}
+  object_region_m: {x: [0.18, 0.26], y: [-0.08, 0.08]}   # in SO-101 base frame; checked in Phase 0
+  container_pos_m: [0.20, 0.14]
+  instruction: "pick up the cube and place it on the plate"
+
+stages:            # staged success; thresholds are proposals until frozen
+  1_reach:     {gripper_to_object_m: 0.03}
+  2_grasp:     {held_s: 0.5}
+  3_lift:      {height_m: 0.05, hold_s: 1.0}
+  4_transport: {object_over_container: true}
+  5_place:     {object_in_container: true, jaws_open: true, at_rest_s: 0.5}
+
+rungs: [R0, R1, R2, R3, R4, R5, R6]
+interfaces: [K, K+V, K+P, K+V+P, K+V+P+S, C, H]
+
+rollouts:
+  screening_per_cell: 50
+  final_per_cell: 200
+  seed_base: 20261028        # same seeds and layouts for every stack
+
+gates:
+  G0: {scripted_expert_success_min: 0.90, at: [R0, R6]}
+  G1: {max_gap_to_published_pts: 5, task_success_min_at_R0: 0.30}
+  G2: {null_test_max_drop_pts: 5}
+  G3: {best_interface_fixed_in_writing: true}
+
+statistics:
+  interval: wilson_95
+  paired_success_test: mcnemar
+  paired_stage_test: wilcoxon_signed_rank
+  multiple_comparisons: holm

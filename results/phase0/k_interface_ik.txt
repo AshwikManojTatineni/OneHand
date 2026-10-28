@@ -1,0 +1,13 @@
+SO-101 TCP at zero pose: [ 0.391 -0.001  0.246]
+
+SO-101: 5 arm joints
+  newton full reach<5mm  4/40  median pos err   60.4 mm  median rot residual 133.5 deg
+  dls    full reach<5mm 24/40  median pos err    4.3 mm  median rot residual  19.6 deg
+  hqp    full reach<5mm 25/40  median pos err    4.1 mm  median rot residual  19.7 deg
+  hqp    axis reach<5mm 40/40  median pos err    0.0 mm  median rot residual   0.0 deg
+
+Franka: 7 arm joints
+  newton full reach<5mm 40/40  median pos err    0.0 mm  median rot residual   0.0 deg
+  dls    full reach<5mm 40/40  median pos err    0.0 mm  median rot residual   0.0 deg
+  hqp    full reach<5mm 40/40  median pos err    0.0 mm  median rot residual   0.0 deg
+  hqp    axis reach<5mm 40/40  median pos err    0.0 mm  median rot residual   0.0 deg

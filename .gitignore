@@ -1,0 +1,7 @@
+.venv/
+.venv-lite/
+checkpoints/
+third_party/
+assets/mujoco_menagerie/
+__pycache__/
+results/phase0/log_*.txt

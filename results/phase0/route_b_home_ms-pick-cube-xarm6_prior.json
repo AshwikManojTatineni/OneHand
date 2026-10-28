@@ -1,0 +1,13 @@
+{
+  "task": "ms-pick-cube-xarm6",
+  "mpc": false,
+  "episodes": 50,
+  "success": 49,
+  "rate": 0.98,
+  "wilson95": [
+    0.8950455630610349,
+    0.9964607407674954
+  ],
+  "sec_per_episode": 0.29358156204223634,
+  "seed_base": 20261028
+}

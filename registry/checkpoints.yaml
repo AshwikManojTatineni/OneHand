@@ -1,0 +1,24 @@
+# Checkpoint registry. Phase 0 fills `status`, `license` and `sha256` for each entry.
+# status: unchecked | available | gated | missing ; needs_gpu: true means not runnable on the CPU box.
+route_A_libero_x:
+  - {id: vla_jepa_libero, repo: lerobot/VLA-JEPA-LIBERO, paradigm: VLA, stack: S4a, needs_gpu: true, status: unchecked}
+  - {id: abot_m0_libero, repo: acvlab/ABot-M0-LIBERO, paradigm: VLA, stack: S3, needs_gpu: true, status: unchecked}
+  - {id: molmoact2_libero, repo: allenai/MolmoAct2-LIBERO, paradigm: VLA, stack: panel, needs_gpu: true, status: unchecked}
+  - {id: groot_n17_libero, repo: nvidia/GR00T-N1.7-LIBERO, paradigm: VLA, stack: panel, needs_gpu: true, status: unchecked, note: gated Cosmos-Reason2-2B backbone}
+  - {id: pi05_libero, repo: "gs://openpi-assets/checkpoints/pi05_libero", paradigm: VLA, stack: panel, needs_gpu: true, status: unchecked}
+  - {id: openvla_oft_rl, repo: RLinf/RLinf-OpenVLAOFT-LIBERO-130, paradigm: RL-tuned VLA, stack: panel, needs_gpu: true, status: unchecked}
+  - {id: fastwam_libero, repo: ZibinDong/fastwam_libero_uncond_2cam224, paradigm: WAM, stack: panel, needs_gpu: true, status: unchecked}
+  - {id: cosmos_policy_libero, repo: nvidia/Cosmos-Policy-LIBERO-Predict2-2B, paradigm: WAM, stack: panel, needs_gpu: true, status: unchecked}
+  - {id: jepa_wm_droid, repo: facebook/jepa-wms, file: jepa_wm_droid.pth.tar, paradigm: WM, stack: S4b, needs_gpu: true, status: unchecked}
+  - {id: instant_policy, repo: "github:vv19/instant_policy", paradigm: in-context, stack: panel, needs_gpu: false, status: unchecked}
+route_B_maniskill:
+  - {id: tdmpc2_pick_cube_franka, repo: nicklashansen/newt, file: ms-pick-cube.pt, paradigm: RL, stack: S5, needs_gpu: false, status: unchecked}
+  - {id: tdmpc2_pick_cube_franka_eepose, repo: nicklashansen/newt, file: ms-pick-cube-eepose.pt, paradigm: RL, stack: S5, needs_gpu: false, status: unchecked}
+  - {id: tdmpc2_pick_cube_xarm6, repo: nicklashansen/newt, file: ms-pick-cube-xarm6.pt, paradigm: RL, stack: S5, needs_gpu: false, status: unchecked}
+  - {id: tdmpc2_pick_cube_so100, repo: nicklashansen/newt, file: ms-pick-cube-so.pt, paradigm: RL, stack: S5-oracle, needs_gpu: false, status: unchecked}
+  - {id: newt_soup_20m, repo: nicklashansen/newt, file: soup-20M-default.pt, paradigm: RL+WM, stack: S5, needs_gpu: false, status: unchecked, note: SO100 pretrain-exposed}
+route_C_isaac:
+  - {id: vjepa2_ac, repo: "torch.hub:facebookresearch/vjepa2:vjepa2_ac_vit_giant", paradigm: WM, stack: S4b, needs_gpu: true, status: unchecked}
+  - {id: pi05_droid, repo: "gs://openpi-assets/checkpoints/pi05_droid", paradigm: VLA, stack: panel, needs_gpu: true, status: unchecked}
+  - {id: molmoact2_so101, repo: allenai/MolmoAct2-SO100_101, paradigm: VLA, stack: reverse, needs_gpu: true, status: unchecked, note: license unclear}
+  - {id: groot_pickorange_so101, repo: wsagi/GR00T-N1.7-V2-PickOrange, paradigm: VLA, stack: SO101-reference, needs_gpu: true, status: unchecked}
