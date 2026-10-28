@@ -20,6 +20,7 @@ SPECS = {
         jaw_bodies=["left_finger", "right_finger"],
         layout_offset=[0.30, 0.0],   # task region sits inside the Franka's minimum reach otherwise (Phase 0)
         torque_capable=True,
+        vmax=1.0, amax=2.0, jmax=20.0,   # conservative fractions of the Panda datasheet limits (rad/s, /s2, /s3)
     ),
     "so101": dict(
         xml="robotstudio_so101/so101.xml",
@@ -30,6 +31,7 @@ SPECS = {
         jaw_bodies=["gripper", "moving_jaw_so101_v1"],
         layout_offset=[0.0, 0.0],
         torque_capable=False,
+        vmax=1.0, amax=3.0, jmax=30.0,   # ST3215 servo: light links, quick but low torque
     ),
 }
 
@@ -44,3 +46,19 @@ def tcp_frame(model, spec):
         mujoco.mju_mulQuat(q, model.site_quat[sid], np.array([np.cos(np.pi / 4), 0, np.sin(np.pi / 4), 0]))
         return body, model.site_pos[sid].copy(), q
     return spec["tcp_body"], np.array(spec["tcp_offset"], float), spec["tcp_quat"]
+
+
+def robot_body_ids(model, spec):
+    """Every body of the robot: the top-level body above the first arm joint, and all its descendants."""
+    b = model.jnt_bodyid[mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_JOINT, spec["arm"][0])]
+    while model.body_parentid[b] != 0:
+        b = model.body_parentid[b]
+    root = b
+    ids = set()
+    for k in range(1, model.nbody):
+        a = k
+        while a != 0 and a != root:
+            a = model.body_parentid[a]
+        if a == root:
+            ids.add(k)
+    return ids
