@@ -23,5 +23,13 @@ for b in franka so101; do
   for c in "${cells[@]}"; do jobs+=("$b $N $c"); done
   for c in "${slow[@]}"; do jobs+=("$b $NSLOW $c"); done
 done
-printf '%s\n' "${jobs[@]}" | xargs -P 4 -I{} sh -c '.venv-lite/bin/python scripts/eval_classical.py {} > /dev/null 2>&1; echo "done: {}"'
+# resume: skip cells whose result file already exists (same naming as eval_classical.py)
+todo=()
+for j in "${jobs[@]}"; do
+  set -- $j; b=$1; shift 2
+  tag=$(printf '%s\n' "$@" | sed 's/=/-/' | paste -sd_ -); tag=${tag:-default}
+  [ -f "results/classical/${b}__${tag}.json" ] || todo+=("$j")
+done
+echo "cells to run: ${#todo[@]} of ${#jobs[@]}"
+printf '%s\n' "${todo[@]}" | xargs -P 4 -I{} sh -c '.venv-lite/bin/python scripts/eval_classical.py {} > /dev/null 2>&1; echo "done: {}"'
 echo CLASSICAL_GRID_DONE
