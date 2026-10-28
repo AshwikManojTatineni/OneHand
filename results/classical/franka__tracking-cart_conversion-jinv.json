@@ -1,0 +1,74 @@
+{
+  "stack": "S1-full",
+  "body": "franka",
+  "cfg": {
+    "input": "pointcloud",
+    "world": "primitives",
+    "endpoint": "constrained",
+    "planner": "rrtconnect",
+    "timing": "toppra",
+    "tracking": "cart",
+    "conversion": "jinv",
+    "control": null,
+    "actuator": null
+  },
+  "resolved": {
+    "input": "pointcloud",
+    "world": "primitives",
+    "endpoint": "constrained",
+    "planner": "rrtconnect",
+    "timing": "toppra",
+    "tracking": "cart",
+    "conversion": "jinv",
+    "control": "pdg",
+    "actuator": "torque"
+  },
+  "changed": {
+    "tracking": "cart",
+    "conversion": "jinv"
+  },
+  "episodes": 20,
+  "success": 0,
+  "rate": 0.0,
+  "wilson95": [
+    0.0,
+    0.16112516018512965
+  ],
+  "mean_stage": 0.0,
+  "stages": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "post_contact_rate": 0.0,
+  "plan_fail_rate": 0.0,
+  "plan_time_s": 0.13338329792022705,
+  "path_len_rad": 1.8554506331472962,
+  "ik_err_mm": 4.126025940418241e-08,
+  "track_rms_rad": 0.0,
+  "sat_frac": 0.0,
+  "not_applicable": "conversion jinv cannot run on this arm",
+  "fail_layers": {
+    "perception": 0,
+    "planning": 0,
+    "execution": 20
+  },
+  "sec_per_episode": 1.952617597579956
+}

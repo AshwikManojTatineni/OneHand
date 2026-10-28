@@ -1,0 +1,73 @@
+{
+  "stack": "S1-full",
+  "body": "so101",
+  "cfg": {
+    "input": "pointcloud",
+    "world": "mesh",
+    "endpoint": "constrained",
+    "planner": "rrtconnect",
+    "timing": "toppra",
+    "tracking": "joint",
+    "conversion": "hqp",
+    "control": null,
+    "actuator": null
+  },
+  "resolved": {
+    "input": "pointcloud",
+    "world": "mesh",
+    "endpoint": "constrained",
+    "planner": "rrtconnect",
+    "timing": "toppra",
+    "tracking": "joint",
+    "conversion": "hqp",
+    "control": "pd",
+    "actuator": "cascade"
+  },
+  "changed": {
+    "world": "mesh"
+  },
+  "episodes": 20,
+  "success": 19,
+  "rate": 0.95,
+  "wilson95": [
+    0.7638688045357189,
+    0.9911185512976646
+  ],
+  "mean_stage": 4.9,
+  "stages": [
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    3,
+    5,
+    5,
+    5,
+    5,
+    5
+  ],
+  "post_contact_rate": 1.0,
+  "plan_fail_rate": 0.0,
+  "plan_time_s": 0.6315248489379883,
+  "path_len_rad": 4.776335135009385,
+  "ik_err_mm": 5.229347872963563e-08,
+  "track_rms_rad": 0.04470945261304482,
+  "sat_frac": 0.0,
+  "not_applicable": "",
+  "fail_layers": {
+    "perception": 0,
+    "planning": 0,
+    "execution": 0
+  },
+  "sec_per_episode": 3.540799927711487
+}

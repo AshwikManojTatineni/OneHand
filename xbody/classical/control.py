@@ -99,6 +99,7 @@ class Converter:
             return 2.0 * J.T @ v
         lo = (self.kin.lo - q) / dt; hi = (self.kin.hi - q) / dt
         lo = np.maximum(lo, -2.0); hi = np.minimum(hi, 2.0)
+        lo = np.minimum(lo, 0.0); hi = np.maximum(hi, 0.0)    # a joint slightly past its limit may still stop
         A_rows, l_rows, u_rows = [np.eye(n)], [lo], [hi]
         if k in ("qp", "cbf") and self.clear is not None:
             c, gq = self.clear(q)
@@ -121,11 +122,15 @@ def _qp(J, v, A_rows, l_rows, u_rows, reg=1e-4):
     P = sparse.csc_matrix(J.T @ J + reg * np.eye(n))
     qv = -J.T @ v
     A = sparse.csc_matrix(np.vstack(A_rows))
-    s = osqp.OSQP()
-    s.setup(P, qv, A, np.concatenate([np.atleast_1d(x) for x in l_rows]),
-            np.concatenate([np.atleast_1d(x) for x in u_rows]), verbose=False, polish=False, max_iter=400)
-    r = s.solve()
-    return None if r.x is None or np.any(np.isnan(r.x)) else r.x
+    lo = np.concatenate([np.atleast_1d(x) for x in l_rows]); hi = np.concatenate([np.atleast_1d(x) for x in u_rows])
+    hi = np.maximum(hi, lo)
+    try:
+        s = osqp.OSQP()
+        s.setup(P, qv, A, lo, hi, verbose=False, polish=False, max_iter=400)
+        r = s.solve()
+    except Exception:
+        return np.zeros(n)                     # solver failure: hold still (counted as the method's behaviour)
+    return np.zeros(n) if r.x is None or np.any(np.isnan(r.x)) else r.x
 
 
 # ======================================================================== layer 8: joint-space laws
@@ -181,9 +186,9 @@ class JointLaw:
             Kp2, Kd2 = self.gains(M, w=12.0, z=0.9)
             return Kp2 * e + Kd2 * ed + d.g()
         if k == "smc":
-            lam, phi = 20.0, 0.05
+            lam, phi = 20.0, 0.1
             s = ed + lam * e
-            return M @ (qdd_ref + lam * ed) + h + 40.0 * np.diag(M) * np.clip(s / phi, -1, 1)
+            return M @ (qdd_ref + lam * ed) + h + 10.0 * np.maximum(np.diag(M), 1e-3) * np.clip(s / phi, -1, 1)
         if k == "backstep":
             k1, k2 = 20.0, 20.0
             z1 = q - q_ref
@@ -253,37 +258,42 @@ class JointLaw:
             try:
                 P = sla.solve_discrete_are(A, B, Q, R)
                 self.K_lqr = np.linalg.solve(R + B.T @ P @ B, B.T @ P @ A)
+                self.P_term = P
             except (np.linalg.LinAlgError, ValueError):
-                self.K_lqr = np.zeros((n, 2 * n))
+                self.K_lqr = np.zeros((n, 2 * n)); self.P_term = Q
             self.k_since = 0
         self.k_since += 1
         if k == "lqr":
             return u_ff - self.K_lqr @ x_err
         if k == "lqg":
-            y = q + self.rng.normal(0, 1e-3, n)                   # noisy encoder
+            y = q + self.rng.normal(0, 1e-3, n)                   # noisy encoder; velocity is not measured
+            dt = self.dt
             if self.kf_x is None:
-                self.kf_x, self.kf_P = np.r_[q, qd], np.eye(2 * n) * 1e-4
+                self.kf_x = np.r_[q, np.zeros(n)]; self.kf_P = np.tile(np.eye(2) * 1e-4, (n, 1, 1))
                 self.kf_u = np.zeros(n)
-            A = self.A
-            # predict with the rigid-body model, correct with the noisy encoder reading
-            x = self.kf_x + np.r_[self.kf_x[n:] * self.dt, np.linalg.solve(M, self.kf_u - h) * self.dt]
-            P = A @ self.kf_P @ A.T + np.eye(2 * n) * 1e-6
-            H = np.c_[np.eye(n), np.zeros((n, n))]
-            S = H @ P @ H.T + np.eye(n) * 1e-6
-            K = P @ H.T @ np.linalg.inv(S)
-            self.kf_x = x + K @ (y - H @ x); self.kf_P = (np.eye(2 * n) - K @ H) @ P
+            Fk = np.array([[1, dt], [0, 1.0]]); Qk = np.diag([1e-9, 1e-3]); Rk = 1e-6
+            acc = np.linalg.solve(M, self.kf_u - h)               # model acceleration from the last torque
+            xq, xv = self.kf_x[:n].copy(), self.kf_x[n:].copy()
+            for j in range(n):                                    # per-joint constant-velocity filter
+                xj = Fk @ np.array([xq[j], xv[j]]) + np.array([0.5 * dt * dt, dt]) * acc[j]
+                Pj = Fk @ self.kf_P[j] @ Fk.T + Qk
+                Kj = Pj[:, 0] / (Pj[0, 0] + Rk)
+                xj = xj + Kj * (y[j] - xj[0])
+                self.kf_P[j] = Pj - np.outer(Kj, Pj[0])
+                xq[j], xv[j] = xj
+            self.kf_x = np.r_[xq, xv]
             xe = self.kf_x - np.r_[q_ref, qd_ref]
             u = u_ff - self.K_lqr @ xe
             self.kf_u = u
             return u
         # linear MPC: box-constrained QP over a short horizon on the linearized model, re-solved every 5 steps
-        if self.mpc_u is None or self.mpc_k >= 5:
+        if self.mpc_u is None or self.mpc_k >= 2:
             self.mpc_u = self._mpc_solve(x_err, u_ff)
             self.mpc_k = 0
         self.mpc_k += 1
         return u_ff + self.mpc_u
 
-    def _mpc_solve(self, x0, u_ff, N=10):
+    def _mpc_solve(self, x0, u_ff, N=15):
         A, B, n = self.A, self.B, self.n
         nx, nu = 2 * n, n
         Q = np.diag(np.r_[np.full(n, 1e4), np.full(n, 10.0)])
@@ -296,6 +306,7 @@ class JointLaw:
             for j in range(i + 1):
                 Gam[i * nx:(i + 1) * nx, j * nu:(j + 1) * nu] = np.linalg.matrix_power(A, i - j) @ B
         Qb = np.kron(np.eye(N), Q); Rb = np.kron(np.eye(N), R)
+        Qb[-nx:, -nx:] = getattr(self, "P_term", Q)               # LQR cost-to-go as terminal cost
         H = Gam.T @ Qb @ Gam + Rb
         f = Gam.T @ Qb @ Phi @ x0
         lo = np.tile(-self.umax - u_ff, N); hi = np.tile(self.umax - u_ff, N)
@@ -313,7 +324,7 @@ class JointLaw:
             u_ff = M @ qdd_ref + h
             Kp, Kd = self.gains(M)
             base = self._nm_u.copy()
-            noise = self.rng.normal(0, 1, (K, H, self.n)) * 0.15 * self.umax
+            noise = self.rng.normal(0, 1, (K, H, self.n)) * 0.03 * self.umax
             costs = np.zeros(K)
             for kk in range(K):
                 r.qpos[:], r.qvel[:], r.ctrl[:] = data.qpos, data.qvel, data.ctrl
@@ -350,7 +361,7 @@ class TaskLaw:
         self.kind, self.dyn, self.kin, self.dt = kind, dyn, kin, dt
         self.n_task = 6 if kin.n >= 6 else 5
         self.int_f = 0.0
-        self.tank = 0.5
+        self.tank = 2.0
 
     def __call__(self, data, p_ref, R_ref, v_ref, q_home, wrench_z=0.0, contact_phase=False):
         d, kin = self.dyn, self.kin
@@ -376,7 +387,7 @@ class TaskLaw:
             Kc = Kx * np.r_[np.full(3, 0.5), np.ones(self.n_task - 3)]
             return J.T @ (Lam @ (Kc * e + 2 * np.sqrt(Kc) * ed)) + g + tau_null
         F = Lam @ (Kx * e + Dx * ed)
-        if k in ("force", "hybrid") and contact_phase:
+        if k in ("force", "hybrid") and contact_phase and abs(wrench_z) > 0.5:   # force loop only once in contact
             f_des = -3.0                                            # press 3 N into the table/cube while in contact
             self.int_f += (f_des - wrench_z) * self.dt
             fz = f_des + 0.5 * (f_des - wrench_z) + 5.0 * self.int_f
@@ -390,11 +401,13 @@ class TaskLaw:
             return J.T @ F + h + tau_null
         if k == "ptask":
             # Cartesian impedance whose injected power is drawn from an energy tank (passivity-preserving)
-            tau = J.T @ F + g + tau_null
-            power = float(qd @ (J.T @ F))
-            self.tank = np.clip(self.tank - power * self.dt, 0.0, 2.0)
-            if self.tank <= 0.01 and power > 0:
-                tau = g + tau_null - J.T @ (Dx * xd)
+            Fk = Lam @ (Kx * e); Fd = Lam @ (Dx * ed)
+            tau = J.T @ (Fk + Fd) + g + tau_null
+            p_stiff = float(xd @ Fk)                               # power the spring injects
+            p_damp = float(xd @ (Lam @ (Dx * xd)))                 # power the damper dissipates refills the tank
+            self.tank = np.clip(self.tank + (p_damp - p_stiff) * self.dt, 0.0, 5.0)
+            if self.tank <= 0.01 and p_stiff > 0:
+                tau = J.T @ Fd + g + tau_null                      # tank empty: only passive damping
             return tau
         raise ValueError(k)
 

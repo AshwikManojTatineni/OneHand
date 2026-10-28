@@ -1,0 +1,73 @@
+{
+  "stack": "S1-full",
+  "body": "so101",
+  "cfg": {
+    "input": "pointcloud",
+    "world": "primitives",
+    "endpoint": "constrained",
+    "planner": "kpiece",
+    "timing": "toppra",
+    "tracking": "joint",
+    "conversion": "hqp",
+    "control": null,
+    "actuator": null
+  },
+  "resolved": {
+    "input": "pointcloud",
+    "world": "primitives",
+    "endpoint": "constrained",
+    "planner": "kpiece",
+    "timing": "toppra",
+    "tracking": "joint",
+    "conversion": "hqp",
+    "control": "pd",
+    "actuator": "cascade"
+  },
+  "changed": {
+    "planner": "kpiece"
+  },
+  "episodes": 20,
+  "success": 13,
+  "rate": 0.65,
+  "wilson95": [
+    0.4328542750684442,
+    0.818808176876017
+  ],
+  "mean_stage": 4.0,
+  "stages": [
+    5,
+    0,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    3,
+    5,
+    5,
+    5,
+    3,
+    5,
+    3,
+    3,
+    5,
+    0,
+    5,
+    3
+  ],
+  "post_contact_rate": 0.4,
+  "plan_fail_rate": 0.1,
+  "plan_time_s": 3.708667886257172,
+  "path_len_rad": 5.561968860357123,
+  "ik_err_mm": 3.4865552965751224e-08,
+  "track_rms_rad": 0.02022803827399723,
+  "sat_frac": 0.0,
+  "not_applicable": "",
+  "fail_layers": {
+    "perception": 0,
+    "planning": 2,
+    "execution": 0
+  },
+  "sec_per_episode": 6.343642807006836
+}
