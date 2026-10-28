@@ -1,0 +1,73 @@
+layer,method,franka_success,franka_episodes,franka_rate,franka_mean_stage,franka_post_contact_rate,franka_not_applicable,so101_success,so101_episodes,so101_rate,so101_mean_stage,so101_post_contact_rate,so101_not_applicable,retention
+1 Input source,camera,1,20,0.05,2.8,1.0,,0,20,0.0,0.95,1.0,,0.00
+1 Input source,known,18,20,0.9,4.8,0.0,,18,20,0.9,4.85,0.5,,1.00
+2 World model,esdf,17,20,0.85,4.7,0.0,,18,20,0.9,4.55,0.3,,1.06
+2 World model,mesh,17,20,0.85,4.7,0.0,,19,20,0.95,4.9,1.0,,1.12
+2 World model,octomap,4,20,0.2,2.5,0.0,,2,20,0.1,1.55,0.05,,0.50
+2 World model,pose,15,20,0.75,4.5,0.0,,20,20,1.0,5.0,0.5,,1.33
+2 World model,tsdf,4,20,0.2,2.05,0.0,,2,20,0.1,1.55,0.05,,0.50
+2 World model,voxel,4,20,0.2,2.2,0.0,,16,20,0.8,4.6,0.25,,4.00
+3 Endpoint IK,analytic,0,20,0.0,0.0,0.0,analytic IK: no closed form for this arm,14,20,0.7,3.95,0.0,,-
+3 Endpoint IK,ccd,0,20,0.0,1.3,0.05,,10,20,0.5,2.8,0.05,,-
+3 Endpoint IK,lm,18,20,0.9,4.8,0.0,,11,20,0.55,3.9,0.15,,0.61
+3 Endpoint IK,newton,17,20,0.85,4.7,0.0,,0,20,0.0,1.1,0.0,,0.00
+3 Endpoint IK,taught,4,20,0.2,1.25,0.0,,2,20,0.1,0.8,1.0,,0.50
+4 Motion planning,astar,0,20,0.0,0.0,0.0,,0,20,0.0,0.0,0.0,,-
+4 Motion planning,chomp,15,20,0.75,4.5,0.25,,18,20,0.9,4.5,0.4,,1.20
+4 Motion planning,dampers,0,20,0.0,3.0,0.0,,0,20,0.0,3.0,0.0,,-
+4 Motion planning,dijkstra,0,20,0.0,0.0,0.0,,0,20,0.0,0.0,0.0,,-
+4 Motion planning,est,16,20,0.8,4.15,0.0,,7,20,0.35,2.95,0.15,,0.44
+4 Motion planning,informedrrtstar,0,20,0.0,3.0,0.0,,12,20,0.6,3.9,0.15,,-
+4 Motion planning,kinorrt,11,20,0.55,3.2,0.0,,8,20,0.4,2.6,0.1,,0.73
+4 Motion planning,kpiece,15,20,0.75,4.55,0.0,,13,20,0.65,4.0,0.4,,0.87
+4 Motion planning,lattice,10,20,0.5,4.0,0.0,,0,20,0.0,2.7,0.0,,0.00
+4 Motion planning,lazyprm,19,20,0.95,4.9,0.0,,18,20,0.9,4.5,0.4,,0.95
+4 Motion planning,potential,6,20,0.3,3.6,0.0,,0,20,0.0,1.95,0.0,,0.00
+4 Motion planning,prm,13,20,0.65,4.45,0.0,,15,20,0.75,4.3,0.4,,1.15
+4 Motion planning,prmstar,18,20,0.9,4.8,0.0,,17,20,0.85,4.45,0.4,,0.94
+4 Motion planning,rrt,0,20,0.0,3.0,0.0,,17,20,0.85,4.4,0.4,,-
+4 Motion planning,rrtstar,0,20,0.0,3.0,0.0,,14,20,0.7,4.1,0.2,,-
+4 Motion planning,sst,15,20,0.75,3.9,0.0,,6,20,0.3,2.85,0.05,,0.40
+4 Motion planning,stomp,17,20,0.85,4.7,0.0,,18,20,0.9,4.5,0.4,,1.06
+4 Motion planning,straight,0,20,0.0,3.0,0.0,,0,20,0.0,2.7,0.0,,-
+4 Motion planning,trajopt,17,20,0.85,4.7,0.0,,14,20,0.7,4.1,0.35,,0.82
+5 Timing,iptp,15,20,0.75,4.5,0.0,,17,20,0.85,4.45,0.4,,1.13
+5 Timing,ruckig,16,20,0.8,4.65,0.0,,9,20,0.45,3.25,0.4,,0.56
+5 Timing,scurve,16,20,0.8,4.6,0.0,,17,20,0.85,4.4,0.4,,1.06
+5 Timing,topp,16,20,0.8,4.6,0.0,,17,20,0.85,4.45,0.4,,1.06
+5 Timing,totg,17,20,0.85,4.7,0.0,,17,20,0.85,4.4,0.4,,1.00
+5 Timing,trapezoid,16,20,0.8,4.6,0.0,,15,20,0.75,4.3,0.4,,0.94
+6 Tracking,admittance,,,,,,,8,20,0.4,2.8,0.35,,-
+6 Tracking,cart,,,,,,,9,20,0.45,3.3,0.15,,-
+6 Tracking,carttorque,16,20,0.8,4.6,0.0,,9,20,0.45,3.25,0.55,,0.56
+6 Tracking,ibvs,17,20,0.85,4.7,0.0,,2,20,0.1,1.9,0.4,,0.12
+6 Tracking,pbvs,14,20,0.7,4.45,0.0,,7,20,0.35,2.8,0.4,,0.50
+6 Tracking,vs25,17,20,0.85,4.7,0.0,,1,20,0.05,1.2,0.4,,0.06
+7 Conversion (Cartesian tracking),cbf,,,,,,,11,20,0.55,3.5,0.1,,-
+7 Conversion (Cartesian tracking),dls,15,20,0.75,4.5,0.0,,9,20,0.45,3.3,0.15,,0.60
+7 Conversion (Cartesian tracking),jinv,0,20,0.0,0.0,0.0,conversion jinv cannot run on this arm,1,20,0.05,1.7,0.45,,-
+7 Conversion (Cartesian tracking),jtrans,14,20,0.7,4.4,0.1,,0,20,0.0,1.15,0.4,,0.00
+7 Conversion (Cartesian tracking),pinv,15,20,0.75,4.5,0.0,,0,20,0.0,1.95,0.75,,0.00
+7 Conversion (Cartesian tracking),qp,,,,,,,7,20,0.35,3.15,0.1,,-
+8 Control,backstep,15,20,0.75,4.5,0.0,,18,20,0.9,4.5,0.4,,1.20
+8 Control,cimp (task space),16,20,0.8,4.6,0.0,,7,20,0.35,3.0,0.7,,0.44
+8 Control,ct,15,20,0.75,4.5,0.0,,18,20,0.9,4.5,0.4,,1.20
+8 Control,force (task space),0,20,0.0,0.4,0.55,,0,20,0.0,1.8,0.2,,-
+8 Control,hinf,15,20,0.75,4.5,0.0,,18,20,0.9,4.5,0.4,,1.20
+8 Control,hybrid (task space),0,20,0.0,0.4,0.55,,0,20,0.0,1.8,0.2,,-
+8 Control,jimp,15,20,0.75,4.5,0.0,,18,20,0.9,4.5,0.4,,1.20
+8 Control,lqg,0,10,0.0,1.0,0.1,,0,10,0.0,1.0,0.4,,-
+8 Control,lqr,15,20,0.75,4.5,0.0,,18,20,0.9,4.5,0.4,,1.20
+8 Control,mpc,0,10,0.0,0.7,0.9,,9,10,0.9,4.5,0.3,,-
+8 Control,mrac,16,20,0.8,4.6,0.05,,18,20,0.9,4.5,0.4,,1.12
+8 Control,nmpc,0,10,0.0,0.4,0.7,,4,10,0.4,2.2,0.2,,-
+8 Control,p,5,20,0.25,2.8,0.1,,18,20,0.9,4.5,0.4,,3.60
+8 Control,passivity,15,20,0.75,4.5,0.0,,18,20,0.9,4.5,0.4,,1.20
+8 Control,pd,13,20,0.65,4.25,0.0,,17,20,0.85,4.45,0.4,,1.31
+8 Control,pdg,15,20,0.75,4.5,0.0,,18,20,0.9,4.5,0.4,,1.20
+8 Control,pid,15,20,0.75,4.5,0.05,,16,20,0.8,4.35,0.4,,1.07
+8 Control,ptask (task space),0,20,0.0,0.0,0.0,,0,20,0.0,1.45,0.3,,-
+8 Control,slotine,17,20,0.85,4.7,0.0,,18,20,0.9,4.5,0.4,,1.06
+8 Control,smc,2,20,0.1,2.55,0.0,,18,20,0.9,4.5,0.4,,9.00
+9 Actuator,cascade,18,20,0.9,4.8,0.0,,17,20,0.85,4.45,0.4,,0.94
+9 Actuator,torque,15,20,0.75,4.5,0.0,,18,20,0.9,4.5,0.4,,1.20
