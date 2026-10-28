@@ -1,0 +1,25 @@
+{
+  "policy": "ms-pick-cube (Franka)",
+  "target": "xArm6 (PickCube-v1)",
+  "rung": "R3",
+  "interface": "K+P",
+  "mpc": false,
+  "naive_gripper": false,
+  "episodes": 20,
+  "success": 3,
+  "rate": 0.15,
+  "wilson95": [
+    0.05236874548672649,
+    0.36041886664286427
+  ],
+  "stage_hist": {
+    "0": 0,
+    "1": 14,
+    "2": 0,
+    "3": 3,
+    "4": 3
+  },
+  "mean_stage": 1.75,
+  "sec_per_episode": 0.40089715719223024,
+  "stage_key": "0 none, 1 reach (<3 cm), 2 grasp (2 steps), 3 at goal while grasped, 4 env success"
+}

@@ -109,6 +109,17 @@ def solve_ik(body, p_target, R_target=None, q0=None, method="hqp", w_rot=0.3, da
         if norm > max_step:            # trust region: large orientation errors must not drag the position
             dq *= max_step / norm
         q = np.clip(q + dq, body.lo, body.hi)
+    if method == "hqp" and R_target is not None:
+        # Strict priority: joint-limit clamping can let the secondary task drag the position, which a true
+        # hierarchical QP forbids. Finish with position-only steps so position always wins.
+        for _ in range(100):
+            p, _, Jp, _ = body.jacobian(q)
+            ep = p_target - p
+            if np.linalg.norm(ep) < tol_p:
+                break
+            dq = Jp.T @ np.linalg.solve(Jp @ Jp.T + damping**2 * np.eye(3), ep)
+            n = np.linalg.norm(dq)
+            q = np.clip(q + (dq * max_step / n if n > max_step else dq), body.lo, body.hi)
     p, R = body.fk(q)
     if R_target is None:
         rerr = 0.0

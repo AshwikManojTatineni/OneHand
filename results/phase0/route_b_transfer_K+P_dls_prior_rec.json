@@ -1,0 +1,25 @@
+{
+  "policy": "ms-pick-cube (Franka)",
+  "target": "SO100 (PickCubeSO100-v1)",
+  "interface": "K+P",
+  "ik": "dls",
+  "mpc": false,
+  "shift": true,
+  "episodes": 20,
+  "success": 0,
+  "rate": 0.0,
+  "wilson95": [
+    0.0,
+    0.16112516018512965
+  ],
+  "stage_hist": {
+    "0": 3,
+    "1": 16,
+    "2": 1,
+    "3": 0,
+    "4": 0
+  },
+  "mean_stage": 0.9,
+  "sec_per_episode": 0.3780015349388123,
+  "stage_key": "0 none, 1 reach (<3 cm), 2 grasp (2 steps), 3 at goal while grasped, 4 env success"
+}

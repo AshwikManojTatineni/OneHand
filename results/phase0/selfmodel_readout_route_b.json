@@ -1,0 +1,47 @@
+{
+  "franka_home": {
+    "transitions": 480,
+    "latent_mse_mean": 0.0006276814487667556,
+    "latent_mse_median": 1.4888762052578386e-05,
+    "cosine_mean": 0.9912316779295604,
+    "no_change_mse_mean": 0.00398937238945006,
+    "relative_error": 0.157338394988311,
+    "self_prediction_ratio": 1.0
+  },
+  "xarm6_R3_KP": {
+    "transitions": 480,
+    "latent_mse_mean": 0.014225282821765479,
+    "latent_mse_median": 0.012252651154994965,
+    "cosine_mean": 0.8133318714797497,
+    "no_change_mse_mean": 0.016450453906425057,
+    "relative_error": 0.8647349734349584,
+    "self_prediction_ratio": 22.663220093113743
+  },
+  "so100_R6_KP": {
+    "transitions": 480,
+    "latent_mse_mean": 0.014892125266972775,
+    "latent_mse_median": 0.016517885960638523,
+    "cosine_mean": 0.8277092097947994,
+    "no_change_mse_mean": 0.0002846077642092353,
+    "relative_error": 52.32508434318228,
+    "self_prediction_ratio": 23.72561001481285
+  },
+  "so100_R6_K": {
+    "transitions": 480,
+    "latent_mse_mean": 0.016852206327409174,
+    "latent_mse_median": 0.01856617722660303,
+    "cosine_mean": 0.801776138941447,
+    "no_change_mse_mean": 0.0001357457653064103,
+    "relative_error": 124.14535576391468,
+    "self_prediction_ratio": 26.848342197335516
+  },
+  "so100_R6_KP_noshift": {
+    "transitions": 480,
+    "latent_mse_mean": 0.0068489081299048845,
+    "latent_mse_median": 0.0044069369323551655,
+    "cosine_mean": 0.9194377669443686,
+    "no_change_mse_mean": 0.0038918937024125235,
+    "relative_error": 1.7597880758303739,
+    "self_prediction_ratio": 10.911439462423745
+  }
+}

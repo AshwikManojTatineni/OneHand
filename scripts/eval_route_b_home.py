@@ -29,31 +29,38 @@ TASKS = {  # mirrors Newt's MANISKILL_TASKS
 ACTION_REPEAT, EP_LEN = 2, 25
 
 
-def main(task, episodes, mpc=True, seed_base=20261028):
+def main(task, episodes, mpc=True, seed_base=20261028, record=None):
     env_id, cm, adim, kw = TASKS[task]
     env = gym.make(env_id, obs_mode="state", control_mode=cm, num_envs=1, sim_backend="cpu", **kw)
     agent = FrozenNewtAgent(ROOT / f"checkpoints/newt/{task}.pt", task, adim, EP_LEN, mpc=mpc)
-    succ, t_start = [], time.time()
+    succ, t_start, rec = [], time.time(), []
     for ep in range(episodes):
         obs, _ = env.reset(seed=seed_base + ep)
         ok = False
+        ep_obs, ep_act = [], []
         for t in range(EP_LEN):
-            a = agent.act(np.asarray(obs).reshape(-1), t0=(t == 0))
+            o_flat = np.asarray(obs).reshape(-1).astype(np.float32)
+            a = agent.act(o_flat, t0=(t == 0))
+            ep_obs.append(o_flat); ep_act.append(a)
             for _ in range(ACTION_REPEAT):
                 obs, r, term, trunc, info = env.step(a[None])
                 ok = ok or bool(np.asarray(info["success"]).item())
                 if bool(np.asarray(term).item()) or bool(np.asarray(trunc).item()):
                     break
+        rec.append((np.array(ep_obs), np.array(ep_act)))
         succ.append(ok)
         print(f"{task} ep {ep:3d} success={ok}", flush=True)
     k, n = int(sum(succ)), len(succ)
     lo, hi = wilson(k, n)
     res = {"task": task, "mpc": mpc, "episodes": n, "success": k, "rate": k / n, "wilson95": [lo, hi],
            "sec_per_episode": (time.time() - t_start) / n, "seed_base": seed_base}
-    out = ROOT / f"results/phase0/route_b_home_{task}_{'mpc' if mpc else 'prior'}.json"
+    if record:
+        np.savez(record, obs=np.array([r[0] for r in rec], dtype=object), act=np.array([r[1] for r in rec], dtype=object))
+    out = ROOT / f"results/phase0/route_b_home_{task}_{'mpc' if mpc else 'prior'}{'_rec' if record else ''}.json"
     out.write_text(json.dumps(res, indent=2))
     print(json.dumps(res))
 
 
 if __name__ == "__main__":
-    main(sys.argv[1], int(sys.argv[2]), mpc="--no-mpc" not in sys.argv)
+    rec_path = sys.argv[sys.argv.index("--record") + 1] if "--record" in sys.argv else None
+    main(sys.argv[1], int(sys.argv[2]), mpc="--no-mpc" not in sys.argv, record=rec_path)

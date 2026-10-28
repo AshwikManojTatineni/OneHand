@@ -1,0 +1,56 @@
+[33;1m2026-10-28 03:57:24,582 - mani_skill  - WARNING - Requested to use render device "sapien_cuda", but CUDA device was not found. Falling back to "cpu" device. Rendering might be disabled.[0m
+No learning rate schedule specified, using constant LR.
+Episode length: 25
+Discount factor: tensor([0.9500])
+Compiling methods...
+ms-pick-cube ep   0 success=True
+ms-pick-cube ep   1 success=True
+ms-pick-cube ep   2 success=True
+ms-pick-cube ep   3 success=True
+ms-pick-cube ep   4 success=True
+ms-pick-cube ep   5 success=True
+ms-pick-cube ep   6 success=True
+ms-pick-cube ep   7 success=True
+ms-pick-cube ep   8 success=True
+ms-pick-cube ep   9 success=True
+ms-pick-cube ep  10 success=True
+ms-pick-cube ep  11 success=True
+ms-pick-cube ep  12 success=True
+ms-pick-cube ep  13 success=True
+ms-pick-cube ep  14 success=True
+ms-pick-cube ep  15 success=True
+ms-pick-cube ep  16 success=True
+ms-pick-cube ep  17 success=True
+ms-pick-cube ep  18 success=True
+ms-pick-cube ep  19 success=True
+ms-pick-cube ep  20 success=True
+ms-pick-cube ep  21 success=True
+ms-pick-cube ep  22 success=True
+ms-pick-cube ep  23 success=True
+ms-pick-cube ep  24 success=True
+ms-pick-cube ep  25 success=True
+ms-pick-cube ep  26 success=True
+ms-pick-cube ep  27 success=True
+ms-pick-cube ep  28 success=True
+ms-pick-cube ep  29 success=True
+ms-pick-cube ep  30 success=True
+ms-pick-cube ep  31 success=True
+ms-pick-cube ep  32 success=True
+ms-pick-cube ep  33 success=True
+ms-pick-cube ep  34 success=True
+ms-pick-cube ep  35 success=True
+ms-pick-cube ep  36 success=True
+ms-pick-cube ep  37 success=True
+ms-pick-cube ep  38 success=True
+ms-pick-cube ep  39 success=True
+ms-pick-cube ep  40 success=True
+ms-pick-cube ep  41 success=True
+ms-pick-cube ep  42 success=True
+ms-pick-cube ep  43 success=True
+ms-pick-cube ep  44 success=True
+ms-pick-cube ep  45 success=True
+ms-pick-cube ep  46 success=True
+ms-pick-cube ep  47 success=True
+ms-pick-cube ep  48 success=True
+ms-pick-cube ep  49 success=True
+{"task": "ms-pick-cube", "mpc": true, "episodes": 50, "success": 50, "rate": 1.0, "wilson95": [0.9286523998213857, 0.9999999999999999], "sec_per_episode": 25.8964142036438, "seed_base": 20261028}

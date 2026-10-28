@@ -1,0 +1,60 @@
+[33;1m2026-10-28 04:05:53,668 - mani_skill  - WARNING - Requested to use render device "sapien_cuda", but CUDA device was not found. Falling back to "cpu" device. Rendering might be disabled.[0m
+/home/user/xbody-bench/.venv-lite/lib/python3.11/site-packages/gymnasium/spaces/box.py:297: UserWarning: [33mWARN: Box low's precision lowered by casting to float32, current low.dtype=float64[0m
+  gym.logger.warn(
+/home/user/xbody-bench/.venv-lite/lib/python3.11/site-packages/gymnasium/spaces/box.py:364: UserWarning: [33mWARN: Box high's precision lowered by casting to float32, current high.dtype=float64[0m
+  gym.logger.warn(
+No learning rate schedule specified, using constant LR.
+Episode length: 25
+Discount factor: tensor([0.9500])
+Compiling methods...
+{"ep": 0, "success": false, "stage": 3}
+{"ep": 1, "success": false, "stage": 1}
+{"ep": 2, "success": false, "stage": 1}
+{"ep": 3, "success": true, "stage": 4}
+{"ep": 4, "success": true, "stage": 4}
+{"ep": 5, "success": false, "stage": 3}
+{"ep": 6, "success": false, "stage": 1}
+{"ep": 7, "success": false, "stage": 1}
+{"ep": 8, "success": false, "stage": 1}
+{"ep": 9, "success": false, "stage": 3}
+{"ep": 10, "success": false, "stage": 1}
+{"ep": 11, "success": false, "stage": 1}
+{"ep": 12, "success": false, "stage": 1}
+{"ep": 13, "success": false, "stage": 1}
+{"ep": 14, "success": true, "stage": 4}
+{"ep": 15, "success": false, "stage": 1}
+{"ep": 16, "success": false, "stage": 1}
+{"ep": 17, "success": false, "stage": 1}
+{"ep": 18, "success": false, "stage": 1}
+{"ep": 19, "success": false, "stage": 1}
+{"ep": 20, "success": false, "stage": 1}
+{"ep": 21, "success": false, "stage": 1}
+{"ep": 22, "success": false, "stage": 3}
+{"ep": 23, "success": false, "stage": 1}
+{"ep": 24, "success": false, "stage": 1}
+{"ep": 25, "success": false, "stage": 2}
+{"ep": 26, "success": false, "stage": 3}
+{"ep": 27, "success": false, "stage": 1}
+{"ep": 28, "success": false, "stage": 1}
+{"ep": 29, "success": false, "stage": 1}
+{"ep": 30, "success": false, "stage": 1}
+{"ep": 31, "success": false, "stage": 1}
+{"ep": 32, "success": false, "stage": 1}
+{"ep": 33, "success": false, "stage": 1}
+{"ep": 34, "success": false, "stage": 1}
+{"ep": 35, "success": false, "stage": 1}
+{"ep": 36, "success": false, "stage": 1}
+{"ep": 37, "success": false, "stage": 1}
+{"ep": 38, "success": false, "stage": 1}
+{"ep": 39, "success": false, "stage": 1}
+{"ep": 40, "success": false, "stage": 1}
+{"ep": 41, "success": false, "stage": 1}
+{"ep": 42, "success": false, "stage": 3}
+{"ep": 43, "success": false, "stage": 1}
+{"ep": 44, "success": false, "stage": 1}
+{"ep": 45, "success": false, "stage": 1}
+{"ep": 46, "success": false, "stage": 3}
+{"ep": 47, "success": false, "stage": 1}
+{"ep": 48, "success": false, "stage": 1}
+{"ep": 49, "success": false, "stage": 3}
+{"policy": "ms-pick-cube (Franka)", "target": "xArm6 (PickCube-v1)", "rung": "R3", "interface": "K+P", "mpc": false, "naive_gripper": false, "episodes": 50, "success": 3, "rate": 0.06, "wilson95": [0.020614970188436152, 0.16217091796874428], "stage_hist": {"0": 0, "1": 38, "2": 1, "3": 8, "4": 3}, "mean_stage": 1.52, "sec_per_episode": 0.5351871967315673, "stage_key": "0 none, 1 reach (<3 cm), 2 grasp (2 steps), 3 at goal while grasped, 4 env success"}

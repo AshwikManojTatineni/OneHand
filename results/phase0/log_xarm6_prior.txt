@@ -1,0 +1,60 @@
+[33;1m2026-10-28 04:04:57,436 - mani_skill  - WARNING - Requested to use render device "sapien_cuda", but CUDA device was not found. Falling back to "cpu" device. Rendering might be disabled.[0m
+/home/user/xbody-bench/.venv-lite/lib/python3.11/site-packages/gymnasium/spaces/box.py:297: UserWarning: [33mWARN: Box low's precision lowered by casting to float32, current low.dtype=float64[0m
+  gym.logger.warn(
+/home/user/xbody-bench/.venv-lite/lib/python3.11/site-packages/gymnasium/spaces/box.py:364: UserWarning: [33mWARN: Box high's precision lowered by casting to float32, current high.dtype=float64[0m
+  gym.logger.warn(
+No learning rate schedule specified, using constant LR.
+Episode length: 25
+Discount factor: tensor([0.9500])
+Compiling methods...
+ms-pick-cube-xarm6 ep   0 success=True
+ms-pick-cube-xarm6 ep   1 success=True
+ms-pick-cube-xarm6 ep   2 success=True
+ms-pick-cube-xarm6 ep   3 success=True
+ms-pick-cube-xarm6 ep   4 success=True
+ms-pick-cube-xarm6 ep   5 success=True
+ms-pick-cube-xarm6 ep   6 success=True
+ms-pick-cube-xarm6 ep   7 success=True
+ms-pick-cube-xarm6 ep   8 success=True
+ms-pick-cube-xarm6 ep   9 success=True
+ms-pick-cube-xarm6 ep  10 success=True
+ms-pick-cube-xarm6 ep  11 success=True
+ms-pick-cube-xarm6 ep  12 success=True
+ms-pick-cube-xarm6 ep  13 success=True
+ms-pick-cube-xarm6 ep  14 success=True
+ms-pick-cube-xarm6 ep  15 success=True
+ms-pick-cube-xarm6 ep  16 success=True
+ms-pick-cube-xarm6 ep  17 success=True
+ms-pick-cube-xarm6 ep  18 success=True
+ms-pick-cube-xarm6 ep  19 success=True
+ms-pick-cube-xarm6 ep  20 success=True
+ms-pick-cube-xarm6 ep  21 success=True
+ms-pick-cube-xarm6 ep  22 success=True
+ms-pick-cube-xarm6 ep  23 success=True
+ms-pick-cube-xarm6 ep  24 success=True
+ms-pick-cube-xarm6 ep  25 success=True
+ms-pick-cube-xarm6 ep  26 success=True
+ms-pick-cube-xarm6 ep  27 success=True
+ms-pick-cube-xarm6 ep  28 success=True
+ms-pick-cube-xarm6 ep  29 success=True
+ms-pick-cube-xarm6 ep  30 success=True
+ms-pick-cube-xarm6 ep  31 success=True
+ms-pick-cube-xarm6 ep  32 success=True
+ms-pick-cube-xarm6 ep  33 success=True
+ms-pick-cube-xarm6 ep  34 success=True
+ms-pick-cube-xarm6 ep  35 success=True
+ms-pick-cube-xarm6 ep  36 success=True
+ms-pick-cube-xarm6 ep  37 success=True
+ms-pick-cube-xarm6 ep  38 success=True
+ms-pick-cube-xarm6 ep  39 success=True
+ms-pick-cube-xarm6 ep  40 success=True
+ms-pick-cube-xarm6 ep  41 success=True
+ms-pick-cube-xarm6 ep  42 success=True
+ms-pick-cube-xarm6 ep  43 success=True
+ms-pick-cube-xarm6 ep  44 success=True
+ms-pick-cube-xarm6 ep  45 success=False
+ms-pick-cube-xarm6 ep  46 success=True
+ms-pick-cube-xarm6 ep  47 success=True
+ms-pick-cube-xarm6 ep  48 success=True
+ms-pick-cube-xarm6 ep  49 success=True
+{"task": "ms-pick-cube-xarm6", "mpc": false, "episodes": 50, "success": 49, "rate": 0.98, "wilson95": [0.8950455630610349, 0.9964607407674954], "sec_per_episode": 0.29358156204223634, "seed_base": 20261028}

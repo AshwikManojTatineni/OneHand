@@ -1,0 +1,585 @@
+{
+  "route_b": {
+    "R0 Franka home (prior)": {
+      "cell": "R0 Franka home (prior)",
+      "n": 50,
+      "success": 50,
+      "rate": 1.0,
+      "wilson95": [
+        0.9286523998213857,
+        0.9999999999999999
+      ],
+      "mean_stage": 4.0,
+      "max_stage": 4,
+      "retention": 1.0,
+      "stage_retention": 1.0
+    },
+    "R3 xArm6 K (prior)": {
+      "cell": "R3 xArm6 K (prior)",
+      "n": 50,
+      "success": 3,
+      "rate": 0.06,
+      "wilson95": [
+        0.020614970188436152,
+        0.16217091796874428
+      ],
+      "mean_stage": 1.84,
+      "max_stage": 4,
+      "retention": 0.06,
+      "stage_retention": 0.46
+    },
+    "R3 xArm6 K+P (prior)": {
+      "cell": "R3 xArm6 K+P (prior)",
+      "n": 50,
+      "success": 3,
+      "rate": 0.06,
+      "wilson95": [
+        0.020614970188436152,
+        0.16217091796874428
+      ],
+      "mean_stage": 1.52,
+      "max_stage": 4,
+      "retention": 0.06,
+      "stage_retention": 0.38
+    },
+    "R3 xArm6 K+P naive gripper (prior)": {
+      "cell": "R3 xArm6 K+P naive gripper (prior)",
+      "n": 50,
+      "success": 1,
+      "rate": 0.02,
+      "wilson95": [
+        0.003539259232504602,
+        0.10495443693896496
+      ],
+      "mean_stage": 0.84,
+      "max_stage": 4,
+      "retention": 0.02,
+      "stage_retention": 0.21
+    },
+    "R6 SO100 K dls (prior)": {
+      "cell": "R6 SO100 K dls (prior)",
+      "n": 50,
+      "success": 0,
+      "rate": 0.0,
+      "wilson95": [
+        0.0,
+        0.07134760017861413
+      ],
+      "mean_stage": 0.94,
+      "max_stage": 4,
+      "retention": 0.0,
+      "stage_retention": 0.235
+    },
+    "R6 SO100 K+P dls (prior)": {
+      "cell": "R6 SO100 K+P dls (prior)",
+      "n": 50,
+      "success": 0,
+      "rate": 0.0,
+      "wilson95": [
+        0.0,
+        0.07134760017861413
+      ],
+      "mean_stage": 0.86,
+      "max_stage": 4,
+      "retention": 0.0,
+      "stage_retention": 0.215
+    },
+    "R6 SO100 K hqp-axis (prior)": {
+      "cell": "R6 SO100 K hqp-axis (prior)",
+      "n": 50,
+      "success": 0,
+      "rate": 0.0,
+      "wilson95": [
+        0.0,
+        0.07134760017861413
+      ],
+      "mean_stage": 0.9,
+      "max_stage": 4,
+      "retention": 0.0,
+      "stage_retention": 0.225
+    },
+    "R6 SO100 K+P hqp-axis (prior)": {
+      "cell": "R6 SO100 K+P hqp-axis (prior)",
+      "n": 50,
+      "success": 0,
+      "rate": 0.0,
+      "wilson95": [
+        0.0,
+        0.07134760017861413
+      ],
+      "mean_stage": 0.78,
+      "max_stage": 4,
+      "retention": 0.0,
+      "stage_retention": 0.195
+    },
+    "R6 SO100 K+P dls no frame shift (prior)": {
+      "cell": "R6 SO100 K+P dls no frame shift (prior)",
+      "n": 50,
+      "success": 0,
+      "rate": 0.0,
+      "wilson95": [
+        0.0,
+        0.07134760017861413
+      ],
+      "mean_stage": 0.42,
+      "max_stage": 4,
+      "retention": 0.0,
+      "stage_retention": 0.105
+    },
+    "R6 SO100 K dls (planning on)": {
+      "cell": "R6 SO100 K dls (planning on)",
+      "n": 20,
+      "success": 0,
+      "rate": 0.0,
+      "wilson95": [
+        0.0,
+        0.16112516018512965
+      ],
+      "mean_stage": 0.0,
+      "max_stage": 4,
+      "retention": 0.0,
+      "stage_retention": 0.0
+    },
+    "R6 SO100 K+P dls (planning on)": {
+      "cell": "R6 SO100 K+P dls (planning on)",
+      "n": 20,
+      "success": 0,
+      "rate": 0.0,
+      "wilson95": [
+        0.0,
+        0.16112516018512965
+      ],
+      "mean_stage": 0.3,
+      "max_stage": 4,
+      "retention": 0.0,
+      "stage_retention": 0.075
+    },
+    "R3 xArm6 K (planning on)": {
+      "cell": "R3 xArm6 K (planning on)",
+      "n": 43,
+      "success": 1,
+      "rate": 0.023255813953488372,
+      "wilson95": [
+        0.004117087228789965,
+        0.12058993558403963
+      ],
+      "mean_stage": 1.5813953488372092,
+      "max_stage": 4,
+      "retention": 0.023255813953488372,
+      "stage_retention": 0.3953488372093023
+    }
+  },
+  "s1": {
+    "dls-full|joint|trapezoid|1.0": {
+      "franka": {
+        "stack": "S1",
+        "body": "franka",
+        "ik": "dls-full",
+        "tracking": "joint",
+        "timing": "trapezoid",
+        "kp_scale": 1.0,
+        "episodes": 50,
+        "success": 50,
+        "rate": 1.0,
+        "wilson95": [
+          0.9286523998213857,
+          0.9999999999999999
+        ],
+        "stage_hist": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 50
+        },
+        "mean_stage": 5.0,
+        "ik_failures_per_episode": 0.0,
+        "sec_per_episode": 0.4104583263397217,
+        "seed_base": 20261028,
+        "stage_key": "0 none, 1 reach, 2 grasp, 3 lift, 4 transport, 5 place (protocol.yaml)"
+      },
+      "so101": {
+        "stack": "S1",
+        "body": "so101",
+        "ik": "dls-full",
+        "tracking": "joint",
+        "timing": "trapezoid",
+        "kp_scale": 1.0,
+        "episodes": 50,
+        "success": 40,
+        "rate": 0.8,
+        "wilson95": [
+          0.6696289395351799,
+          0.8875625003576518
+        ],
+        "stage_hist": {
+          "0": 0,
+          "1": 5,
+          "2": 5,
+          "3": 0,
+          "4": 0,
+          "5": 40
+        },
+        "mean_stage": 4.3,
+        "ik_failures_per_episode": 5.12,
+        "sec_per_episode": 0.23873584747314452,
+        "seed_base": 20261028,
+        "stage_key": "0 none, 1 reach, 2 grasp, 3 lift, 4 transport, 5 place (protocol.yaml)"
+      }
+    },
+    "hqp-axis|cartesian|trapezoid|1.0": {
+      "franka": {
+        "stack": "S1",
+        "body": "franka",
+        "ik": "hqp-axis",
+        "tracking": "cartesian",
+        "timing": "trapezoid",
+        "kp_scale": 1.0,
+        "episodes": 50,
+        "success": 50,
+        "rate": 1.0,
+        "wilson95": [
+          0.9286523998213857,
+          0.9999999999999999
+        ],
+        "stage_hist": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 50
+        },
+        "mean_stage": 5.0,
+        "ik_failures_per_episode": 0.0,
+        "sec_per_episode": 1.02081130027771,
+        "seed_base": 20261028,
+        "stage_key": "0 none, 1 reach, 2 grasp, 3 lift, 4 transport, 5 place (protocol.yaml)"
+      },
+      "so101": {
+        "stack": "S1",
+        "body": "so101",
+        "ik": "hqp-axis",
+        "tracking": "cartesian",
+        "timing": "trapezoid",
+        "kp_scale": 1.0,
+        "episodes": 50,
+        "success": 47,
+        "rate": 0.94,
+        "wilson95": [
+          0.8378290820312557,
+          0.9793850298115638
+        ],
+        "stage_hist": {
+          "0": 0,
+          "1": 3,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 47
+        },
+        "mean_stage": 4.76,
+        "ik_failures_per_episode": 0.0,
+        "sec_per_episode": 0.7520242738723755,
+        "seed_base": 20261028,
+        "stage_key": "0 none, 1 reach, 2 grasp, 3 lift, 4 transport, 5 place (protocol.yaml)"
+      }
+    },
+    "hqp-axis|joint|quintic|1.0": {
+      "franka": {
+        "stack": "S1",
+        "body": "franka",
+        "ik": "hqp-axis",
+        "tracking": "joint",
+        "timing": "quintic",
+        "kp_scale": 1.0,
+        "episodes": 50,
+        "success": 50,
+        "rate": 1.0,
+        "wilson95": [
+          0.9286523998213857,
+          0.9999999999999999
+        ],
+        "stage_hist": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 50
+        },
+        "mean_stage": 5.0,
+        "ik_failures_per_episode": 0.0,
+        "sec_per_episode": 0.2785633373260498,
+        "seed_base": 20261028,
+        "stage_key": "0 none, 1 reach, 2 grasp, 3 lift, 4 transport, 5 place (protocol.yaml)"
+      },
+      "so101": {
+        "stack": "S1",
+        "body": "so101",
+        "ik": "hqp-axis",
+        "tracking": "joint",
+        "timing": "quintic",
+        "kp_scale": 1.0,
+        "episodes": 50,
+        "success": 50,
+        "rate": 1.0,
+        "wilson95": [
+          0.9286523998213857,
+          0.9999999999999999
+        ],
+        "stage_hist": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 50
+        },
+        "mean_stage": 5.0,
+        "ik_failures_per_episode": 0.0,
+        "sec_per_episode": 0.24060102939605713,
+        "seed_base": 20261028,
+        "stage_key": "0 none, 1 reach, 2 grasp, 3 lift, 4 transport, 5 place (protocol.yaml)"
+      }
+    },
+    "hqp-axis|joint|trapezoid|0.017857": {
+      "franka": {
+        "stack": "S1",
+        "body": "franka",
+        "ik": "hqp-axis",
+        "tracking": "joint",
+        "timing": "trapezoid",
+        "kp_scale": 0.017857,
+        "episodes": 50,
+        "success": 0,
+        "rate": 0.0,
+        "wilson95": [
+          0.0,
+          0.07134760017861413
+        ],
+        "stage_hist": {
+          "0": 50,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "mean_stage": 0.0,
+        "ik_failures_per_episode": 0.0,
+        "sec_per_episode": 0.2693083953857422,
+        "seed_base": 20261028,
+        "stage_key": "0 none, 1 reach, 2 grasp, 3 lift, 4 transport, 5 place (protocol.yaml)"
+      },
+      "so101": {
+        "stack": "S1",
+        "body": "so101",
+        "ik": "hqp-axis",
+        "tracking": "joint",
+        "timing": "trapezoid",
+        "kp_scale": 0.017857,
+        "episodes": 50,
+        "success": 50,
+        "rate": 1.0,
+        "wilson95": [
+          0.9286523998213857,
+          0.9999999999999999
+        ],
+        "stage_hist": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 50
+        },
+        "mean_stage": 5.0,
+        "ik_failures_per_episode": 0.0,
+        "sec_per_episode": 0.20028077602386474,
+        "seed_base": 20261028,
+        "stage_key": "0 none, 1 reach, 2 grasp, 3 lift, 4 transport, 5 place (protocol.yaml)"
+      }
+    },
+    "hqp-axis|joint|trapezoid|1.0": {
+      "franka": {
+        "stack": "S1",
+        "body": "franka",
+        "ik": "hqp-axis",
+        "tracking": "joint",
+        "timing": "trapezoid",
+        "kp_scale": 1.0,
+        "episodes": 50,
+        "success": 50,
+        "rate": 1.0,
+        "wilson95": [
+          0.9286523998213857,
+          0.9999999999999999
+        ],
+        "stage_hist": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 50
+        },
+        "mean_stage": 5.0,
+        "ik_failures_per_episode": 0.0,
+        "sec_per_episode": 0.3076793384552002,
+        "seed_base": 20261028,
+        "stage_key": "0 none, 1 reach, 2 grasp, 3 lift, 4 transport, 5 place (protocol.yaml)"
+      },
+      "so101": {
+        "stack": "S1",
+        "body": "so101",
+        "ik": "hqp-axis",
+        "tracking": "joint",
+        "timing": "trapezoid",
+        "kp_scale": 1.0,
+        "episodes": 50,
+        "success": 50,
+        "rate": 1.0,
+        "wilson95": [
+          0.9286523998213857,
+          0.9999999999999999
+        ],
+        "stage_hist": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 50
+        },
+        "mean_stage": 5.0,
+        "ik_failures_per_episode": 0.0,
+        "sec_per_episode": 0.26680070877075196,
+        "seed_base": 20261028,
+        "stage_key": "0 none, 1 reach, 2 grasp, 3 lift, 4 transport, 5 place (protocol.yaml)"
+      }
+    },
+    "hqp-full|joint|trapezoid|1.0": {
+      "franka": {
+        "stack": "S1",
+        "body": "franka",
+        "ik": "hqp-full",
+        "tracking": "joint",
+        "timing": "trapezoid",
+        "kp_scale": 1.0,
+        "episodes": 50,
+        "success": 50,
+        "rate": 1.0,
+        "wilson95": [
+          0.9286523998213857,
+          0.9999999999999999
+        ],
+        "stage_hist": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 50
+        },
+        "mean_stage": 5.0,
+        "ik_failures_per_episode": 0.0,
+        "sec_per_episode": 0.29508199691772463,
+        "seed_base": 20261028,
+        "stage_key": "0 none, 1 reach, 2 grasp, 3 lift, 4 transport, 5 place (protocol.yaml)"
+      },
+      "so101": {
+        "stack": "S1",
+        "body": "so101",
+        "ik": "hqp-full",
+        "tracking": "joint",
+        "timing": "trapezoid",
+        "kp_scale": 1.0,
+        "episodes": 50,
+        "success": 50,
+        "rate": 1.0,
+        "wilson95": [
+          0.9286523998213857,
+          0.9999999999999999
+        ],
+        "stage_hist": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 50
+        },
+        "mean_stage": 5.0,
+        "ik_failures_per_episode": 0.0,
+        "sec_per_episode": 0.2641532039642334,
+        "seed_base": 20261028,
+        "stage_key": "0 none, 1 reach, 2 grasp, 3 lift, 4 transport, 5 place (protocol.yaml)"
+      }
+    },
+    "newton-full|joint|trapezoid|1.0": {
+      "franka": {
+        "stack": "S1",
+        "body": "franka",
+        "ik": "newton-full",
+        "tracking": "joint",
+        "timing": "trapezoid",
+        "kp_scale": 1.0,
+        "episodes": 50,
+        "success": 50,
+        "rate": 1.0,
+        "wilson95": [
+          0.9286523998213857,
+          0.9999999999999999
+        ],
+        "stage_hist": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 50
+        },
+        "mean_stage": 5.0,
+        "ik_failures_per_episode": 0.0,
+        "sec_per_episode": 0.3971400833129883,
+        "seed_base": 20261028,
+        "stage_key": "0 none, 1 reach, 2 grasp, 3 lift, 4 transport, 5 place (protocol.yaml)"
+      },
+      "so101": {
+        "stack": "S1",
+        "body": "so101",
+        "ik": "newton-full",
+        "tracking": "joint",
+        "timing": "trapezoid",
+        "kp_scale": 1.0,
+        "episodes": 50,
+        "success": 0,
+        "rate": 0.0,
+        "wilson95": [
+          0.0,
+          0.07134760017861413
+        ],
+        "stage_hist": {
+          "0": 49,
+          "1": 0,
+          "2": 0,
+          "3": 1,
+          "4": 0,
+          "5": 0
+        },
+        "mean_stage": 0.06,
+        "ik_failures_per_episode": 5.98,
+        "sec_per_episode": 0.09962631225585937,
+        "seed_base": 20261028,
+        "stage_key": "0 none, 1 reach, 2 grasp, 3 lift, 4 transport, 5 place (protocol.yaml)"
+      }
+    }
+  },
+  "selfmodel_spearman": {
+    "rho": -0.6,
+    "p": 0.28475697986529386,
+    "n": 5
+  }
+}

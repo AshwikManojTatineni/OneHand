@@ -1,0 +1,56 @@
+[33;1m2026-10-28 04:02:36,080 - mani_skill  - WARNING - Requested to use render device "sapien_cuda", but CUDA device was not found. Falling back to "cpu" device. Rendering might be disabled.[0m
+No learning rate schedule specified, using constant LR.
+Episode length: 25
+Discount factor: tensor([0.9500])
+Compiling methods...
+{"ep": 0, "success": false, "stage": 2, "ik_err_mm_median": 95.4311452805996}
+{"ep": 1, "success": false, "stage": 1, "ik_err_mm_median": 0.034139644412789494}
+{"ep": 2, "success": false, "stage": 1, "ik_err_mm_median": 0.32556366932112724}
+{"ep": 3, "success": false, "stage": 1, "ik_err_mm_median": 0.07371587707893923}
+{"ep": 4, "success": false, "stage": 1, "ik_err_mm_median": 0.0781150592956692}
+{"ep": 5, "success": false, "stage": 0, "ik_err_mm_median": 0.029349445867410395}
+{"ep": 6, "success": false, "stage": 1, "ik_err_mm_median": 0.015616600649082102}
+{"ep": 7, "success": false, "stage": 1, "ik_err_mm_median": 0.033797789001255296}
+{"ep": 8, "success": false, "stage": 1, "ik_err_mm_median": 0.012697458259935956}
+{"ep": 9, "success": false, "stage": 1, "ik_err_mm_median": 0.11376738984836265}
+{"ep": 10, "success": false, "stage": 1, "ik_err_mm_median": 0.061189804910100065}
+{"ep": 11, "success": false, "stage": 1, "ik_err_mm_median": 0.010863111128855962}
+{"ep": 12, "success": false, "stage": 1, "ik_err_mm_median": 0.014815269878454274}
+{"ep": 13, "success": false, "stage": 0, "ik_err_mm_median": 0.04542115857475437}
+{"ep": 14, "success": false, "stage": 0, "ik_err_mm_median": 0.01702597910480108}
+{"ep": 15, "success": false, "stage": 1, "ik_err_mm_median": 0.02311109255970223}
+{"ep": 16, "success": false, "stage": 1, "ik_err_mm_median": 0.014632179954787716}
+{"ep": 17, "success": false, "stage": 1, "ik_err_mm_median": 0.013112357009958941}
+{"ep": 18, "success": false, "stage": 1, "ik_err_mm_median": 0.015427531252498738}
+{"ep": 19, "success": false, "stage": 1, "ik_err_mm_median": 0.4555790656013414}
+{"ep": 20, "success": false, "stage": 0, "ik_err_mm_median": 0.23471211170544848}
+{"ep": 21, "success": false, "stage": 1, "ik_err_mm_median": 0.013467782082443591}
+{"ep": 22, "success": false, "stage": 1, "ik_err_mm_median": 0.013837910955771804}
+{"ep": 23, "success": false, "stage": 1, "ik_err_mm_median": 0.3515962162055075}
+{"ep": 24, "success": false, "stage": 1, "ik_err_mm_median": 0.0782248425821308}
+{"ep": 25, "success": false, "stage": 1, "ik_err_mm_median": 0.042642590415198356}
+{"ep": 26, "success": false, "stage": 1, "ik_err_mm_median": 0.01142268001785851}
+{"ep": 27, "success": false, "stage": 1, "ik_err_mm_median": 0.08621684901299886}
+{"ep": 28, "success": false, "stage": 0, "ik_err_mm_median": 0.06633043449255638}
+{"ep": 29, "success": false, "stage": 1, "ik_err_mm_median": 0.01737903858156642}
+{"ep": 30, "success": false, "stage": 1, "ik_err_mm_median": 0.017918007870321162}
+{"ep": 31, "success": false, "stage": 1, "ik_err_mm_median": 0.41753250116016716}
+{"ep": 32, "success": false, "stage": 1, "ik_err_mm_median": 0.2548632910475135}
+{"ep": 33, "success": false, "stage": 1, "ik_err_mm_median": 0.02713288904487854}
+{"ep": 34, "success": false, "stage": 1, "ik_err_mm_median": 0.020472288269957062}
+{"ep": 35, "success": false, "stage": 1, "ik_err_mm_median": 0.04015246486233082}
+{"ep": 36, "success": false, "stage": 1, "ik_err_mm_median": 0.41019904892891645}
+{"ep": 37, "success": false, "stage": 1, "ik_err_mm_median": 0.011197387721040286}
+{"ep": 38, "success": false, "stage": 1, "ik_err_mm_median": 0.0433237109973561}
+{"ep": 39, "success": false, "stage": 1, "ik_err_mm_median": 0.24884496815502644}
+{"ep": 40, "success": false, "stage": 0, "ik_err_mm_median": 0.01464278511775774}
+{"ep": 41, "success": false, "stage": 1, "ik_err_mm_median": 0.032885696782614104}
+{"ep": 42, "success": false, "stage": 1, "ik_err_mm_median": 0.014352229754877044}
+{"ep": 43, "success": false, "stage": 0, "ik_err_mm_median": 0.04161220022069756}
+{"ep": 44, "success": false, "stage": 1, "ik_err_mm_median": 0.06747086808900349}
+{"ep": 45, "success": false, "stage": 1, "ik_err_mm_median": 0.029374419682426378}
+{"ep": 46, "success": false, "stage": 0, "ik_err_mm_median": 0.07068297782097943}
+{"ep": 47, "success": false, "stage": 1, "ik_err_mm_median": 0.013792617664876161}
+{"ep": 48, "success": false, "stage": 1, "ik_err_mm_median": 0.016567162674618885}
+{"ep": 49, "success": false, "stage": 1, "ik_err_mm_median": 0.02566079820098821}
+{"policy": "ms-pick-cube (Franka)", "target": "SO100 (PickCubeSO100-v1)", "interface": "K+P", "ik": "dls", "mpc": false, "shift": true, "episodes": 50, "success": 0, "rate": 0.0, "wilson95": [0.0, 0.07134760017861413], "stage_hist": {"0": 8, "1": 41, "2": 1, "3": 0, "4": 0}, "mean_stage": 0.86, "sec_per_episode": 0.43554153442382815, "stage_key": "0 none, 1 reach (<3 cm), 2 grasp (2 steps), 3 at goal while grasped, 4 env success"}

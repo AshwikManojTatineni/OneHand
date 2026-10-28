@@ -40,18 +40,20 @@ def main():
     ap.add_argument("--no-mpc", action="store_true")
     ap.add_argument("--naive-gripper", action="store_true")
     ap.add_argument("--seed-base", type=int, default=20261028)
+    ap.add_argument("--record", default=None, help="save policy-view observations and actions (.npz)")
     args = ap.parse_args()
 
     env = gym.make("PickCube-v1", robot_uids="xarm6_robotiq", obs_mode="state", control_mode="pd_ee_delta_pos",
                    num_envs=1, sim_backend="cpu")
     agent = FrozenNewtAgent(ROOT / "checkpoints/newt/ms-pick-cube.pt", "ms-pick-cube", 4, EP_LEN, mpc=not args.no_mpc)
     twin = franka_twin()
-    results, t0 = [], time.time()
+    results, t0, rec = [], time.time(), []
     for ep in range(args.episodes):
         obs, _ = env.reset(seed=args.seed_base + ep)
         u = env.unwrapped
         q_twin, prev = FRANKA_REST.copy(), FRANKA_REST.copy()
         stage, grasp_steps, ok = 0, 0, False
+        ep_obs, ep_act = [], []
         for t in range(EP_LEN):
             o = np.asarray(obs).reshape(-1)
             qpos, rest = o[:12], o[24:]
@@ -62,7 +64,9 @@ def main():
             fq = np.concatenate([q_twin, [finger, finger]])
             fqd = np.concatenate([(q_twin - prev) * 10.0, [0.0, 0.0]])
             prev = q_twin.copy()
-            a = agent.act(np.concatenate([fq, fqd, rest]).astype(np.float32), t0=(t == 0))
+            f_obs = np.concatenate([fq, fqd, rest]).astype(np.float32)
+            a = agent.act(f_obs, t0=(t == 0))
+            ep_obs.append(f_obs); ep_act.append(a)
             for _ in range(ACTION_REPEAT):
                 o = np.asarray(obs).reshape(-1)
                 if args.naive_gripper:
@@ -83,10 +87,11 @@ def main():
                 stage = max(stage, 4 if ok else 0)
                 if bool(np.asarray(term).item()) or bool(np.asarray(trunc).item()):
                     break
+        rec.append((np.array(ep_obs), np.array(ep_act)))
         results.append({"ep": ep, "success": ok, "stage": stage})
         print(json.dumps(results[-1]), flush=True)
     k, n = sum(r["success"] for r in results), len(results)
-    tag = f"{args.interface}_{'prior' if args.no_mpc else 'mpc'}{'_naivegrip' if args.naive_gripper else ''}"
+    tag = f"{args.interface}_{'prior' if args.no_mpc else 'mpc'}{'_naivegrip' if args.naive_gripper else ''}{'_rec' if args.record else ''}"
     summary = {"policy": "ms-pick-cube (Franka)", "target": "xArm6 (PickCube-v1)", "rung": "R3",
                "interface": args.interface, "mpc": not args.no_mpc, "naive_gripper": args.naive_gripper,
                "episodes": n, "success": k, "rate": k / n, "wilson95": wilson(k, n),
@@ -94,6 +99,8 @@ def main():
                "mean_stage": float(np.mean([r["stage"] for r in results])),
                "sec_per_episode": (time.time() - t0) / n,
                "stage_key": "0 none, 1 reach (<3 cm), 2 grasp (2 steps), 3 at goal while grasped, 4 env success"}
+    if args.record:
+        np.savez(args.record, obs=np.array([r[0] for r in rec], dtype=object), act=np.array([r[1] for r in rec], dtype=object))
     (ROOT / f"results/phase0/route_b_r3_{tag}.json").write_text(json.dumps(summary, indent=2))
     print(json.dumps(summary))
 

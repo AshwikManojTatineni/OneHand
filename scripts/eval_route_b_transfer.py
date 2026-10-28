@@ -128,13 +128,14 @@ def main():
     ap.add_argument("--no-mpc", action="store_true")
     ap.add_argument("--no-shift", action="store_true")
     ap.add_argument("--seed-base", type=int, default=20261028)
+    ap.add_argument("--record", default=None, help="save policy-view observations and actions (.npz)")
     args = ap.parse_args()
 
     env = gym.make("PickCubeSO100-v1", obs_mode="state", control_mode="pd_joint_pos", num_envs=1, sim_backend="cpu")
     agent = FrozenNewtAgent(ROOT / "checkpoints/newt/ms-pick-cube.pt", "ms-pick-cube", 4, EP_LEN, mpc=not args.no_mpc)
     twin = franka_twin()
     shift = np.zeros(3) if args.no_shift else SHIFT
-    results, t_start = [], time.time()
+    results, t_start, rec = [], time.time(), []
     for ep in range(args.episodes):
         obs, _ = env.reset(seed=args.seed_base + ep)
         u = env.unwrapped
@@ -144,6 +145,7 @@ def main():
         ap_tab, ang_tab = calibrate_jaw(env, kin)
         q_twin, prev_twin = FRANKA_REST.copy(), FRANKA_REST.copy()
         stage, max_stage, grasp_steps, ok, ik_err = 0, 0, 0, False, []
+        ep_obs, ep_act = [], []
         for t in range(EP_LEN):
             o = np.asarray(obs).reshape(-1)
             qpos, rest = o[:6], o[12:]
@@ -163,6 +165,7 @@ def main():
             prev_twin = q_twin.copy()
             f_obs = np.concatenate([fq, fqd, rest]).astype(np.float32)
             a = agent.act(f_obs, t0=(t == 0))
+            ep_obs.append(f_obs); ep_act.append(a)
             dp = np.clip(a[:3], -1, 1) * EE_DELTA_LIMIT
             width = -0.01 + (np.clip(a[3], -1, 1) + 1) / 2 * 0.05              # panda finger target (m)
             g = np.interp(2 * max(width, 0.0), ap_tab, ang_tab)
@@ -187,10 +190,11 @@ def main():
                 stage = max(stage, 4 if ok else 0)
                 if bool(np.asarray(term).item()) or bool(np.asarray(trunc).item()):
                     break
+        rec.append((np.array(ep_obs), np.array(ep_act)))
         results.append({"ep": ep, "success": ok, "stage": stage, "ik_err_mm_median": 1000 * float(np.median(ik_err))})
         print(json.dumps(results[-1]), flush=True)
     k, n = sum(r["success"] for r in results), len(results)
-    tag = f"{args.interface}_{args.ik}_{'prior' if args.no_mpc else 'mpc'}{'_noshift' if args.no_shift else ''}"
+    tag = f"{args.interface}_{args.ik}_{'prior' if args.no_mpc else 'mpc'}{'_noshift' if args.no_shift else ''}{'_rec' if args.record else ''}"
     summary = {"policy": "ms-pick-cube (Franka)", "target": "SO100 (PickCubeSO100-v1)", "interface": args.interface,
                "ik": args.ik, "mpc": not args.no_mpc, "shift": not args.no_shift, "episodes": n, "success": k,
                "rate": k / n, "wilson95": wilson(k, n),
@@ -198,6 +202,8 @@ def main():
                "mean_stage": float(np.mean([r["stage"] for r in results])),
                "sec_per_episode": (time.time() - t_start) / n,
                "stage_key": "0 none, 1 reach (<3 cm), 2 grasp (2 steps), 3 at goal while grasped, 4 env success"}
+    if args.record:
+        np.savez(args.record, obs=np.array([r[0] for r in rec], dtype=object), act=np.array([r[1] for r in rec], dtype=object))
     (ROOT / f"results/phase0/route_b_transfer_{tag}.json").write_text(json.dumps(summary, indent=2))
     print(json.dumps(summary))
 

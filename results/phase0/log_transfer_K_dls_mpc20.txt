@@ -1,0 +1,26 @@
+[33;1m2026-10-28 04:05:26,625 - mani_skill  - WARNING - Requested to use render device "sapien_cuda", but CUDA device was not found. Falling back to "cpu" device. Rendering might be disabled.[0m
+No learning rate schedule specified, using constant LR.
+Episode length: 25
+Discount factor: tensor([0.9500])
+Compiling methods...
+{"ep": 0, "success": false, "stage": 0, "ik_err_mm_median": 0.13317560660652816}
+{"ep": 1, "success": false, "stage": 0, "ik_err_mm_median": 0.16766993940109387}
+{"ep": 2, "success": false, "stage": 0, "ik_err_mm_median": 0.15238661580951884}
+{"ep": 3, "success": false, "stage": 0, "ik_err_mm_median": 0.07328292849706486}
+{"ep": 4, "success": false, "stage": 0, "ik_err_mm_median": 0.0762545460020192}
+{"ep": 5, "success": false, "stage": 0, "ik_err_mm_median": 0.20874581241514534}
+{"ep": 6, "success": false, "stage": 0, "ik_err_mm_median": 0.2963625593110919}
+{"ep": 7, "success": false, "stage": 0, "ik_err_mm_median": 0.1483090891269967}
+{"ep": 8, "success": false, "stage": 0, "ik_err_mm_median": 0.2571959630586207}
+{"ep": 9, "success": false, "stage": 0, "ik_err_mm_median": 20.843593403697014}
+{"ep": 10, "success": false, "stage": 0, "ik_err_mm_median": 0.13145088450983167}
+{"ep": 11, "success": false, "stage": 0, "ik_err_mm_median": 0.20825010869884863}
+{"ep": 12, "success": false, "stage": 0, "ik_err_mm_median": 0.26144708681385964}
+{"ep": 13, "success": false, "stage": 0, "ik_err_mm_median": 0.3010840591741726}
+{"ep": 14, "success": false, "stage": 0, "ik_err_mm_median": 0.0897214595170226}
+{"ep": 15, "success": false, "stage": 0, "ik_err_mm_median": 0.15423521836055443}
+{"ep": 16, "success": false, "stage": 0, "ik_err_mm_median": 0.17475835920777172}
+{"ep": 17, "success": false, "stage": 0, "ik_err_mm_median": 0.17709767416818067}
+{"ep": 18, "success": false, "stage": 0, "ik_err_mm_median": 0.36393641494214535}
+{"ep": 19, "success": false, "stage": 0, "ik_err_mm_median": 0.1038081682054326}
+{"policy": "ms-pick-cube (Franka)", "target": "SO100 (PickCubeSO100-v1)", "interface": "K", "ik": "dls", "mpc": true, "shift": true, "episodes": 20, "success": 0, "rate": 0.0, "wilson95": [0.0, 0.16112516018512965], "stage_hist": {"0": 20, "1": 0, "2": 0, "3": 0, "4": 0}, "mean_stage": 0.0, "sec_per_episode": 25.687951934337615, "stage_key": "0 none, 1 reach (<3 cm), 2 grasp (2 steps), 3 at goal while grasped, 4 env success"}
