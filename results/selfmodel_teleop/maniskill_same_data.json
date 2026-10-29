@@ -1,0 +1,68 @@
+[
+  {
+    "noise": "none",
+    "fold_a": {
+      "transitions": 240,
+      "mean_step_mm": 16.521165490855754,
+      "local_jac_rel_pos": 0.015252385603089606,
+      "diff_only_rel_pos": 4.531492148819502e-11,
+      "diff_only_step_err_mm_median": 0.00020446492793641498,
+      "diff_abs_rel_pos": 4.4445782334522884e-11,
+      "diff_abs_step_err_mm_median": 0.0002062134118373421
+    },
+    "fold_b": {
+      "transitions": 240,
+      "mean_step_mm": 17.3002002811397,
+      "local_jac_rel_pos": 0.025597511432166726,
+      "diff_only_rel_pos": 4.20419745311268e-11,
+      "diff_only_step_err_mm_median": 0.00020922826752101621,
+      "diff_abs_rel_pos": 4.1327162834434784e-11,
+      "diff_abs_step_err_mm_median": 0.00021089376289572088
+    },
+    "newt_latent_rel": 0.157338394988311
+  },
+  {
+    "noise": "mid",
+    "fold_a": {
+      "transitions": 240,
+      "mean_step_mm": 16.521165490855754,
+      "local_jac_rel_pos": 0.015485631334884531,
+      "diff_only_rel_pos": 4.553721032256404e-05,
+      "diff_only_step_err_mm_median": 0.003750906657839319,
+      "diff_abs_rel_pos": 1.2491073029090387e-05,
+      "diff_abs_step_err_mm_median": 0.0019108037642441413
+    },
+    "fold_b": {
+      "transitions": 240,
+      "mean_step_mm": 17.3002002811397,
+      "local_jac_rel_pos": 0.02554680507907911,
+      "diff_only_rel_pos": 0.00035947275791177745,
+      "diff_only_step_err_mm_median": 0.009995286000567581,
+      "diff_abs_rel_pos": 2.277312663194407e-05,
+      "diff_abs_step_err_mm_median": 0.0019321185306345888
+    },
+    "newt_latent_rel": 0.157338394988311
+  },
+  {
+    "noise": "high",
+    "fold_a": {
+      "transitions": 240,
+      "mean_step_mm": 16.521165490855754,
+      "local_jac_rel_pos": 0.01783084242249067,
+      "diff_only_rel_pos": 0.00043502397250468733,
+      "diff_only_step_err_mm_median": 0.014485057741506926,
+      "diff_abs_rel_pos": 0.00011689124932964177,
+      "diff_abs_step_err_mm_median": 0.005719107957346308
+    },
+    "fold_b": {
+      "transitions": 240,
+      "mean_step_mm": 17.3002002811397,
+      "local_jac_rel_pos": 0.0273880713369779,
+      "diff_only_rel_pos": 0.0030342441263141217,
+      "diff_only_step_err_mm_median": 0.019647099388140923,
+      "diff_abs_rel_pos": 0.0002133424414369425,
+      "diff_abs_step_err_mm_median": 0.006091633231934189
+    },
+    "newt_latent_rel": 0.157338394988311
+  }
+]
