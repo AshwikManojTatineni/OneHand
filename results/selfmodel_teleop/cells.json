@@ -1078,5 +1078,275 @@
     "rel_rot": 0.10666829619999087
    }
   }
+ },
+ {
+  "seed": 4,
+  "mode": "joint",
+  "steps": 400,
+  "noise": "mid",
+  "fit_s_diff_only": 0.8777437210083008,
+  "fit_s_diff_abs": 1.9939219951629639,
+  "nominal": {
+   "one_step": {
+    "rel_pos": 0.0013897846237637373,
+    "rel_rot": 6.184817928631569e-05
+   },
+   "fk": {
+    "pos_mm_median": 15.346265106956984,
+    "pos_mm_p95": 21.95541081827133,
+    "rot_deg_median": 0.7853965500493119,
+    "rot_deg_p95": 1.3281547071943711
+   },
+   "reach": {
+    "success": 0,
+    "n": 40,
+    "ci": [
+     0.0,
+     0.08762160245846368
+    ],
+    "hits": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "pos_mm_median": 19.06121942938667,
+    "rot_deg_median": 0.8222471590978816
+   }
+  },
+  "diff_only": {
+   "one_step": {
+    "rel_pos": 0.0005384442483594424,
+    "rel_rot": 0.0003683640603171603
+   },
+   "fk": {
+    "pos_mm_median": 23.896182104736404,
+    "pos_mm_p95": 53.65711185705701,
+    "rot_deg_median": 2.4097055937400356,
+    "rot_deg_p95": 4.197572051033315
+   },
+   "reach": {
+    "success": 6,
+    "n": 40,
+    "ci": [
+     0.07061187676107432,
+     0.29072324495985025
+    ],
+    "hits": [
+     false,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     false,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "pos_mm_median": 7.4887618772039115,
+    "rot_deg_median": 0.8217544873664766
+   }
+  },
+  "diff_abs": {
+   "one_step": {
+    "rel_pos": 1.64752248414616e-05,
+    "rel_rot": 1.7072242742714847e-05
+   },
+   "fk": {
+    "pos_mm_median": 1.0939154026843507,
+    "pos_mm_p95": 1.9368324386574693,
+    "rot_deg_median": 0.28069444005322713,
+    "rot_deg_p95": 0.507727394826122
+   },
+   "reach": {
+    "success": 40,
+    "n": 40,
+    "ci": [
+     0.9123783975415363,
+     1.0
+    ],
+    "hits": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "pos_mm_median": 0.45006531521689697,
+    "rot_deg_median": 0.12242064042208195
+   }
+  },
+  "calib": {
+   "one_step": {
+    "rel_pos": 1.647522112366053e-05,
+    "rel_rot": 1.707221225872738e-05
+   },
+   "fk": {
+    "pos_mm_median": 1.0939213486374144,
+    "pos_mm_p95": 1.936841944741318,
+    "rot_deg_median": 0.28069390349485057,
+    "rot_deg_p95": 0.5077243797110688
+   },
+   "reach": {
+    "success": 40,
+    "n": 40,
+    "ci": [
+     0.9123783975415363,
+     1.0
+    ],
+    "hits": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "pos_mm_median": 0.45006580276962593,
+    "rot_deg_median": 0.12242090269063557
+   }
+  },
+  "local_jac": {
+   "one_step": {
+    "rel_pos": 0.24209302658859821,
+    "rel_rot": 0.15003023844349608
+   }
+  }
  }
 ]
