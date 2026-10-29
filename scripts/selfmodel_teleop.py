@@ -7,8 +7,9 @@ A second model, which never sees the model file, rebuilds the kinematics from th
 
 Compared:
   nominal     the kinematic model file itself (what every other method in the benchmark assumes)
-  poe_blind   differential PoE fit, initialised from the data alone
-  poe_calib   the same fit, initialised from the nominal model (classical calibration)
+  diff_only   differential PoE fit only (screws from pose changes; M averaged), initialised from the data alone
+  diff_abs    the same, then refined on the absolute logged poses (still no model file)
+  calib       nominal model as the starting point, refined on the same logs (classical calibration)
   local_jac   model-free online Jacobian (recursive least squares), one-step prediction only
   newt        the current self-model readout (frozen TD-MPC2 latent), on the same recorded ManiSkill episodes
 
@@ -172,7 +173,7 @@ def reach(fk_model, real, rng, n=40):
     inside the Cartesian teleop workspace."""
     lo, hi = real.lo, real.hi
     home = np.array(SPEC["home"])
-    errs, ok = [], 0
+    errs, hits = [], []
     while len(errs) < n:
         qt = np.clip(home + rng.normal(0, 0.5, 7), lo + 0.05, hi - 0.05)
         Tt = T_of(real, qt)
@@ -182,12 +183,11 @@ def reach(fk_model, real, rng, n=40):
         Ta = T_of(real, q_cmd - real.enc_offset)
         e_p = np.linalg.norm(Ta[:3, 3] - Tt[:3, 3])
         e_r = np.rad2deg(np.linalg.norm(sd.so3_log(Tt[:3, :3].T @ Ta[:3, :3])))
-        # Count only targets the model itself thinks it solved: an IK failure on the model is a different fault.
         errs.append((e_p * 1000, e_r))
-        ok += e_p < REACH_TOL[0] and e_r < REACH_TOL[1]
-    e = np.array(errs)
+        hits.append(bool(e_p < REACH_TOL[0] and e_r < REACH_TOL[1]))
+    e, ok = np.array(errs), int(sum(hits))
     lo_, hi_ = wilson(ok, n)
-    return {"success": int(ok), "n": n, "ci": [lo_, hi_], "pos_mm_median": float(np.median(e[:, 0])),
+    return {"success": ok, "n": n, "ci": [lo_, hi_], "hits": hits, "pos_mm_median": float(np.median(e[:, 0])),
             "rot_deg_median": float(np.median(e[:, 1]))}
 
 
@@ -195,20 +195,21 @@ def run_cell(seed, mode, steps, noise, nom, evaluate_reach=True):
     real = real_robot(seed)
     Q, qt, Tt, Tm = teleop(mode, steps, 1000 + seed, nom, real, noise)
     Qh, _, Tth, Tmh = teleop(mode, 200, 5000 + seed, nom, real, noise)   # held-out teleop log
-    rng = np.random.default_rng(9000 + seed)
     out = {"seed": seed, "mode": mode, "steps": steps, "noise": noise}
     models = {"nominal": NominalModel(nom).fk}
     t0 = time.time()
-    blind = sd.fit_poe(Q, Tm, "data")
-    out["fit_s_blind"] = time.time() - t0
+    diff = sd.fit_poe(Q, Tm, "data")
+    models["diff_only"] = diff.fk
+    out["fit_s_diff_only"] = time.time() - t0
     t0 = time.time()
-    calib = sd.fit_poe(Q, Tm, "nominal", nominal_J=nominal_J(nom, Q[0]))
-    out["fit_s_calib"] = time.time() - t0
-    models["poe_blind"], models["poe_calib"] = blind.fk, calib.fk
+    models["diff_abs"] = sd.fit_poe(Q, Tm, "data", absolute=True).fk
+    out["fit_s_diff_abs"] = time.time() - t0
+    models["calib"] = sd.fit_poe(Q, Tm, "nominal", nominal_J=nominal_J(nom, Q[0]), absolute=True).fk
     for name, fk in models.items():
-        r = {"one_step": one_step(fk, Qh, Tth), "fk": fk_errors(fk, real, np.random.default_rng(rng.integers(1 << 30)))}
+        # Same test configurations and reach targets for every model, so comparisons are paired.
+        r = {"one_step": one_step(fk, Qh, Tth), "fk": fk_errors(fk, real, np.random.default_rng(9000 + seed))}
         if evaluate_reach:
-            r["reach"] = reach(fk, real, np.random.default_rng(rng.integers(1 << 30)))
+            r["reach"] = reach(fk, real, np.random.default_rng(9500 + seed))
         out[name] = r
     lj = sd.LocalJacobian(7)
     for k in range(len(Q) - 1):
@@ -217,7 +218,7 @@ def run_cell(seed, mode, steps, noise, nom, evaluate_reach=True):
     return out
 
 
-def maniskill_same_data():
+def maniskill_same_data(noise="none", seed=0):
     """The current readout's own data: 20 recorded ManiSkill Franka pick-cube episodes. Fit on 10, test on the
     other 10 (both folds), against the true logged poses. ManiSkill state obs: qpos 0:9, tcp pose 19:26 (wxyz)."""
     d = np.load(ROOT / "results/phase0/traj/franka_home.npz", allow_pickle=True)
@@ -234,54 +235,65 @@ def maniskill_same_data():
         valid = np.concatenate([np.r_[np.ones(len(eps[i]) - 1, bool), False] for i in idx])[:-1]
         return Q, T, valid
 
-    res = {}
+    rng = np.random.default_rng(seed)
+    res = {"noise": noise}
     for name, (tr, te) in {"fold_a": (range(10), range(10, 20)), "fold_b": (range(10, 20), range(10))}.items():
         Q, T, v = stack(tr)
-        m = sd.fit_poe(Q, T, "data", valid=v)
+        Q = Q + rng.normal(0, ENC_NOISE, Q.shape) * (noise != "none")
+        Tm = np.array([measure(rng, t, noise) for t in T])
+        fits = {"diff_only": sd.fit_poe(Q, Tm, "data", valid=v), "diff_abs": sd.fit_poe(Q, Tm, "data", valid=v, absolute=True)}
         lj = sd.LocalJacobian(7)
         for k in np.where(v)[0]:
-            lj.update(Q[k + 1] - Q[k], sd.delta_x(T[k], T[k + 1]))
-        ps, pl, ns, sq = [], [], [], []
+            lj.update(Q[k + 1] - Q[k], sd.delta_x(Tm[k], Tm[k + 1]))
+        ps = {k: [] for k in fits}
+        pl, sq = [], []
         for i in te:
-            Qe, Te = eps[i][:, :7], np.array([to_T(o) for o in eps[i]])
-            P = np.array([m.fk(q) for q in Qe])
+            Qe, Te = eps[i][:, :7], np.array([to_T(o) for o in eps[i]])   # targets: the true logged poses
             dp = np.diff(Te[:, :3, 3], axis=0)
-            ps.append(((np.diff(P[:, :3, 3], axis=0) - dp) ** 2).sum(1))
+            for k, m in fits.items():
+                P = np.array([m.fk(q) for q in Qe])
+                ps[k].append(((np.diff(P[:, :3, 3], axis=0) - dp) ** 2).sum(1))
+            Tme = np.array([measure(rng, t, noise) for t in Te])
             for k in range(len(Qe) - 1):
                 pl.append(((lj.predict(Qe[k + 1] - Qe[k])[:3] - dp[k]) ** 2).sum())
-                lj.update(Qe[k + 1] - Qe[k], sd.delta_x(Te[k], Te[k + 1]))
+                lj.update(Qe[k + 1] - Qe[k], sd.delta_x(Tme[k], Tme[k + 1]))
             sq.append((dp ** 2).sum(1))
-        ps, sq = np.concatenate(ps), np.concatenate(sq)
-        res[name] = {"transitions": int(len(sq)), "poe_blind_rel_pos": float(ps.mean() / sq.mean()),
-                     "local_jac_rel_pos": float(np.mean(pl) / sq.mean()),
-                     "poe_blind_step_err_mm_median": float(np.median(np.sqrt(ps)) * 1000),
-                     "mean_step_mm": float(np.sqrt(sq).mean() * 1000)}
+        sq = np.concatenate(sq)
+        res[name] = {"transitions": int(len(sq)), "mean_step_mm": float(np.sqrt(sq).mean() * 1000),
+                     "local_jac_rel_pos": float(np.mean(pl) / sq.mean())}
+        for k in fits:
+            e = np.concatenate(ps[k])
+            res[name][f"{k}_rel_pos"] = float(e.mean() / sq.mean())
+            res[name][f"{k}_step_err_mm_median"] = float(np.median(np.sqrt(e)) * 1000)
     newt = json.loads((ROOT / "results/phase0/selfmodel_readout_route_b.json").read_text())["franka_home"]
     res["newt_latent_rel"] = newt["relative_error"]
     return res
 
 
+def _cell(args):
+    return run_cell(*args, nominal_body())
+
+
 def main(quick=False):
+    from multiprocessing import Pool
     OUT.mkdir(parents=True, exist_ok=True)
-    nom = nominal_body()
     seeds = [0, 1] if quick else [0, 1, 2, 3, 4]
-    cells = []
     plan = [(m, 400, "mid") for m in ("joint", "cartesian")]
     plan += [(m, n, "mid") for m in ("joint", "cartesian") for n in (25, 50, 100, 200, 800)]
     plan += [(m, 400, z) for m in ("joint", "cartesian") for z in ("none", "low", "high")]
     if quick:
         plan = plan[:2]
-    for mode, steps, noise in plan:
-        for s in seeds:
-            t0 = time.time()
-            r = run_cell(s, mode, steps, noise, nom)
+    jobs = [(s, mode, steps, noise) for mode, steps, noise in plan for s in seeds]
+    cells = []
+    with Pool(4) as pool:
+        for r in pool.imap_unordered(_cell, jobs):
             cells.append(r)
-            print(f"{mode:9s} N={steps:4d} noise={noise:5s} seed={s} "
+            print(f"{r['mode']:9s} N={r['steps']:4d} noise={r['noise']:5s} seed={r['seed']} "
                   + " ".join(f"{k}: fk {r[k]['fk']['pos_mm_median']:.2f}mm reach {r[k]['reach']['success']}/40"
-                             for k in ("nominal", "poe_blind", "poe_calib"))
-                  + f" lj {r['local_jac']['one_step']['rel_pos']:.3f} ({time.time() - t0:.0f}s)", flush=True)
+                             for k in ("nominal", "diff_only", "diff_abs", "calib"))
+                  + f" lj {r['local_jac']['one_step']['rel_pos']:.3f}", flush=True)
             (OUT / "cells.json").write_text(json.dumps(cells, indent=1))
-    ms = maniskill_same_data()
+    ms = [maniskill_same_data(z) for z in ("none", "mid", "high")]
     print("maniskill", json.dumps(ms), flush=True)
     (OUT / "maniskill_same_data.json").write_text(json.dumps(ms, indent=2))
 

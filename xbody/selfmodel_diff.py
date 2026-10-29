@@ -173,9 +173,34 @@ class PoEModel:
 
         sol = least_squares(res, x0, method="lm", max_nfev=iters * len(x0))
         self.x = sol.x
+        self.set_M(Q, T)
+        self.cost = float(sol.cost)
+        return self
+
+    def set_M(self, Q, T):
         A = inv_batch(self.products(Q)) @ T
         self.M = pose(np.mean([a[:3, 3] for a in A], 0), project_rot(np.mean([a[:3, :3] for a in A], 0)))
-        self.cost = float(sol.cost)
+        return self
+
+    def refine_absolute(self, Q, T, iters=100):
+        """Second stage: refine screws and M together on every logged absolute pose. Differences between noisy
+        poses carry the noise twice and say nothing about drift along the chain; absolute poses pin it."""
+        Q, T = np.asarray(Q), np.asarray(T)
+        Rt = np.transpose(T[:, :3, :3], (0, 2, 1))
+
+        def unpack(z):
+            return z[:-6], pose(z[-3:], so3_exp(z[-6:-3]) @ self.M[:3, :3])
+
+        def res(z):
+            x, M = unpack(z)
+            P = self.products(Q, x) @ M
+            return np.concatenate([(P[:, :3, 3] - T[:, :3, 3]),
+                                   rotvec_batch(Rt @ P[:, :3, :3]) * L_ROT], 1).ravel()
+
+        z0 = np.concatenate([self.x, np.zeros(3), self.M[:3, 3]])
+        sol = least_squares(res, z0, method="lm", max_nfev=iters * len(z0))
+        self.x, self.M = unpack(sol.x)
+        self.cost_abs = float(sol.cost)
         return self
 
     def init_from_jacobian(self, J):
@@ -203,16 +228,17 @@ def spatial_jacobian_ls(Q, T, valid=None, ridge=1e-6):
     return np.linalg.solve(A, dQ.T @ X).T
 
 
-def fit_poe(Q, T, init="data", nominal_J=None, valid=None, window=100):
+def fit_poe(Q, T, init="data", nominal_J=None, valid=None, window=100, absolute=False):
     """Blind fit (screws initialised from a local Jacobian over the first `window` steps) or calibration
-    (initialised from a nominal model's spatial Jacobian at q_ref)."""
+    (initialised from a nominal model's spatial Jacobian at q_ref). absolute=True adds the second stage."""
     m = PoEModel(len(Q[0]), Q[0])
     if init == "data":
         v = None if valid is None else np.asarray(valid)[:window]
         J = spatial_jacobian_ls(Q[: window + 1], T[: window + 1], v)
     else:
         J = nominal_J
-    return m.fit(Q, T, m.init_from_jacobian(J), valid)
+    m.fit(Q, T, m.init_from_jacobian(J), valid)
+    return m.refine_absolute(Q, T) if absolute else m
 
 
 # ---------- model-free baseline ----------
