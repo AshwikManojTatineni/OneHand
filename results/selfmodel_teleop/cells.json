@@ -538,5 +538,545 @@
     "rel_rot": 0.11323481140045358
    }
   }
+ },
+ {
+  "seed": 0,
+  "mode": "joint",
+  "steps": 400,
+  "noise": "mid",
+  "fit_s_diff_only": 0.9255828857421875,
+  "fit_s_diff_abs": 1.9625253677368164,
+  "nominal": {
+   "one_step": {
+    "rel_pos": 0.00028337375085175996,
+    "rel_rot": 0.00017547508298151808
+   },
+   "fk": {
+    "pos_mm_median": 11.410376666877138,
+    "pos_mm_p95": 20.156926047961267,
+    "rot_deg_median": 1.3408818471930308,
+    "rot_deg_p95": 1.9945508692073124
+   },
+   "reach": {
+    "success": 24,
+    "n": 40,
+    "ci": [
+     0.44595893542800863,
+     0.7365167440802984
+    ],
+    "hits": [
+     true,
+     false,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     true,
+     false,
+     false,
+     true,
+     true,
+     true,
+     false,
+     false,
+     true,
+     true,
+     false,
+     true,
+     false,
+     true,
+     false,
+     true,
+     false,
+     true,
+     true,
+     true,
+     true,
+     false,
+     true,
+     false,
+     false,
+     true,
+     true,
+     true,
+     true,
+     false,
+     false,
+     true
+    ],
+    "pos_mm_median": 4.210649261547714,
+    "rot_deg_median": 0.9951292872848994
+   }
+  },
+  "diff_only": {
+   "one_step": {
+    "rel_pos": 0.0007003336472859447,
+    "rel_rot": 0.00024714754671578996
+   },
+   "fk": {
+    "pos_mm_median": 19.9784503795855,
+    "pos_mm_p95": 36.750526074289695,
+    "rot_deg_median": 1.6591979865564546,
+    "rot_deg_p95": 3.1377752776325125
+   },
+   "reach": {
+    "success": 4,
+    "n": 40,
+    "ci": [
+     0.039579528407411566,
+     0.23051775355935938
+    ],
+    "hits": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     false,
+     false,
+     false,
+     false,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     true,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "pos_mm_median": 9.927575929556141,
+    "rot_deg_median": 1.3483570697455733
+   }
+  },
+  "diff_abs": {
+   "one_step": {
+    "rel_pos": 1.8501295826730447e-05,
+    "rel_rot": 1.8854788361715637e-05
+   },
+   "fk": {
+    "pos_mm_median": 2.0458088069658205,
+    "pos_mm_p95": 4.11571556676104,
+    "rot_deg_median": 0.2428707922584289,
+    "rot_deg_p95": 0.42327528874514253
+   },
+   "reach": {
+    "success": 40,
+    "n": 40,
+    "ci": [
+     0.9123783975415363,
+     1.0
+    ],
+    "hits": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "pos_mm_median": 0.5821396976672875,
+    "rot_deg_median": 0.11668753354844223
+   }
+  },
+  "calib": {
+   "one_step": {
+    "rel_pos": 1.8501306960587124e-05,
+    "rel_rot": 1.8854768560843598e-05
+   },
+   "fk": {
+    "pos_mm_median": 2.0457961436395093,
+    "pos_mm_p95": 4.1157416615538,
+    "rot_deg_median": 0.2428712712322271,
+    "rot_deg_p95": 0.42327646792239243
+   },
+   "reach": {
+    "success": 40,
+    "n": 40,
+    "ci": [
+     0.9123783975415363,
+     1.0
+    ],
+    "hits": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "pos_mm_median": 0.582141431955957,
+    "rot_deg_median": 0.11668587798058494
+   }
+  },
+  "local_jac": {
+   "one_step": {
+    "rel_pos": 0.3387185875853744,
+    "rel_rot": 0.1401963783153107
+   }
+  }
+ },
+ {
+  "seed": 2,
+  "mode": "joint",
+  "steps": 400,
+  "noise": "mid",
+  "fit_s_diff_only": 1.0116515159606934,
+  "fit_s_diff_abs": 4.368040561676025,
+  "nominal": {
+   "one_step": {
+    "rel_pos": 0.00010526719691978238,
+    "rel_rot": 3.7330507857429135e-05
+   },
+   "fk": {
+    "pos_mm_median": 6.138824700164713,
+    "pos_mm_p95": 11.72139196301638,
+    "rot_deg_median": 0.5461202684167776,
+    "rot_deg_p95": 0.8882173653846082
+   },
+   "reach": {
+    "success": 24,
+    "n": 40,
+    "ci": [
+     0.44595893542800863,
+     0.7365167440802984
+    ],
+    "hits": [
+     false,
+     false,
+     true,
+     true,
+     false,
+     false,
+     false,
+     true,
+     true,
+     true,
+     false,
+     false,
+     false,
+     true,
+     true,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false,
+     true,
+     true,
+     false,
+     true,
+     false,
+     false,
+     true,
+     false,
+     true,
+     false,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     false
+    ],
+    "pos_mm_median": 4.843614182684579,
+    "rot_deg_median": 0.3364185791884986
+   }
+  },
+  "diff_only": {
+   "one_step": {
+    "rel_pos": 0.0003249177918947329,
+    "rel_rot": 0.00039819382691747213
+   },
+   "fk": {
+    "pos_mm_median": 20.50232126138325,
+    "pos_mm_p95": 44.749255989336596,
+    "rot_deg_median": 2.448288969735416,
+    "rot_deg_p95": 4.079932949884589
+   },
+   "reach": {
+    "success": 17,
+    "n": 40,
+    "ci": [
+     0.2850939246378106,
+     0.5780493157309589
+    ],
+    "hits": [
+     false,
+     false,
+     false,
+     false,
+     true,
+     false,
+     true,
+     false,
+     false,
+     true,
+     false,
+     false,
+     false,
+     true,
+     true,
+     false,
+     false,
+     true,
+     false,
+     true,
+     true,
+     true,
+     false,
+     true,
+     false,
+     false,
+     false,
+     true,
+     false,
+     true,
+     true,
+     true,
+     false,
+     false,
+     true,
+     false,
+     false,
+     true,
+     true,
+     false
+    ],
+    "pos_mm_median": 5.860832523108007,
+    "rot_deg_median": 1.0537508312299737
+   }
+  },
+  "diff_abs": {
+   "one_step": {
+    "rel_pos": 1.73899018496921e-05,
+    "rel_rot": 1.8660219668668574e-05
+   },
+   "fk": {
+    "pos_mm_median": 1.68631275618215,
+    "pos_mm_p95": 3.3252830575282,
+    "rot_deg_median": 0.2988243162302585,
+    "rot_deg_p95": 0.5357993929725658
+   },
+   "reach": {
+    "success": 40,
+    "n": 40,
+    "ci": [
+     0.9123783975415363,
+     1.0
+    ],
+    "hits": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "pos_mm_median": 0.522802756285526,
+    "rot_deg_median": 0.11067163141275499
+   }
+  },
+  "calib": {
+   "one_step": {
+    "rel_pos": 1.738996637596455e-05,
+    "rel_rot": 1.8660239895423182e-05
+   },
+   "fk": {
+    "pos_mm_median": 1.6863276691720093,
+    "pos_mm_p95": 3.325309465981929,
+    "rot_deg_median": 0.2988254956806717,
+    "rot_deg_p95": 0.5358012894984476
+   },
+   "reach": {
+    "success": 40,
+    "n": 40,
+    "ci": [
+     0.9123783975415363,
+     1.0
+    ],
+    "hits": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "pos_mm_median": 0.5227988284765973,
+    "rot_deg_median": 0.11067176731071973
+   }
+  },
+  "local_jac": {
+   "one_step": {
+    "rel_pos": 0.07675624837835952,
+    "rel_rot": 0.10666829619999087
+   }
+  }
  }
 ]
