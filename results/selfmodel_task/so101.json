@@ -1,0 +1,966 @@
+{
+ "body": "so101",
+ "errors": {
+  "link_mm": 1.0,
+  "axis_deg": 0.5,
+  "enc_deg": 1.5,
+  "base_mm": 3.0,
+  "base_deg": 0.3
+ },
+ "arms": 5,
+ "layouts": 20,
+ "ideal": {
+  "success": 17,
+  "n": 20,
+  "ci": [
+   0.6395811333571357,
+   0.9476312545132735
+  ],
+  "stages": [
+   5,
+   0,
+   5,
+   5,
+   5,
+   5,
+   5,
+   5,
+   5,
+   5,
+   5,
+   5,
+   4,
+   5,
+   5,
+   5,
+   5,
+   0,
+   5,
+   5
+  ]
+ },
+ "nominal": {
+  "success": 56,
+  "n": 100,
+  "ci": [
+   0.46228104575723733,
+   0.6532797343904831
+  ]
+ },
+ "self-model": {
+  "success": 85,
+  "n": 100,
+  "ci": [
+   0.7671644033458782,
+   0.9069401475158245
+  ]
+ },
+ "nominal_vs_selfmodel_mcnemar_p": 1.0843941709026694e-06,
+ "per_arm": [
+  {
+   "seed": 0,
+   "calibration": {
+    "rms_mm_before": 6.664245376426271,
+    "rms_mm_after": 1.7140226044799343,
+    "nfev": 13,
+    "fk_nominal_mm": [
+     9.745906786207682,
+     14.51901717341278
+    ],
+    "fk_selfmodel_mm": [
+     0.7867841246238725,
+     1.5979623421511224
+    ]
+   },
+   "nominal": [
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 0,
+     "post_contact": false
+    },
+    {
+     "stage": 4,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 2,
+     "post_contact": false
+    },
+    {
+     "stage": 2,
+     "post_contact": false
+    },
+    {
+     "stage": 2,
+     "post_contact": false
+    },
+    {
+     "stage": 4,
+     "post_contact": true
+    },
+    {
+     "stage": 2,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 2,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 1,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 4,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    }
+   ],
+   "self-model": [
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 0,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 4,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 4,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    }
+   ],
+   "seconds": 512.8026990890503
+  },
+  {
+   "seed": 1,
+   "calibration": {
+    "rms_mm_before": 6.242382302437103,
+    "rms_mm_after": 1.7227446986646304,
+    "nfev": 12,
+    "fk_nominal_mm": [
+     8.894157547812613,
+     12.053463911416882
+    ],
+    "fk_selfmodel_mm": [
+     0.6774108150842079,
+     1.1520519850969897
+    ]
+   },
+   "nominal": [
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 0,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 0,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    }
+   ],
+   "self-model": [
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 0,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 0,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    }
+   ],
+   "seconds": 516.0481085777283
+  },
+  {
+   "seed": 2,
+   "calibration": {
+    "rms_mm_before": 10.637096353472433,
+    "rms_mm_after": 1.7075013183154368,
+    "nfev": 14,
+    "fk_nominal_mm": [
+     10.894173967162166,
+     14.098751949107152
+    ],
+    "fk_selfmodel_mm": [
+     0.8293686400894063,
+     1.7001516142511068
+    ]
+   },
+   "nominal": [
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 0,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 1,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 0,
+     "post_contact": false
+    },
+    {
+     "stage": 1,
+     "post_contact": true
+    },
+    {
+     "stage": 3,
+     "post_contact": true
+    }
+   ],
+   "self-model": [
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 0,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 4,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 0,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    }
+   ],
+   "seconds": 509.10133814811707
+  },
+  {
+   "seed": 3,
+   "calibration": {
+    "rms_mm_before": 16.84935151193859,
+    "rms_mm_after": 1.7715538148336716,
+    "nfev": 16,
+    "fk_nominal_mm": [
+     19.227233728750548,
+     27.799574857637925
+    ],
+    "fk_selfmodel_mm": [
+     1.8920633352161786,
+     2.855744172460929
+    ]
+   },
+   "nominal": [
+    {
+     "stage": 1,
+     "post_contact": false
+    },
+    {
+     "stage": 0,
+     "post_contact": false
+    },
+    {
+     "stage": 2,
+     "post_contact": true
+    },
+    {
+     "stage": 1,
+     "post_contact": false
+    },
+    {
+     "stage": 2,
+     "post_contact": true
+    },
+    {
+     "stage": 2,
+     "post_contact": false
+    },
+    {
+     "stage": 2,
+     "post_contact": false
+    },
+    {
+     "stage": 1,
+     "post_contact": false
+    },
+    {
+     "stage": 2,
+     "post_contact": true
+    },
+    {
+     "stage": 1,
+     "post_contact": false
+    },
+    {
+     "stage": 1,
+     "post_contact": false
+    },
+    {
+     "stage": 2,
+     "post_contact": false
+    },
+    {
+     "stage": 2,
+     "post_contact": true
+    },
+    {
+     "stage": 1,
+     "post_contact": false
+    },
+    {
+     "stage": 2,
+     "post_contact": false
+    },
+    {
+     "stage": 2,
+     "post_contact": true
+    },
+    {
+     "stage": 2,
+     "post_contact": true
+    },
+    {
+     "stage": 0,
+     "post_contact": false
+    },
+    {
+     "stage": 2,
+     "post_contact": true
+    },
+    {
+     "stage": 2,
+     "post_contact": true
+    }
+   ],
+   "self-model": [
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 0,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 0,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    }
+   ],
+   "seconds": 341.74998140335083
+  },
+  {
+   "seed": 4,
+   "calibration": {
+    "rms_mm_before": 7.523048889420885,
+    "rms_mm_after": 1.6449802095836454,
+    "nfev": 14,
+    "fk_nominal_mm": [
+     14.72609969616654,
+     22.477866833016147
+    ],
+    "fk_selfmodel_mm": [
+     0.707555557529365,
+     1.489033149810978
+    ]
+   },
+   "nominal": [
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 0,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 2,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    }
+   ],
+   "self-model": [
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 0,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 5,
+     "post_contact": true
+    },
+    {
+     "stage": 4,
+     "post_contact": true
+    }
+   ],
+   "seconds": 194.07661747932434
+  }
+ ]
+}

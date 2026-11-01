@@ -1,0 +1,966 @@
+{
+ "body": "franka",
+ "errors": {
+  "link_mm": 2.0,
+  "axis_deg": 0.2,
+  "enc_deg": 0.5,
+  "base_mm": 3.0,
+  "base_deg": 0.3
+ },
+ "arms": 5,
+ "layouts": 20,
+ "ideal": {
+  "success": 15,
+  "n": 20,
+  "ci": [
+   0.5312991206074114,
+   0.8881382993000237
+  ],
+  "stages": [
+   3,
+   3,
+   5,
+   5,
+   5,
+   5,
+   5,
+   5,
+   3,
+   5,
+   5,
+   5,
+   5,
+   5,
+   5,
+   3,
+   5,
+   3,
+   5,
+   5
+  ]
+ },
+ "nominal": {
+  "success": 55,
+  "n": 100,
+  "ci": [
+   0.4524460292190725,
+   0.643854620904028
+  ]
+ },
+ "self-model": {
+  "success": 81,
+  "n": 100,
+  "ci": [
+   0.7222115454423077,
+   0.8748524853209148
+  ]
+ },
+ "nominal_vs_selfmodel_mcnemar_p": 8.67992639541626e-07,
+ "per_arm": [
+  {
+   "seed": 0,
+   "calibration": {
+    "rms_mm_before": 7.084666257303635,
+    "rms_mm_after": 1.7096983247587434,
+    "nfev": 16,
+    "fk_nominal_mm": [
+     11.292677328934317,
+     19.86982027309557
+    ],
+    "fk_selfmodel_mm": [
+     2.0167417253366104,
+     4.578682190620356
+    ]
+   },
+   "nominal": [
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    }
+   ],
+   "self-model": [
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    }
+   ],
+   "seconds": 493.8985767364502
+  },
+  {
+   "seed": 1,
+   "calibration": {
+    "rms_mm_before": 15.842221220634455,
+    "rms_mm_after": 1.7890383561525687,
+    "nfev": 12,
+    "fk_nominal_mm": [
+     12.434533780430186,
+     21.395522790118825
+    ],
+    "fk_selfmodel_mm": [
+     3.4738614257794085,
+     6.517002738573554
+    ]
+   },
+   "nominal": [
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 2,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 1,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 1,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 1,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    }
+   ],
+   "self-model": [
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    }
+   ],
+   "seconds": 453.57704401016235
+  },
+  {
+   "seed": 2,
+   "calibration": {
+    "rms_mm_before": 14.397965505192193,
+    "rms_mm_after": 1.6829662442742244,
+    "nfev": 14,
+    "fk_nominal_mm": [
+     12.070086338647442,
+     21.156006030046385
+    ],
+    "fk_selfmodel_mm": [
+     1.4318931291016028,
+     3.061754007470643
+    ]
+   },
+   "nominal": [
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    }
+   ],
+   "self-model": [
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    }
+   ],
+   "seconds": 460.62248373031616
+  },
+  {
+   "seed": 3,
+   "calibration": {
+    "rms_mm_before": 18.27730089756439,
+    "rms_mm_after": 1.6905364786061312,
+    "nfev": 14,
+    "fk_nominal_mm": [
+     20.907284379244253,
+     38.66713067196868
+    ],
+    "fk_selfmodel_mm": [
+     1.8420653607395303,
+     3.989711196833814
+    ]
+   },
+   "nominal": [
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    }
+   ],
+   "self-model": [
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 4,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    }
+   ],
+   "seconds": 365.12463426589966
+  },
+  {
+   "seed": 4,
+   "calibration": {
+    "rms_mm_before": 8.463705970913832,
+    "rms_mm_after": 1.746525694446642,
+    "nfev": 15,
+    "fk_nominal_mm": [
+     9.159816919890133,
+     16.217897251957837
+    ],
+    "fk_selfmodel_mm": [
+     2.0706150167718254,
+     4.6967151971634795
+    ]
+   },
+   "nominal": [
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 4,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    }
+   ],
+   "self-model": [
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 3,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    },
+    {
+     "stage": 5,
+     "post_contact": false
+    }
+   ],
+   "seconds": 233.13754844665527
+  }
+ ]
+}
