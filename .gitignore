@@ -10,3 +10,4 @@ third_party
 assets/mujoco_menagerie
 results/classical_grid.log
 results/selfmodel_sensors/cells_quick.json
+.venv-mjx/
