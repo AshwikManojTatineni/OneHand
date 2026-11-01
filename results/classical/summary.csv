@@ -55,6 +55,7 @@ layer,method,franka_success,franka_episodes,franka_rate,franka_mean_stage,franka
 8 Control,force (task space),16,20,0.8,4.6,0.0,,8,20,0.4,2.95,0.55,,0.50
 8 Control,hinf,15,20,0.75,4.5,0.0,,18,20,0.9,4.5,0.4,,1.20
 8 Control,hybrid (task space),16,20,0.8,4.6,0.0,,8,20,0.4,2.95,0.55,,0.50
+8 Control,ilc,15,20,0.75,4.5,0.0,,16,20,0.8,4.35,0.4,,1.07
 8 Control,jimp,15,20,0.75,4.5,0.0,,18,20,0.9,4.5,0.4,,1.20
 8 Control,lqg,7,10,0.7,4.4,0.0,,9,10,0.9,4.5,0.3,,1.29
 8 Control,lqr,15,20,0.75,4.5,0.0,,18,20,0.9,4.5,0.4,,1.20

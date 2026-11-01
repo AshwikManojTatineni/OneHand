@@ -1,0 +1,86 @@
+{
+  "stack": "S1-full",
+  "body": "franka",
+  "cfg": {
+    "input": "pointcloud",
+    "world": "primitives",
+    "endpoint": "constrained",
+    "planner": "rrtconnect",
+    "timing": "toppra",
+    "tracking": "joint",
+    "conversion": "hqp",
+    "control": "ilc",
+    "actuator": null
+  },
+  "resolved": {
+    "actuator": "torque",
+    "control": "ilc",
+    "ilc_base": "pdg"
+  },
+  "changed": {
+    "control": "ilc"
+  },
+  "episodes": 20,
+  "success": 15,
+  "rate": 0.75,
+  "wilson95": [
+    0.5312991206074114,
+    0.8881382993000237
+  ],
+  "mean_stage": 4.5,
+  "stages": [
+    3,
+    3,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    3,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    3,
+    5,
+    3,
+    5,
+    5
+  ],
+  "post_contact_rate": 0.0,
+  "track_rms_rad": 0.01011981153202653,
+  "not_applicable": "",
+  "trials": 5,
+  "per_trial": [
+    {
+      "trial": 1,
+      "success": 15,
+      "track_rms_rad": 0.011676679898511823
+    },
+    {
+      "trial": 2,
+      "success": 15,
+      "track_rms_rad": 0.010909532042178635
+    },
+    {
+      "trial": 3,
+      "success": 15,
+      "track_rms_rad": 0.010342913138477872
+    },
+    {
+      "trial": 4,
+      "success": 15,
+      "track_rms_rad": 0.010203360351936737
+    },
+    {
+      "trial": 5,
+      "success": 15,
+      "track_rms_rad": 0.01011981153202653
+    }
+  ],
+  "first_vs_last_mcnemar_p": 1.0,
+  "sec_per_episode": 30.4662642121315
+}

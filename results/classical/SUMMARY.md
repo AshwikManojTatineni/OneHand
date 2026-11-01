@@ -101,6 +101,7 @@ stage 5 (cube resting on the plate, jaws open). Retention = SO-101 success / Fra
 | force (task space) | 16/20 | 8/20 | 0.50 | 4.6 / 3.0 | 0.00 / 0.55 | 1 / 0.0039 | SO-101 torque: sim-only counterfactual |
 | hinf | 15/20 | 18/20 | 1.20 | 4.5 / 4.5 | 0.00 / 0.40 | 1 / 1 | SO-101 torque: sim-only counterfactual |
 | hybrid (task space) | 16/20 | 8/20 | 0.50 | 4.6 / 3.0 | 0.00 / 0.55 | 1 / 0.0039 | SO-101 torque: sim-only counterfactual |
+| ilc | 15/20 | 16/20 | 1.07 | 4.5 / 4.3 | 0.00 / 0.40 | 1 / 1 |  |
 | jimp | 15/20 | 18/20 | 1.20 | 4.5 / 4.5 | 0.00 / 0.40 | 1 / 1 | SO-101 torque: sim-only counterfactual |
 | lqg | 7/10 | 9/10 | 1.29 | 4.4 / 4.5 | 0.00 / 0.30 | 1 / 1 | SO-101 torque: sim-only counterfactual |
 | lqr | 15/20 | 18/20 | 1.20 | 4.5 / 4.5 | 0.00 / 0.40 | 1 / 1 | SO-101 torque: sim-only counterfactual |
