@@ -137,11 +137,14 @@ def record(seed, mode, level, steps, rng_seed):
         if T_lidar_prev is None:   # stand-in for a global registration step at start-up: 2 cm / 2 deg off
             Gl = log["true"]["lidar"][-1]
             T_lidar_prev = sd.pose(Gl[:3, 3] + rng.normal(0, 0.02, 3), sd.so3_exp(rng.normal(0, 0.035, 3)) @ Gl[:3, :3])
+            k_prev = k
+        else:   # motion prior: how far the encoders say the lidar moved since the last good fix (nominal model)
+            T_lidar_prev = T_lidar_prev @ sd.inv(nom.fk_joint(log["Q"][k_prev], "lidar")) @ nom.fk_joint(log["Q"][k], "lidar")
         Tl, st = loc.localize(scan, T_lidar_prev)
         log["lidar_status"].append(st)
         log["meas"]["lidar"].append(Tl)
         if Tl is not None:
-            T_lidar_prev = Tl
+            T_lidar_prev, k_prev = Tl, k
     rend.close()
     return log, nom, real
 
@@ -171,7 +174,7 @@ def reach(fk, real, which, n=40, seed=1):
         q_cmd = sd.ik(fk, Tt, home, real.lo, real.hi)
         ep, er = pose_err(real.fk_joint(q_cmd, which), Tt)
         errs.append((ep, er))
-        hits.append(bool(ep < REACH_TOL[0] and er < REACH_TOL[1]))
+        hits.append(bool(ep < 1000 * REACH_TOL[0] and er < REACH_TOL[1]))   # ep is in mm
     e = np.array(errs)
     return {"success": int(sum(hits)), "n": n, "hits": hits, "pos_mm_median": float(np.median(e[:, 0]))}
 
@@ -217,7 +220,7 @@ def main(quick=False):
     seeds = [0, 1] if quick else [0, 1, 2, 3, 4]
     levels = ["R1"] if quick else ["R1", "R0", "R2", "R3"]
     modes = ["cartesian"] if quick else ["cartesian", "joint"]
-    steps = 150 if quick else 400
+    steps = int(sys.argv[sys.argv.index("--steps") + 1]) if "--steps" in sys.argv else (150 if quick else 400)
     jobs = [(s, mo, lv, steps) for lv in levels for mo in modes for s in seeds]
     path = OUT / ("cells_quick.json" if quick else "cells.json")
     done = json.loads(path.read_text()) if path.exists() else []

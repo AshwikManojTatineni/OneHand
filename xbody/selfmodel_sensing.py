@@ -131,12 +131,13 @@ def kabsch(A, B):
 
 # ---------- lidar ----------
 def lidar_dirs():
+    """Ray directions in the lidar frame: a full turn about its z axis (mounted along the approach axis, so it
+    points down when the gripper does), elevation measured from the plane normal to z, positive toward +z."""
     c = L.LIDAR
-    h = np.deg2rad(np.linspace(-c["h_fov"] / 2, c["h_fov"] / 2, c["nh"]))
-    v = np.deg2rad(np.linspace(-c["v_fov"] / 2, c["v_fov"] / 2, c["nv"]))
-    hh, vv = np.meshgrid(h, v)
-    d = np.stack([np.tan(hh), np.tan(vv), np.ones_like(hh)], -1).reshape(-1, 3)
-    return d / np.linalg.norm(d, axis=1, keepdims=True)    # sensor frame, looking along +z
+    a = np.deg2rad(np.arange(0, 360, c["az_step"]))
+    e = np.deg2rad(np.arange(c["el_min"], c["el_max"] + 1e-9, c["el_step"]))
+    aa, ee = np.meshgrid(a, e)
+    return np.stack([np.cos(ee) * np.cos(aa), np.cos(ee) * np.sin(aa), np.sin(ee)], -1).reshape(-1, 3)
 
 
 def lidar_scan(m, d, site_id, dirs, rig, rng):
@@ -199,9 +200,11 @@ class LidarLocalizer:
         self.P, self.N = map_pts, map_nrm
         self.tree = cKDTree(map_pts)
 
-    def localize(self, scan, T0, iters=30, min_pts=300):
+    def localize(self, scan, T0, iters=30, min_pts=300, max_pts=3000, seed=0):
         if len(scan) < min_pts:
             return None, "few_points"
+        if len(scan) > max_pts:
+            scan = scan[np.random.default_rng(seed).choice(len(scan), max_pts, replace=False)]
         T = T0.copy()
         for it in range(iters):
             thr = 0.10 if it < 10 else 0.03
@@ -220,7 +223,17 @@ class LidarLocalizer:
             T = sd.pose(dR @ T[:3, 3] + xi[3:], dR @ T[:3, :3])
             if np.linalg.norm(xi) < 1e-6:
                 break
-        ev = np.linalg.eigvalsh(H / ok.sum())
-        if ev[0] < 1e-4 * ev[-1] or ev[0] < 1e-6:
+        # Degeneracy: can the geometry pin all six directions? Rotation columns are about the sensor (lever arms of
+        # metres would hide a free rotation), so recentre before the eigenvalue test.
+        Ac = np.hstack([np.cross(x - T[:3, 3], n), n]) * np.sqrt(w)[:, None]
+        ev = np.linalg.eigvalsh(Ac.T @ Ac / ok.sum())
+        if ev[0] < 2e-3 * ev[-1]:
             return None, "degenerate"
+        # Slip check: after convergence most of the scan must lie on the map.
+        X = scan @ T[:3, :3].T + T[:3, 3]
+        dd, idx = self.tree.query(X, distance_upper_bound=0.05)
+        ok = np.isfinite(dd)
+        r = np.abs(np.einsum("ij,ij->i", self.N[idx[ok]], X[ok] - self.P[idx[ok]]))
+        if ok.mean() < 0.85 or np.median(r) > 0.03:
+            return None, "poor_fit"
         return T, "ok"

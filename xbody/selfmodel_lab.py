@@ -27,7 +27,8 @@ LINKS = [f"link{i}" for i in range(1, 8)] + ["hand"]
 W, H, FOVY = 640, 480, 60.0
 BASELINE = 0.06
 BOARD = dict(squares=(10, 7), square=0.04, marker=0.03, center=(0.50, 0.0))
-LIDAR = dict(h_fov=70.0, v_fov=55.0, nh=64, nv=48, rmin=0.05, rmax=4.0)
+# Livox Mid-360-like: 360 deg around its axis, -7 to +52 deg elevation, 2 cm range noise (datasheet scale).
+LIDAR = dict(az_step=2.0, el_min=-7.0, el_max=52.0, el_step=2.0, rmin=0.1, rmax=4.0)
 
 # Sensor head on the hand (hand frame: z = approach). Cameras look along +z_hand; MuJoCo cameras look along -z.
 CAM_POS = np.array([0.065, -0.03, 0.035])
