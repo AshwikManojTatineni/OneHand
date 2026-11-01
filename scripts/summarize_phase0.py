@@ -64,6 +64,11 @@ def main():
         "R3 xArm6 K (planning on)": "log_r3_K_mpc.txt",
         "R3 xArm6 K+P (planning on)": "log_r3_K+P_mpc.txt",
         "R3 xArm6 K+P naive gripper (planning on)": "log_r3_K+P_--naive-gripper_mpc.txt",
+        # The same task's frozen policy trained with end-effector pose deltas (7-D action) instead of position deltas.
+        "R0 Franka home, EE-pose policy (prior)": "log_franka_eepose_prior.txt",
+        "R3 xArm6 K+P, EE-pose policy (prior)": "log_r3_eepose_K+P--no-mpc.txt",
+        "R6 SO100 K+P dls, EE-pose policy (prior)": "log_transfer_eepose_K+P_dls--no-mpc.txt",
+        "R6 SO100 K+P hqp-axis, EE-pose policy (prior)": "log_transfer_eepose_K+P_hqp-axis--no-mpc.txt",
     }
     cells = {k: cell(k, episodes_from_log(R / v), 4) for k, v in B.items() if (R / v).exists() and episodes_from_log(R / v)}
     src = cells["R0 Franka home (prior)"]
@@ -84,7 +89,10 @@ def main():
              ("R6 SO100 K+P dls (prior)", "R6 SO100 K+P dls (planning on)", "Planning on vs off, R6 (first 20 seeds)"),
              ("R3 xArm6 K (prior)", "R3 xArm6 K (planning on)", "Planning on vs off, R3"),
              ("R3 xArm6 K+P (prior)", "R3 xArm6 K+P (planning on)", "Planning on vs off, R3 with P"),
-             ("R3 xArm6 K (planning on)", "R3 xArm6 K+P (planning on)", "P (virtual twin), R3 with planning")]
+             ("R3 xArm6 K (planning on)", "R3 xArm6 K+P (planning on)", "P (virtual twin), R3 with planning"),
+             ("R3 xArm6 K+P (prior)", "R3 xArm6 K+P, EE-pose policy (prior)", "Position vs pose action space, R3"),
+             ("R6 SO100 K+P dls (prior)", "R6 SO100 K+P dls, EE-pose policy (prior)", "Position vs pose action space, R6 dls"),
+             ("R6 SO100 K+P hqp-axis (prior)", "R6 SO100 K+P hqp-axis, EE-pose policy (prior)", "Position vs pose action space, R6 hqp-axis")]
     rows, pv = [], []
     for a, b, label in pairs:
         if a in cells and b in cells:

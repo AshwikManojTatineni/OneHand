@@ -195,6 +195,62 @@
       "max_stage": 4,
       "retention": 0.0,
       "stage_retention": 0.22
+    },
+    "R0 Franka home, EE-pose policy (prior)": {
+      "cell": "R0 Franka home, EE-pose policy (prior)",
+      "n": 50,
+      "success": 49,
+      "rate": 0.98,
+      "wilson95": [
+        0.8950455630610349,
+        0.9964607407674954
+      ],
+      "mean_stage": 3.92,
+      "max_stage": 4,
+      "retention": 0.98,
+      "stage_retention": 0.98
+    },
+    "R3 xArm6 K+P, EE-pose policy (prior)": {
+      "cell": "R3 xArm6 K+P, EE-pose policy (prior)",
+      "n": 50,
+      "success": 0,
+      "rate": 0.0,
+      "wilson95": [
+        0.0,
+        0.07134760017861413
+      ],
+      "mean_stage": 1.58,
+      "max_stage": 4,
+      "retention": 0.0,
+      "stage_retention": 0.395
+    },
+    "R6 SO100 K+P dls, EE-pose policy (prior)": {
+      "cell": "R6 SO100 K+P dls, EE-pose policy (prior)",
+      "n": 50,
+      "success": 0,
+      "rate": 0.0,
+      "wilson95": [
+        0.0,
+        0.07134760017861413
+      ],
+      "mean_stage": 0.28,
+      "max_stage": 4,
+      "retention": 0.0,
+      "stage_retention": 0.07
+    },
+    "R6 SO100 K+P hqp-axis, EE-pose policy (prior)": {
+      "cell": "R6 SO100 K+P hqp-axis, EE-pose policy (prior)",
+      "n": 50,
+      "success": 0,
+      "rate": 0.0,
+      "wilson95": [
+        0.0,
+        0.07134760017861413
+      ],
+      "mean_stage": 0.42,
+      "max_stage": 4,
+      "retention": 0.0,
+      "stage_retention": 0.105
     }
   },
   "s1": {
