@@ -127,12 +127,17 @@ def main():
     ap.add_argument("--ik", default="dls", choices=["dls", "hqp-axis"])
     ap.add_argument("--no-mpc", action="store_true")
     ap.add_argument("--no-shift", action="store_true")
+    ap.add_argument("--policy", default="eepos", choices=["eepos", "eepose"],
+                    help="eepose: the frozen Franka policy trained with end-effector pose deltas (rotation projected away)")
     ap.add_argument("--seed-base", type=int, default=20261028)
     ap.add_argument("--record", default=None, help="save policy-view observations and actions (.npz)")
     args = ap.parse_args()
 
     env = gym.make("PickCubeSO100-v1", obs_mode="state", control_mode="pd_joint_pos", num_envs=1, sim_backend="cpu")
-    agent = FrozenNewtAgent(ROOT / "checkpoints/newt/ms-pick-cube.pt", "ms-pick-cube", 4, EP_LEN, mpc=not args.no_mpc)
+    pose = args.policy == "eepose"
+    task = "ms-pick-cube-eepose" if pose else "ms-pick-cube"
+    agent = FrozenNewtAgent(ROOT / f"checkpoints/newt/{task}.pt", task, 7 if pose else 4, EP_LEN, mpc=not args.no_mpc)
+    gi = 6 if pose else 3
     twin = franka_twin()
     shift = np.zeros(3) if args.no_shift else SHIFT
     results, t_start, rec = [], time.time(), []
@@ -167,7 +172,7 @@ def main():
             a = agent.act(f_obs, t0=(t == 0))
             ep_obs.append(f_obs); ep_act.append(a)
             dp = np.clip(a[:3], -1, 1) * EE_DELTA_LIMIT
-            width = -0.01 + (np.clip(a[3], -1, 1) + 1) / 2 * 0.05              # panda finger target (m)
+            width = -0.01 + (np.clip(a[gi], -1, 1) + 1) / 2 * 0.05             # panda finger target (m)
             g = np.interp(2 * max(width, 0.0), ap_tab, ang_tab)
             for _ in range(ACTION_REPEAT):
                 q = u.agent.robot.get_qpos().numpy()[0]
@@ -194,7 +199,7 @@ def main():
         results.append({"ep": ep, "success": ok, "stage": stage, "ik_err_mm_median": 1000 * float(np.median(ik_err))})
         print(json.dumps(results[-1]), flush=True)
     k, n = sum(r["success"] for r in results), len(results)
-    tag = f"{args.interface}_{args.ik}_{'prior' if args.no_mpc else 'mpc'}{'_noshift' if args.no_shift else ''}{'_rec' if args.record else ''}"
+    tag = f"{'eepose_' if pose else ''}{args.interface}_{args.ik}_{'prior' if args.no_mpc else 'mpc'}{'_noshift' if args.no_shift else ''}{'_rec' if args.record else ''}"
     summary = {"policy": "ms-pick-cube (Franka)", "target": "SO100 (PickCubeSO100-v1)", "interface": args.interface,
                "ik": args.ik, "mpc": not args.no_mpc, "shift": not args.no_shift, "episodes": n, "success": k,
                "rate": k / n, "wilson95": wilson(k, n),

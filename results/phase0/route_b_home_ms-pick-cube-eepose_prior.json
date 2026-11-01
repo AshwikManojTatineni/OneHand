@@ -1,0 +1,13 @@
+{
+  "task": "ms-pick-cube-eepose",
+  "mpc": false,
+  "episodes": 50,
+  "success": 49,
+  "rate": 0.98,
+  "wilson95": [
+    0.8950455630610349,
+    0.9964607407674954
+  ],
+  "sec_per_episode": 2.5306356620788573,
+  "seed_base": 20261028
+}

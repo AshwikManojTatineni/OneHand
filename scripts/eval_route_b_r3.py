@@ -39,13 +39,19 @@ def main():
     ap.add_argument("episodes", type=int)
     ap.add_argument("--no-mpc", action="store_true")
     ap.add_argument("--naive-gripper", action="store_true")
+    ap.add_argument("--policy", default="eepos", choices=["eepos", "eepose"],
+                    help="eepose: the frozen Franka policy trained with end-effector pose deltas (7-D action)")
     ap.add_argument("--seed-base", type=int, default=20261028)
     ap.add_argument("--record", default=None, help="save policy-view observations and actions (.npz)")
     args = ap.parse_args()
 
-    env = gym.make("PickCube-v1", robot_uids="xarm6_robotiq", obs_mode="state", control_mode="pd_ee_delta_pos",
+    pose = args.policy == "eepose"
+    env = gym.make("PickCube-v1", robot_uids="xarm6_robotiq", obs_mode="state",
+                   control_mode="pd_ee_delta_pose" if pose else "pd_ee_delta_pos",
                    num_envs=1, sim_backend="cpu")
-    agent = FrozenNewtAgent(ROOT / "checkpoints/newt/ms-pick-cube.pt", "ms-pick-cube", 4, EP_LEN, mpc=not args.no_mpc)
+    task = "ms-pick-cube-eepose" if pose else "ms-pick-cube"
+    agent = FrozenNewtAgent(ROOT / f"checkpoints/newt/{task}.pt", task, 7 if pose else 4, EP_LEN, mpc=not args.no_mpc)
+    gi = 6 if pose else 3                                   # gripper slot in the policy's action
     twin = franka_twin()
     results, t0, rec = [], time.time(), []
     for ep in range(args.episodes):
@@ -70,12 +76,12 @@ def main():
             for _ in range(ACTION_REPEAT):
                 o = np.asarray(obs).reshape(-1)
                 if args.naive_gripper:
-                    g = float(np.clip(a[3], -1, 1))
+                    g = float(np.clip(a[gi], -1, 1))
                 else:
-                    width = -0.01 + (np.clip(a[3], -1, 1) + 1) / 2 * 0.05
+                    width = -0.01 + (np.clip(a[gi], -1, 1) + 1) / 2 * 0.05
                     target = (1 - np.clip(width / 0.04, 0, 1)) * KNUCKLE_CLOSED
                     g = float(np.clip((target - o[6]) / KNUCKLE_DELTA, -1, 1))
-                act = np.concatenate([np.clip(a[:3], -1, 1), [g]]).astype(np.float32)
+                act = np.concatenate([np.clip(a[:gi], -1, 1), [g]]).astype(np.float32)
                 obs, r, term, trunc, info = env.step(act[None])
                 ok = ok or bool(np.asarray(info["success"]).item())
                 o2 = np.asarray(obs).reshape(-1)[24:]
@@ -91,7 +97,7 @@ def main():
         results.append({"ep": ep, "success": ok, "stage": stage})
         print(json.dumps(results[-1]), flush=True)
     k, n = sum(r["success"] for r in results), len(results)
-    tag = f"{args.interface}_{'prior' if args.no_mpc else 'mpc'}{'_naivegrip' if args.naive_gripper else ''}{'_rec' if args.record else ''}"
+    tag = f"{'eepose_' if pose else ''}{args.interface}_{'prior' if args.no_mpc else 'mpc'}{'_naivegrip' if args.naive_gripper else ''}{'_rec' if args.record else ''}"
     summary = {"policy": "ms-pick-cube (Franka)", "target": "xArm6 (PickCube-v1)", "rung": "R3",
                "interface": args.interface, "mpc": not args.no_mpc, "naive_gripper": args.naive_gripper,
                "episodes": n, "success": k, "rate": k / n, "wilson95": wilson(k, n),
