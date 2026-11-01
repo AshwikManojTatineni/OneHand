@@ -47,3 +47,10 @@ Compiling methods...
 {"ep": 41, "success": false, "stage": 0, "ik_err_mm_median": 0.02618300095491577}
 {"ep": 42, "success": false, "stage": 0, "ik_err_mm_median": 88.72482553124428}
 {"ep": 43, "success": false, "stage": 1, "ik_err_mm_median": 0.13453375868266448}
+{"ep": 44, "success": false, "stage": 0, "ik_err_mm_median": 0.0252784102485748}
+{"ep": 45, "success": false, "stage": 0, "ik_err_mm_median": 0.022082043869886547}
+{"ep": 46, "success": false, "stage": 1, "ik_err_mm_median": 0.09313172995462082}
+{"ep": 47, "success": false, "stage": 0, "ik_err_mm_median": 0.02169475374103058}
+{"ep": 48, "success": false, "stage": 0, "ik_err_mm_median": 0.06339236460917164}
+{"ep": 49, "success": false, "stage": 0, "ik_err_mm_median": 0.03241721060476266}
+{"policy": "ms-pick-cube (Franka)", "target": "SO100 (PickCubeSO100-v1)", "interface": "K+P", "ik": "dls", "mpc": false, "shift": true, "episodes": 50, "success": 0, "rate": 0.0, "wilson95": [0.0, 0.07134760017861413], "stage_hist": {"0": 38, "1": 10, "2": 2, "3": 0, "4": 0}, "mean_stage": 0.28, "sec_per_episode": 2.8790599060058595, "stage_key": "0 none, 1 reach (<3 cm), 2 grasp (2 steps), 3 at goal while grasped, 4 env success"}
