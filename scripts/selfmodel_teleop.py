@@ -80,6 +80,16 @@ def measure(rng, T, noise):
 def teleop(mode, steps, seed, nom, real, noise):
     """Returns encoder log Q (encoder coordinates), true joint angles, true and measured hand poses."""
     rng = np.random.default_rng(seed)
+    cmd = teleop_commands(mode, steps, rng, nom)
+    q_true = cmd - real.enc_offset              # the arm reaches what its encoders read as cmd
+    Q = cmd + rng.normal(0, ENC_NOISE, cmd.shape)
+    T_true = np.array([T_of(real, q) for q in q_true])
+    T_meas = np.array([measure(rng, T, noise) for T in T_true])
+    return Q, q_true, T_true, T_meas
+
+
+def teleop_commands(mode, steps, rng, nom):
+    """The operator's joint commands (encoder coordinates), driven through the nominal model."""
     lo, hi = nom.lo + 0.15 * (nom.hi - nom.lo), nom.hi - 0.15 * (nom.hi - nom.lo)
     home = np.array(SPEC["home"])
     cmd = [home.copy()]
@@ -109,12 +119,7 @@ def teleop(mode, steps, seed, nom, real, noise):
                 if len(cmd) >= steps:
                     break
             p, R = nom.fk(q)
-    cmd = np.array(cmd[:steps])
-    q_true = cmd - real.enc_offset              # the arm reaches what its encoders read as cmd
-    Q = cmd + rng.normal(0, ENC_NOISE, cmd.shape)
-    T_true = np.array([T_of(real, q) for q in q_true])
-    T_meas = np.array([measure(rng, T, noise) for T in T_true])
-    return Q, q_true, T_true, T_meas
+    return np.array(cmd[:steps])
 
 
 def nominal_J(nom, q):

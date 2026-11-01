@@ -160,7 +160,7 @@ class PoEModel:
             P = P @ se3_exp_batch(S, TH[:, i])
         return P
 
-    def fit(self, Q, T, x0, valid=None, iters=100):
+    def fit(self, Q, T, x0, valid=None, iters=100, robust=False):
         """Differential fit of the screws on consecutive pairs (valid[k]: k -> k+1 is one motion, False across
         separate recordings), then M from the absolute poses."""
         Q, T = np.asarray(Q), np.asarray(T)
@@ -171,7 +171,7 @@ class PoEModel:
             P = self.products(Q, x)
             return (twists_batch(P[1:] @ inv_batch(P[:-1]))[valid] - meas).ravel()
 
-        sol = least_squares(res, x0, method="lm", max_nfev=iters * len(x0))
+        sol = _solve(res, x0, iters, robust)
         self.x = sol.x
         self.set_M(Q, T)
         self.cost = float(sol.cost)
@@ -182,7 +182,7 @@ class PoEModel:
         self.M = pose(np.mean([a[:3, 3] for a in A], 0), project_rot(np.mean([a[:3, :3] for a in A], 0)))
         return self
 
-    def refine_absolute(self, Q, T, iters=100):
+    def refine_absolute(self, Q, T, iters=100, robust=False):
         """Second stage: refine screws and M together on every logged absolute pose. Differences between noisy
         poses carry the noise twice and say nothing about drift along the chain; absolute poses pin it."""
         Q, T = np.asarray(Q), np.asarray(T)
@@ -198,7 +198,7 @@ class PoEModel:
                                    rotvec_batch(Rt @ P[:, :3, :3]) * L_ROT], 1).ravel()
 
         z0 = np.concatenate([self.x, np.zeros(3), self.M[:3, 3]])
-        sol = least_squares(res, z0, method="lm", max_nfev=iters * len(z0))
+        sol = _solve(res, z0, iters, robust)
         self.x, self.M = unpack(sol.x)
         self.cost_abs = float(sol.cost)
         return self
@@ -228,7 +228,15 @@ def spatial_jacobian_ls(Q, T, valid=None, ridge=1e-6):
     return np.linalg.solve(A, dQ.T @ X).T
 
 
-def fit_poe(Q, T, init="data", nominal_J=None, valid=None, window=100, absolute=False):
+def _solve(res, x0, iters, robust):
+    """Levenberg-Marquardt; robust=True switches to a soft-L1 loss (5 mm scale) so the occasional wrong sensor
+    pose (a misdetected board, an ICP that slipped) cannot drag the model."""
+    if robust:
+        return least_squares(res, x0, method="trf", loss="soft_l1", f_scale=0.005, max_nfev=iters * len(x0))
+    return least_squares(res, x0, method="lm", max_nfev=iters * len(x0))
+
+
+def fit_poe(Q, T, init="data", nominal_J=None, valid=None, window=100, absolute=False, robust=False):
     """Blind fit (screws initialised from a local Jacobian over the first `window` steps) or calibration
     (initialised from a nominal model's spatial Jacobian at q_ref). absolute=True adds the second stage."""
     m = PoEModel(len(Q[0]), Q[0])
@@ -237,8 +245,8 @@ def fit_poe(Q, T, init="data", nominal_J=None, valid=None, window=100, absolute=
         J = spatial_jacobian_ls(Q[: window + 1], T[: window + 1], v)
     else:
         J = nominal_J
-    m.fit(Q, T, m.init_from_jacobian(J), valid)
-    return m.refine_absolute(Q, T) if absolute else m
+    m.fit(Q, T, m.init_from_jacobian(J), valid, robust=robust)
+    return m.refine_absolute(Q, T, robust=robust) if absolute else m
 
 
 # ---------- model-free baseline ----------
