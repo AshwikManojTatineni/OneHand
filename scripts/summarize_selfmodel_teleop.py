@@ -1,5 +1,6 @@
 """Summary of the teleop self-model pilot (scripts/selfmodel_teleop.py): results/selfmodel_teleop/SUMMARY.md."""
 import json
+import os
 import pathlib
 import sys
 
@@ -9,7 +10,8 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from xbody.stats import mcnemar_exact, wilson  # noqa: E402
 
-OUT = ROOT / "results/selfmodel_teleop"
+BODY = os.environ.get("SELFMODEL_BODY", "franka")
+OUT = ROOT / ("results/selfmodel_teleop" if BODY == "franka" else f"results/selfmodel_teleop_{BODY}")
 MODELS = ["nominal", "diff_only", "diff_abs", "calib"]
 LABEL = {"nominal": "Nominal model file", "diff_only": "Differential only (blind)",
          "diff_abs": "Differential + absolute (blind)", "calib": "Calibrated nominal", "local_jac": "Local Jacobian (model-free)"}
@@ -22,9 +24,11 @@ def pick(cells, mode, steps, noise):
 
 def main():
     cells = json.loads((OUT / "cells.json").read_text())
-    md = ["# Teleop self-model pilot (Franka): kinematics from encoder and extrinsic changes", "",
+    err = {"franka": "2 mm link offsets, 0.2 deg axis tilts, 0.5 deg encoder offsets, 1 mm tool offset",
+           "so101": "1 mm link offsets, 0.5 deg axis tilts, 1.5 deg servo zero offsets, 1 mm tool offset"}[BODY]
+    md = [f"# Teleop self-model pilot ({BODY}): kinematics from encoder and extrinsic changes", "",
           "The arm is teleoperated through its nominal kinematic model, but differs from it by sampled calibration",
-          "errors (2 mm link offsets, 0.2 deg axis tilts, 0.5 deg encoder offsets, 1 mm tool offset). It logs encoder",
+          f"errors ({err}). It logs encoder",
           "readings and the measured pose of a frame on the hand. The self-models rebuild the kinematics from those logs",
           "alone. 5 sampled arms per row. FK error is measured on 300 random configurations over the whole joint range.",
           "Reach: IK on the model, run on the real arm, success = within 5 mm and 2 deg (40 targets per arm,",

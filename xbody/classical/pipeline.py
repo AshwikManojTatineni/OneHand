@@ -44,12 +44,23 @@ class Episode:
         c = self.cfg
         if c["control"] is None:
             c["control"] = "pdg" if c["actuator"] == "torque" else "pd"
-        if c["control"] not in ("p", "pd", "pid") or c["tracking"] == "carttorque":
+        if c["control"] == "ilc":
+            c["ilc_base"] = "pdg" if c["actuator"] == "torque" else "pd"
+        elif c["control"] not in ("p", "pd", "pid") or c["tracking"] == "carttorque":
             c["actuator"] = "torque"
         self.m = build_task(body, torque=(c["actuator"] == "torque"))
+        # Self-model experiments: the simulated arm can carry calibration errors (real_arm = (seed, errors)) while
+        # the pipeline plans with a belief model (its nominal model file, or a calibrated one). Physics, rendering
+        # and scoring use the real arm; IK, FK and planning collision checks use the belief.
+        self.m_belief = self.m
+        if c.get("real_arm") is not None:
+            from xbody.calibration import perturb
+            self.m_belief = c.get("belief_model") or build_task(body, torque=(c["actuator"] == "torque"))
+            perturb(self.m, self.spec, *c["real_arm"])
         self.d = mujoco.MjData(self.m)
-        bn, off, q = tcp_frame(self.m, self.spec)
-        self.kin = Body(self.m, self.spec["arm"], bn, off, q)
+        bn, off, q = tcp_frame(self.m_belief, self.spec)
+        self.kin = Body(self.m_belief, self.spec["arm"], bn, off, q)
+        self.kin_true = self.kin if self.m_belief is self.m else Body(self.m, self.spec["arm"], *tcp_frame(self.m, self.spec))
         self.rb = robot_body_ids(self.m, self.spec)
         self.rng = np.random.default_rng(seed)
         self.seed = seed
@@ -90,6 +101,14 @@ class Episode:
         else:
             self.law = C.JointLaw(c["control"], self.dyn, m.opt.timestep, c["actuator"], rng=self.rng)
             self.law.arm_act, self.law.umax = self.arm_act, (self.umax if self.umax is not None else np.ones(self.kin.n))
+            if c["control"] == "ilc":
+                mem = self.law.ilc = c["ilc_memory"]
+                if mem.gp is None:   # learning gains: half the feedback gains (torque) or 0.5 rad/rad (servo offset)
+                    if c["actuator"] == "torque":
+                        Kp, Kd = self.law.gains(self.dyn.M())
+                        mem.gp, mem.gd = 0.5 * Kp, 0.5 * Kd
+                    else:
+                        mem.gp, mem.gd = np.full(self.kin.n, 0.5), np.zeros(self.kin.n)
         self.q_hold = np.array(self.spec["home"], float)
 
     # ------------------------------------------------------------------ perception and world model (layers 1-2)
@@ -97,7 +116,7 @@ class Episode:
         c, m, d = self.cfg, self.m, self.d
         off = np.r_[self.spec["layout_offset"], 0]
         bounds = ([off[0] - 0.05, -0.25, 0.0], [off[0] + 0.45, 0.40, 0.35])
-        self.rp = RobotPoints(m, self.rb)
+        self.rp = RobotPoints(self.m_belief, self.rb)
         if c["input"] == "known":
             cube = d.xpos[self.cube].copy()
             ox, oy = CLASSICAL["post_xy"]
@@ -225,7 +244,7 @@ class Episode:
 
     def state(self):
         d = self.d
-        tcp, _ = self.kin.fk(d.qpos[self.kin.qadr])
+        tcp, _ = self.kin_true.fk(d.qpos[self.kin.qadr])   # scoring sees where the hand really is
         touch = [False, False]
         for i in range(d.ncon):
             con = d.contact[i]

@@ -134,6 +134,41 @@ def _qp(J, v, A_rows, l_rows, u_rows, reg=1e-4):
 
 
 # ======================================================================== layer 8: joint-space laws
+class ILCMemory:
+    """PD-type ILC with a Q-filter: u_ff[j+1](t) = Q * (u_ff[j](t) + Gp e_j(t+1) + Gd e'_j(t+1)).
+
+    Torque interface (base law pdg): gains in N m per rad, scaled by the joint inertia like the feedback gains.
+    Position-servo interface (base law pd): the feedforward is a reference offset in rad.
+    """
+
+    def __init__(self, base, n, gp, gd, window=25):
+        self.base, self.n = base, n
+        self.gp, self.gd, self.window = gp, gd, window   # None: the pipeline sets them from the feedback gains
+        self.ff = np.zeros((0, n))
+        self.e, self.ed = [], []
+        self.t = 0
+
+    def step(self, e, ed):
+        self.e.append(e.copy()); self.ed.append(ed.copy())
+        i = self.t
+        self.t += 1
+        return self.ff[i] if i < len(self.ff) else np.zeros(self.n)
+
+    def end_trial(self):
+        E, Ed = np.array(self.e), np.array(self.ed)
+        T = len(E)
+        ff = np.zeros((T, self.n))
+        ff[:min(T, len(self.ff))] = self.ff[:T]
+        lead = np.vstack([E[1:], E[-1:]]) * self.gp + np.vstack([Ed[1:], Ed[-1:]]) * self.gd
+        new = ff + lead
+        k = np.ones(self.window) / self.window                          # Q-filter: zero-phase moving average
+        self.ff = np.stack([np.convolve(np.pad(new[:, j], self.window // 2, mode="edge"), k, mode="valid")[:T]
+                            for j in range(self.n)], 1)
+        rms = float(np.sqrt((E ** 2).mean()))
+        self.e, self.ed, self.t = [], [], 0
+        return rms
+
+
 class JointLaw:
     def __init__(self, kind, dyn, dt, interface, rng=None):
         self.kind, self.dyn, self.dt, self.iface = kind, dyn, dt, interface
@@ -159,6 +194,16 @@ class JointLaw:
         d.sync(data)
         q, qd = data.qpos[d.kin.qadr].copy(), data.qvel[d.dof].copy()
         e, ed = q_ref - q, qd_ref - qd
+        if k == "ilc":
+            # Iterative learning control: the base feedback law plus a feedforward learned over repeated trials of
+            # the same task (ILCMemory), indexed by control step.
+            mem = self.ilc
+            self.kind = mem.base
+            try:
+                u = self(data, q_ref, qd_ref, qdd_ref)
+            finally:
+                self.kind = "ilc"
+            return u + mem.step(e, ed)
         if self.iface == "cascade":
             # embedded position servo; the host adds an outer loop on top of the reference
             if k == "p":

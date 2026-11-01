@@ -20,6 +20,7 @@ reach test: solve IK on the model, run the joints on the real arm, measure where
 Usage: python scripts/selfmodel_teleop.py [--quick]
 """
 import json
+import os
 import pathlib
 import sys
 import time
@@ -30,29 +31,49 @@ import numpy as np
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from xbody import selfmodel_diff as sd  # noqa: E402
-from xbody.bodies import MENAGERIE, SPECS  # noqa: E402
+from xbody.bodies import MENAGERIE, SPECS, tcp_frame  # noqa: E402
 from xbody.kinematics import Body, solve_ik  # noqa: E402
 from xbody.stats import wilson  # noqa: E402
 
-OUT = ROOT / "results/selfmodel_teleop"
-SPEC = SPECS["franka"]
-LINKS = [f"link{i}" for i in range(1, 8)] + ["hand"]
+BODY = os.environ.get("SELFMODEL_BODY", "franka")   # env var so pool workers see it too
+SPEC = SPECS[BODY]
+OUT = ROOT / ("results/selfmodel_teleop" if BODY == "franka" else f"results/selfmodel_teleop_{BODY}")
+# Per-body teleop workspace, reach-test box and calibration errors. The SO-101 is a hobby arm: 3D-printed links,
+# servo zero offsets set by hand, so larger joint offsets and axis tilts than the Franka's.
+BODYCFG = {
+    "franka": dict(work=((0.3, 0.6), (-0.25, 0.25), (0.15, 0.5)), reach_box=((0.25, 0.65), (-0.3, 0.3), (0.1, 0.55)),
+                   reach_sigma=0.5, orient="full", errors=dict(link_mm=2.0, axis_deg=0.2, enc_deg=0.5, tcp_mm=1.0)),
+    "so101": dict(work=((0.12, 0.30), (-0.15, 0.15), (0.04, 0.22)), reach_box=((0.08, 0.36), (-0.22, 0.22), (0.0, 0.3)),
+                  reach_sigma=0.4, orient="axis", errors=dict(link_mm=1.0, axis_deg=0.5, enc_deg=1.5, tcp_mm=1.0)),
+}[BODY]
+N = len(SPEC["arm"])
 NOISE = {"none": (0.0, 0.0), "low": (0.0005, 0.1), "mid": (0.001, 0.3), "high": (0.003, 1.0)}   # (m, deg)
 ENC_NOISE = 1e-4   # rad, ~ a 16-bit absolute encoder
 REACH_TOL = (0.005, 2.0)   # m, deg
 
 
+def _links(m):
+    """Bodies along the arm chain (one per arm joint) plus the TCP body: where calibration errors live."""
+    bn, _, _ = tcp_frame(m, SPEC)
+    ids = [m.jnt_bodyid[mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_JOINT, j)] for j in SPEC["arm"]]
+    ids.append(mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_BODY, bn))
+    return list(dict.fromkeys(ids))
+
+
 def nominal_body():
     m = mujoco.MjModel.from_xml_path(str(MENAGERIE / SPEC["xml"]))
-    return Body(m, SPEC["arm"], SPEC["tcp_body"], SPEC["tcp_offset"])
+    bn, off, q = tcp_frame(m, SPEC)
+    return Body(m, SPEC["arm"], bn, off, q)
 
 
-def real_robot(seed, link_mm=2.0, axis_deg=0.2, enc_deg=0.5, tcp_mm=1.0):
+def real_robot(seed, link_mm=None, axis_deg=None, enc_deg=None, tcp_mm=None):
     """The physical arm: the same model with sampled calibration errors, plus encoder zero offsets."""
+    e = BODYCFG["errors"]
+    link_mm, axis_deg = link_mm or e["link_mm"], axis_deg or e["axis_deg"]
+    enc_deg, tcp_mm = enc_deg or e["enc_deg"], tcp_mm or e["tcp_mm"]
     rng = np.random.default_rng(seed)
     m = mujoco.MjModel.from_xml_path(str(MENAGERIE / SPEC["xml"]))
-    for name in LINKS:
-        b = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_BODY, name)
+    for b in _links(m):
         m.body_pos[b] += rng.normal(0, link_mm / 1000, 3)
         ax = rng.normal(size=3)
         dq = np.zeros(4)
@@ -60,9 +81,9 @@ def real_robot(seed, link_mm=2.0, axis_deg=0.2, enc_deg=0.5, tcp_mm=1.0):
         q = np.zeros(4)
         mujoco.mju_mulQuat(q, m.body_quat[b].copy(), dq)
         m.body_quat[b] = q / np.linalg.norm(q)
-    tcp = np.array(SPEC["tcp_offset"]) + rng.normal(0, tcp_mm / 1000, 3)
-    body = Body(m, SPEC["arm"], SPEC["tcp_body"], tcp)
-    body.enc_offset = np.deg2rad(rng.normal(0, enc_deg, 7))
+    bn, off, qo = tcp_frame(m, SPEC)
+    body = Body(m, SPEC["arm"], bn, np.asarray(off) + rng.normal(0, tcp_mm / 1000, 3), qo)
+    body.enc_offset = np.deg2rad(rng.normal(0, enc_deg, N))
     return body
 
 
@@ -95,26 +116,29 @@ def teleop_commands(mode, steps, rng, nom):
     cmd = [home.copy()]
     if mode == "joint":
         # Joint-space teleop: wiggle each joint about home, then a random walk through the workspace.
-        for i in range(7):
+        for i in range(N):
             for a in np.sin(np.linspace(0, 2 * np.pi, 13)[1:]) * 0.3:
                 c = home.copy(); c[i] += a; cmd.append(c)
         q = home.copy()
         while len(cmd) < steps:
-            q = np.clip(q + rng.normal(0, 0.04, 7), lo, hi); cmd.append(q.copy())
+            q = np.clip(q + rng.normal(0, 0.04, N), lo, hi); cmd.append(q.copy())
     else:
         # Cartesian teleop: the operator moves the gripper between waypoints, pointing roughly down; the
         # driver turns each 1 cm / 2 deg increment into joints with the nominal model's IK.
         q = home.copy()
         p, R = nom.fk(q)
         while len(cmd) < steps:
-            pt = np.array([rng.uniform(0.3, 0.6), rng.uniform(-0.25, 0.25), rng.uniform(0.15, 0.5)])
+            pt = np.array([rng.uniform(*r) for r in BODYCFG["work"]])
             Rt = sd.so3_exp(np.array([rng.uniform(-0.35, 0.35), rng.uniform(-0.35, 0.35), 0])) @ \
                 np.diag([1, -1, -1]) @ sd.so3_exp(np.array([0, 0, rng.uniform(-1.5, 1.5)]))
             dr = sd.so3_log(Rt @ R.T)
             k = int(max(np.linalg.norm(pt - p) / 0.01, np.linalg.norm(dr) / np.deg2rad(2), 1))
             for s in range(1, k + 1):
                 pi, Ri = p + (pt - p) * s / k, sd.so3_exp(dr * s / k) @ R
-                q, _ = solve_ik(nom, pi, Ri, q0=q, method="dls", iters=50)
+                if BODYCFG["orient"] == "full":
+                    q, _ = solve_ik(nom, pi, Ri, q0=q, method="dls", iters=50)
+                else:   # 5-DOF arm: position and approach axis only (interface K's projection)
+                    q, _ = solve_ik(nom, pi, Ri, q0=q, method="hqp", iters=50, orient="axis")
                 cmd.append(q.copy())
                 if len(cmd) >= steps:
                     break
@@ -180,9 +204,9 @@ def reach(fk_model, real, rng, n=40):
     home = np.array(SPEC["home"])
     errs, hits = [], []
     while len(errs) < n:
-        qt = np.clip(home + rng.normal(0, 0.5, 7), lo + 0.05, hi - 0.05)
+        qt = np.clip(home + rng.normal(0, BODYCFG["reach_sigma"], N), lo + 0.05, hi - 0.05)
         Tt = T_of(real, qt)
-        if not (0.25 < Tt[0, 3] < 0.65 and abs(Tt[1, 3]) < 0.3 and 0.1 < Tt[2, 3] < 0.55):
+        if not all(a < Tt[i, 3] < b for i, (a, b) in enumerate(BODYCFG["reach_box"])):
             continue
         q_cmd = sd.ik(fk_model, Tt, home, lo, hi)
         Ta = T_of(real, q_cmd - real.enc_offset)
@@ -216,7 +240,7 @@ def run_cell(seed, mode, steps, noise, nom, evaluate_reach=True):
         if evaluate_reach:
             r["reach"] = reach(fk, real, np.random.default_rng(9500 + seed))
         out[name] = r
-    lj = sd.LocalJacobian(7)
+    lj = sd.LocalJacobian(N)
     for k in range(len(Q) - 1):
         lj.update(Q[k + 1] - Q[k], sd.delta_x(Tm[k], Tm[k + 1]))
     out["local_jac"] = {"one_step": one_step_local(lj, Qh, Tth, Tmh)}
@@ -298,9 +322,10 @@ def main(quick=False):
                              for k in ("nominal", "diff_only", "diff_abs", "calib"))
                   + f" lj {r['local_jac']['one_step']['rel_pos']:.3f}", flush=True)
             (OUT / "cells.json").write_text(json.dumps(cells, indent=1))
-    ms = [maniskill_same_data(z) for z in ("none", "mid", "high")]
-    print("maniskill", json.dumps(ms), flush=True)
-    (OUT / "maniskill_same_data.json").write_text(json.dumps(ms, indent=2))
+    if BODY == "franka":   # the current readout's recorded episodes exist for the Franka only
+        ms = [maniskill_same_data(z) for z in ("none", "mid", "high")]
+        print("maniskill", json.dumps(ms), flush=True)
+        (OUT / "maniskill_same_data.json").write_text(json.dumps(ms, indent=2))
 
 
 if __name__ == "__main__":
