@@ -11,6 +11,7 @@ What changes against the first pilot (which handed the self-model a true pose pl
 
 World frame = the board / room-map frame. Everything a sensor measures is in that frame.
 """
+import os
 import pathlib
 
 import cv2
@@ -21,18 +22,30 @@ from xbody.bodies import MENAGERIE, SPECS
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "assets/generated"
-SPEC = SPECS["franka"]
-LINKS = [f"link{i}" for i in range(1, 8)] + ["hand"]
+BODY = os.environ.get("SELFMODEL_BODY", "franka")
+SPEC = SPECS[BODY]
 
 W, H, FOVY = 640, 480, 60.0
-BASELINE = 0.06
-BOARD = dict(squares=(10, 7), square=0.04, marker=0.03, center=(0.50, 0.0))
+# Per body: board size and place, stereo baseline, sensor head (offset back from the TCP along the approach axis),
+# calibration errors, joint compliance, and how much the tabletop clutter ring shrinks around the smaller board.
+_CFG = {
+    "franka": dict(board=dict(squares=(10, 7), square=0.04, marker=0.03, center=(0.50, 0.0)), baseline=0.06,
+                   head_back=0.1034, cam=(0.065, -0.03, 0.035), lidar=(-0.065, 0.0, 0.035), ring=1.0,
+                   errors=dict(link_mm=2.0, axis_deg=0.2, enc_deg=0.5),
+                   stiffness=(2.0e4, 2.0e4, 1.5e4, 1.5e4, 8e3, 8e3, 8e3)),           # harmonic drives (Nm/rad)
+    "so101": dict(board=dict(squares=(10, 8), square=0.02, marker=0.015, center=(0.24, 0.0)), baseline=0.04,
+                  head_back=0.06, cam=(0.035, -0.015, 0.0), lidar=(-0.035, 0.0, 0.0), ring=0.65,
+                  errors=dict(link_mm=1.0, axis_deg=0.5, enc_deg=1.5),
+                  stiffness=(40.0, 40.0, 30.0, 15.0, 10.0)),                           # hobby servos with backlash
+}[BODY]
+BASELINE = _CFG["baseline"]
+BOARD = _CFG["board"]
 # Livox Mid-360-like: 360 deg around its axis, -7 to +52 deg elevation, 2 cm range noise (datasheet scale).
 LIDAR = dict(az_step=2.0, el_min=-7.0, el_max=52.0, el_step=2.0, rmin=0.1, rmax=4.0)
 
 # Sensor head on the hand (hand frame: z = approach). Cameras look along +z_hand; MuJoCo cameras look along -z.
-CAM_POS = np.array([0.065, -0.03, 0.035])
-LIDAR_POS = np.array([-0.065, 0.0, 0.035])
+CAM_POS = np.array(_CFG["cam"])
+LIDAR_POS = np.array(_CFG["lidar"])
 CAM_XYAXES = [0, 1, 0, 1, 0, 0]
 
 REALISM = {
@@ -47,16 +60,16 @@ REALISM = {
     "R3": dict(img_noise=3.0, defocus=0.6, k1=-0.12, calib_err=True, exposure=0.15, lidar_std=0.02, dropout=0.03,
                blur_steps=4, latency=0.015, compliance=True),
 }
-JOINT_STIFFNESS = np.array([2.0e4, 2.0e4, 1.5e4, 1.5e4, 8e3, 8e3, 8e3])   # Nm/rad, harmonic-drive scale
+JOINT_STIFFNESS = np.array(_CFG["stiffness"])
 
 
 def board_image():
     ASSETS.mkdir(parents=True, exist_ok=True)
-    path = ASSETS / "charuco_10x7.png"
+    path = ASSETS / f"charuco_{BOARD['squares'][0]}x{BOARD['squares'][1]}.png"
     if not path.exists():
         d = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_5X5_250)
         b = cv2.aruco.CharucoBoard(BOARD["squares"], BOARD["square"], BOARD["marker"], d)
-        img = b.generateImage((2000, 1400), marginSize=0)
+        img = b.generateImage((200 * BOARD["squares"][0], 200 * BOARD["squares"][1]), marginSize=0)
         cv2.imwrite(str(path), cv2.cvtColor(img, cv2.COLOR_GRAY2RGB))
     return path
 
@@ -83,31 +96,53 @@ ROOM_BOXES = [   # (centre, half sizes, yaw deg): clutter around the board and t
     ((0.78, 0.30, 0.06), (0.06, 0.05, 0.06), 20), ((0.80, -0.28, 0.09), (0.05, 0.08, 0.09), -15),
     ((0.25, 0.42, 0.04), (0.08, 0.04, 0.04), 35), ((0.30, -0.45, 0.12), (0.04, 0.04, 0.12), 0),
     ((0.62, 0.45, 0.03), (0.10, 0.03, 0.03), -40), ((0.95, 0.0, 0.15), (0.04, 0.15, 0.15), 10),
-    # tabletop objects ringing the board (board footprint x 0.30-0.70, y -0.14-0.14 stays clear)
-    ((0.50, 0.22, 0.04), (0.05, 0.03, 0.04), 10), ((0.38, -0.22, 0.05), (0.03, 0.03, 0.05), 0),
-    ((0.64, -0.21, 0.025), (0.06, 0.04, 0.025), 30), ((0.78, 0.05, 0.07), (0.03, 0.06, 0.07), -20),
-    ((0.22, 0.12, 0.03), (0.04, 0.04, 0.03), 45), ((0.24, -0.10, 0.06), (0.025, 0.05, 0.06), 15),
 ]
+RING = [   # tabletop objects ringing the board, as offsets from the board centre (Franka board: footprint stays clear)
+    ((0.0, 0.22, 0.04), (0.05, 0.03, 0.04), 10), ((-0.12, -0.22, 0.05), (0.03, 0.03, 0.05), 0),
+    ((0.14, -0.21, 0.025), (0.06, 0.04, 0.025), 30), ((0.28, 0.05, 0.07), (0.03, 0.06, 0.07), -20),
+    ((-0.28, 0.12, 0.03), (0.04, 0.04, 0.03), 45), ((-0.26, -0.10, 0.06), (0.025, 0.05, 0.06), 15),
+]
+ROOM_BOXES += [((BOARD["center"][0] + _CFG["ring"] * dx, BOARD["center"][1] + _CFG["ring"] * dy, _CFG["ring"] * hz),
+                tuple(_CFG["ring"] * np.array(sz)), yaw) for (dx, dy, hz), sz, yaw in RING]
 
 
-def build(seed=None, link_mm=2.0, axis_deg=0.2, base_mm=3.0, base_deg=0.3, mount_mm=1.0, mount_deg=0.3):
+def _chain_names():
+    """Robot base, the bodies of the arm joints and the TCP body (names), from the nominal model."""
+    from xbody.calibration import chain_bodies
+    m = mujoco.MjModel.from_xml_path(str(MENAGERIE / SPEC["xml"]))
+    bodies, _, root = chain_bodies(m, SPEC)
+    name = lambda b: mujoco.mj_id2name(m, mujoco.mjtObj.mjOBJ_BODY, b)
+    return name(root), [name(b) for b in bodies if b != root]
+
+
+def build(seed=None, link_mm=None, axis_deg=None, base_mm=3.0, base_deg=0.3, mount_mm=1.0, mount_deg=0.3):
     """Compile the lab. seed=None: the nominal robot (what the CAD says). seed=k: the k-th 'real' arm."""
+    from xbody.bodies import tcp_frame
+    e = _CFG["errors"]
+    link_mm, axis_deg = link_mm or e["link_mm"], axis_deg or e["axis_deg"]
     rng = np.random.default_rng(seed) if seed is not None else None
     spec = mujoco.MjSpec.from_file(str(MENAGERIE / SPEC["xml"]))
     spec.visual.global_.offwidth, spec.visual.global_.offheight = W, H
     wb = spec.worldbody
+    root, links = _chain_names()
     if rng is not None:
-        for name in LINKS:
+        for name in links:
             b = spec.body(name)
             b.pos = np.asarray(b.pos) + rng.normal(0, link_mm / 1000, 3)
             b.quat = _mulq(b.quat, _quat_small(rng, axis_deg))
-        base = spec.body("link0")
+        base = spec.body(root)
         base.pos = np.asarray(base.pos) + rng.normal(0, base_mm / 1000, 3)
         base.quat = _mulq(base.quat, _quat_small(rng, base_deg))
-    # Sensor head (mount errors only on the real arm).
-    hand = spec.body("hand")
+    # Sensor head on the TCP body, its frame the canonical TCP frame (z = approach) moved back along the approach
+    # axis (on the Franka that is exactly the hand frame). Mount errors only on the real arm.
+    tb, toff, tq = tcp_frame(mujoco.MjModel.from_xml_path(str(MENAGERIE / SPEC["xml"])), SPEC)
+    tq = np.array([1.0, 0, 0, 0]) if tq is None else np.asarray(tq, float)
+    R = np.zeros(9)
+    mujoco.mju_quat2Mat(R, tq)
+    hpos = np.asarray(toff, float) - R.reshape(3, 3) @ np.array([0, 0, _CFG["head_back"]])
     dm = rng.normal(0, mount_mm / 1000, 3) if rng is not None else np.zeros(3)
-    head = hand.add_body(name="sensor_head", pos=dm, quat=_quat_small(rng, mount_deg) if rng is not None else [1, 0, 0, 0])
+    hq = _mulq(tq, _quat_small(rng, mount_deg)) if rng is not None else tq
+    head = spec.body(tb).add_body(name="sensor_head", pos=hpos + dm, quat=hq)
     head.add_camera(name="cam_l", pos=CAM_POS, xyaxes=CAM_XYAXES, fovy=FOVY)
     head.add_camera(name="cam_r", pos=CAM_POS + np.array([0, BASELINE, 0]), xyaxes=CAM_XYAXES, fovy=FOVY)
     head.add_site(name="lidar", pos=LIDAR_POS, quat=[1, 0, 0, 0])
@@ -136,7 +171,8 @@ def build(seed=None, link_mm=2.0, axis_deg=0.2, base_mm=3.0, base_deg=0.3, mount
                  diffuse=[0.7, 0.7, 0.7])
     wb.add_light(name="fill", pos=[-0.5, -0.5, 1.5], dir=[0.5, 0.5, -1], castshadow=0, diffuse=[0.3, 0.3, 0.3])
     m = spec.compile()
-    enc = np.deg2rad(rng.normal(0, 0.5, 7)) if rng is not None else np.zeros(7)
+    n = len(SPEC["arm"])
+    enc = np.deg2rad(rng.normal(0, e["enc_deg"], n)) if rng is not None else np.zeros(n)
     return m, enc
 
 

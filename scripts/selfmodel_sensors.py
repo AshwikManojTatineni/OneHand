@@ -17,6 +17,7 @@ open-loop reach (IK on the model, run on the real arm, success within 5 mm and 2
 Usage: MUJOCO_GL=osmesa python scripts/selfmodel_sensors.py [--quick]
 """
 import json
+import os
 import pathlib
 import sys
 import time
@@ -32,10 +33,16 @@ from selfmodel_teleop import teleop_commands  # noqa: E402
 from xbody import selfmodel_diff as sd  # noqa: E402
 from xbody import selfmodel_lab as L  # noqa: E402
 from xbody import selfmodel_sensing as S  # noqa: E402
+from xbody.bodies import tcp_frame  # noqa: E402
 from xbody.kinematics import Body  # noqa: E402
 from xbody.stats import wilson  # noqa: E402
 
-OUT = ROOT / "results/selfmodel_sensors"
+BODY = L.BODY   # SELFMODEL_BODY environment variable, read by every module so pool workers agree
+OUT = ROOT / ("results/selfmodel_sensors" if BODY == "franka" else f"results/selfmodel_sensors_{BODY}")
+N = len(L.SPEC["arm"])
+# Reach targets: poses of the sensor frame the real arm can take, inside its working volume.
+REACH = {"franka": dict(sigma=0.5, box=((0.2, 0.75), (-0.35, 0.35), (0.15, 0.65))),
+         "so101": dict(sigma=0.4, box=((0.05, 0.40), (-0.25, 0.25), (0.05, 0.40)))}[BODY]
 SENSORS = ["oracle", "mono", "stereo", "lidar"]
 FRAME = {"oracle": "cam", "mono": "cam", "stereo": "cam", "lidar": "lidar"}
 DT, EXPOSURE = 0.1, 0.008      # teleop log period, camera exposure (s)
@@ -94,7 +101,7 @@ def record(seed, mode, level, steps, rng_seed):
     rng = np.random.default_rng(rng_seed)
     nom = Arm(None)
     real = Arm(seed, compliance=cfg["compliance"])
-    drive = Body(nom.m, L.SPEC["arm"], L.SPEC["tcp_body"], L.SPEC["tcp_offset"])
+    drive = Body(nom.m, L.SPEC["arm"], *tcp_frame(nom.m, L.SPEC))
     cmd = teleop_commands(mode, steps, rng, drive)
     q_motor = cmd - real.enc
     rig = S.Rig(cfg, rng)
@@ -156,7 +163,7 @@ def pose_err(A, B):
 def fk_errors(fk, real, which, n=300, seed=0):
     rng = np.random.default_rng(seed)
     lo, hi = real.lo + 0.1 * (real.hi - real.lo), real.hi - 0.1 * (real.hi - real.lo)
-    e = np.array([pose_err(fk(q), real.fk_joint(q, which)) for q in rng.uniform(lo, hi, (n, 7)) + real.enc])
+    e = np.array([pose_err(fk(q), real.fk_joint(q, which)) for q in rng.uniform(lo, hi, (n, N)) + real.enc])
     return {"pos_mm_median": float(np.median(e[:, 0])), "pos_mm_p95": float(np.percentile(e[:, 0], 95)),
             "rot_deg_median": float(np.median(e[:, 1]))}
 
@@ -166,10 +173,9 @@ def reach(fk, real, which, n=40, seed=1):
     home = np.array(L.SPEC["home"])
     hits, errs = [], []
     while len(hits) < n:
-        qt = np.clip(home + rng.normal(0, 0.5, 7), real.lo + 0.05, real.hi - 0.05)
+        qt = np.clip(home + rng.normal(0, REACH["sigma"], N), real.lo + 0.05, real.hi - 0.05)
         Tt = real.fk_joint(qt + real.enc, which)
-        tcp_z = Tt[2, 3]
-        if not (0.2 < Tt[0, 3] < 0.75 and abs(Tt[1, 3]) < 0.35 and 0.15 < tcp_z < 0.65):
+        if not all(a < Tt[i, 3] < b for i, (a, b) in enumerate(REACH["box"])):
             continue
         q_cmd = sd.ik(fk, Tt, home, real.lo, real.hi)
         ep, er = pose_err(real.fk_joint(q_cmd, which), Tt)
