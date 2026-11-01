@@ -1,0 +1,49 @@
+[33;1m2026-11-01 18:55:28,323 - mani_skill  - WARNING - Requested to use render device "sapien_cuda", but CUDA device was not found. Falling back to "cpu" device. Rendering might be disabled.[0m
+No learning rate schedule specified, using constant LR.
+Episode length: 25
+Discount factor: tensor([0.9500])
+Compiling methods...
+{"ep": 0, "success": false, "stage": 0, "ik_err_mm_median": 0.06654561002505943}
+{"ep": 1, "success": false, "stage": 0, "ik_err_mm_median": 0.016547816812817473}
+{"ep": 2, "success": false, "stage": 2, "ik_err_mm_median": 0.060880092860315926}
+{"ep": 3, "success": false, "stage": 2, "ik_err_mm_median": 0.1451842617825605}
+{"ep": 4, "success": false, "stage": 0, "ik_err_mm_median": 0.18468267808202654}
+{"ep": 5, "success": false, "stage": 0, "ik_err_mm_median": 0.028020917852700222}
+{"ep": 6, "success": false, "stage": 0, "ik_err_mm_median": 0.0422220637119608}
+{"ep": 7, "success": false, "stage": 0, "ik_err_mm_median": 0.029832968721166253}
+{"ep": 8, "success": false, "stage": 0, "ik_err_mm_median": 0.01371202597511001}
+{"ep": 9, "success": false, "stage": 0, "ik_err_mm_median": 0.0928677363845054}
+{"ep": 10, "success": false, "stage": 0, "ik_err_mm_median": 0.09622428842703812}
+{"ep": 11, "success": false, "stage": 0, "ik_err_mm_median": 0.030085489925113507}
+{"ep": 12, "success": false, "stage": 0, "ik_err_mm_median": 0.05141866313351784}
+{"ep": 13, "success": false, "stage": 0, "ik_err_mm_median": 0.2798623318085447}
+{"ep": 14, "success": false, "stage": 1, "ik_err_mm_median": 0.035005685276701115}
+{"ep": 15, "success": false, "stage": 0, "ik_err_mm_median": 0.09954495180863887}
+{"ep": 16, "success": false, "stage": 0, "ik_err_mm_median": 0.034405440601403825}
+{"ep": 17, "success": false, "stage": 0, "ik_err_mm_median": 0.08211109525291249}
+{"ep": 18, "success": false, "stage": 1, "ik_err_mm_median": 0.061715163610642776}
+{"ep": 19, "success": false, "stage": 0, "ik_err_mm_median": 0.04086575972905848}
+{"ep": 20, "success": false, "stage": 0, "ik_err_mm_median": 0.12590453115990385}
+{"ep": 21, "success": false, "stage": 0, "ik_err_mm_median": 0.4217993700876832}
+{"ep": 22, "success": false, "stage": 1, "ik_err_mm_median": 0.05794112803414464}
+{"ep": 23, "success": false, "stage": 1, "ik_err_mm_median": 0.03197814476152416}
+{"ep": 24, "success": false, "stage": 1, "ik_err_mm_median": 0.03369105252204463}
+{"ep": 25, "success": false, "stage": 0, "ik_err_mm_median": 0.01492929004598409}
+{"ep": 26, "success": false, "stage": 0, "ik_err_mm_median": 0.09661815784056671}
+{"ep": 27, "success": false, "stage": 0, "ik_err_mm_median": 0.032999996619764715}
+{"ep": 28, "success": false, "stage": 0, "ik_err_mm_median": 0.03164679310430074}
+{"ep": 29, "success": false, "stage": 0, "ik_err_mm_median": 0.139635922096204}
+{"ep": 30, "success": false, "stage": 0, "ik_err_mm_median": 0.3960211615776643}
+{"ep": 31, "success": false, "stage": 0, "ik_err_mm_median": 0.027612779376795515}
+{"ep": 32, "success": false, "stage": 0, "ik_err_mm_median": 0.015473811799893156}
+{"ep": 33, "success": false, "stage": 0, "ik_err_mm_median": 0.037909989259787835}
+{"ep": 34, "success": false, "stage": 0, "ik_err_mm_median": 0.027567280994844623}
+{"ep": 35, "success": false, "stage": 1, "ik_err_mm_median": 0.039144151742220856}
+{"ep": 36, "success": false, "stage": 1, "ik_err_mm_median": 0.050913140512420796}
+{"ep": 37, "success": false, "stage": 0, "ik_err_mm_median": 0.011354074104019674}
+{"ep": 38, "success": false, "stage": 1, "ik_err_mm_median": 0.04936354343954008}
+{"ep": 39, "success": false, "stage": 0, "ik_err_mm_median": 0.07896974784671329}
+{"ep": 40, "success": false, "stage": 0, "ik_err_mm_median": 0.04732283196062781}
+{"ep": 41, "success": false, "stage": 0, "ik_err_mm_median": 0.02618300095491577}
+{"ep": 42, "success": false, "stage": 0, "ik_err_mm_median": 88.72482553124428}
+{"ep": 43, "success": false, "stage": 1, "ik_err_mm_median": 0.13453375868266448}
