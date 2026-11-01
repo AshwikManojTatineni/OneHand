@@ -3,3 +3,54 @@ No learning rate schedule specified, using constant LR.
 Episode length: 25
 Discount factor: tensor([0.9500])
 Compiling methods...
+{"ep": 0, "success": false, "stage": 1, "ik_err_mm_median": 0.07523215026594698}
+{"ep": 1, "success": false, "stage": 0, "ik_err_mm_median": 0.05142477311892435}
+{"ep": 2, "success": false, "stage": 1, "ik_err_mm_median": 0.027571890313993208}
+{"ep": 3, "success": false, "stage": 1, "ik_err_mm_median": 0.3627990809036419}
+{"ep": 4, "success": false, "stage": 0, "ik_err_mm_median": 0.25439907039981335}
+{"ep": 5, "success": false, "stage": 0, "ik_err_mm_median": 0.3147437091683969}
+{"ep": 6, "success": false, "stage": 1, "ik_err_mm_median": 0.14885801647324115}
+{"ep": 7, "success": false, "stage": 0, "ik_err_mm_median": 0.11222522516618483}
+{"ep": 8, "success": false, "stage": 0, "ik_err_mm_median": 0.10812491746037267}
+{"ep": 9, "success": false, "stage": 0, "ik_err_mm_median": 0.02686730385903502}
+{"ep": 10, "success": false, "stage": 1, "ik_err_mm_median": 0.053445977755472995}
+{"ep": 11, "success": false, "stage": 0, "ik_err_mm_median": 0.3005578910233453}
+{"ep": 12, "success": false, "stage": 1, "ik_err_mm_median": 0.09477375715505332}
+{"ep": 13, "success": false, "stage": 1, "ik_err_mm_median": 0.02710268563532736}
+{"ep": 14, "success": false, "stage": 1, "ik_err_mm_median": 0.029888940844102763}
+{"ep": 15, "success": false, "stage": 0, "ik_err_mm_median": 0.021630376977554988}
+{"ep": 16, "success": false, "stage": 1, "ik_err_mm_median": 0.024214292352553457}
+{"ep": 17, "success": false, "stage": 0, "ik_err_mm_median": 0.056773611504468136}
+{"ep": 18, "success": false, "stage": 1, "ik_err_mm_median": 0.12478735152399167}
+{"ep": 19, "success": false, "stage": 0, "ik_err_mm_median": 0.29321150213945657}
+{"ep": 20, "success": false, "stage": 1, "ik_err_mm_median": 0.07428758544847369}
+{"ep": 21, "success": false, "stage": 0, "ik_err_mm_median": 0.030735418476979248}
+{"ep": 22, "success": false, "stage": 0, "ik_err_mm_median": 0.04811854159925133}
+{"ep": 23, "success": false, "stage": 0, "ik_err_mm_median": 0.4461465869098902}
+{"ep": 24, "success": false, "stage": 1, "ik_err_mm_median": 0.05346906073100399}
+{"ep": 25, "success": false, "stage": 0, "ik_err_mm_median": 0.12445170432329178}
+{"ep": 26, "success": false, "stage": 0, "ik_err_mm_median": 0.0998819014057517}
+{"ep": 27, "success": false, "stage": 1, "ik_err_mm_median": 0.4259957786416635}
+{"ep": 28, "success": false, "stage": 0, "ik_err_mm_median": 0.41640049312263727}
+{"ep": 29, "success": false, "stage": 1, "ik_err_mm_median": 0.08773838271736167}
+{"ep": 30, "success": false, "stage": 0, "ik_err_mm_median": 0.22812133829575032}
+{"ep": 31, "success": false, "stage": 0, "ik_err_mm_median": 0.13574122203863226}
+{"ep": 32, "success": false, "stage": 0, "ik_err_mm_median": 0.0507022523379419}
+{"ep": 33, "success": false, "stage": 0, "ik_err_mm_median": 0.374738679965958}
+{"ep": 34, "success": false, "stage": 0, "ik_err_mm_median": 0.015044968677102588}
+{"ep": 35, "success": false, "stage": 1, "ik_err_mm_median": 0.2404043189017102}
+{"ep": 36, "success": false, "stage": 1, "ik_err_mm_median": 0.04729664397018496}
+{"ep": 37, "success": false, "stage": 0, "ik_err_mm_median": 0.036641436963691376}
+{"ep": 38, "success": false, "stage": 1, "ik_err_mm_median": 0.17232158279512078}
+{"ep": 39, "success": false, "stage": 0, "ik_err_mm_median": 0.1087243072106503}
+{"ep": 40, "success": false, "stage": 0, "ik_err_mm_median": 0.10914617814705707}
+{"ep": 41, "success": false, "stage": 0, "ik_err_mm_median": 0.33145408087875694}
+{"ep": 42, "success": false, "stage": 1, "ik_err_mm_median": 0.08854331099428236}
+{"ep": 43, "success": false, "stage": 1, "ik_err_mm_median": 0.06772632332285866}
+{"ep": 44, "success": false, "stage": 0, "ik_err_mm_median": 0.05754268386226613}
+{"ep": 45, "success": false, "stage": 1, "ik_err_mm_median": 0.06732254769303836}
+{"ep": 46, "success": false, "stage": 1, "ik_err_mm_median": 0.026101137336809188}
+{"ep": 47, "success": false, "stage": 0, "ik_err_mm_median": 0.022751361939299386}
+{"ep": 48, "success": false, "stage": 0, "ik_err_mm_median": 0.03547507458279142}
+{"ep": 49, "success": false, "stage": 0, "ik_err_mm_median": 0.06670040238532238}
+{"policy": "ms-pick-cube (Franka)", "target": "SO100 (PickCubeSO100-v1)", "interface": "K+P", "ik": "hqp-axis", "mpc": false, "shift": true, "episodes": 50, "success": 0, "rate": 0.0, "wilson95": [0.0, 0.07134760017861413], "stage_hist": {"0": 29, "1": 21, "2": 0, "3": 0, "4": 0}, "mean_stage": 0.42, "sec_per_episode": 2.723592529296875, "stage_key": "0 none, 1 reach (<3 cm), 2 grasp (2 steps), 3 at goal while grasped, 4 env success"}
