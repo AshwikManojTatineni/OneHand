@@ -1,0 +1,86 @@
+{
+  "stack": "S1-full",
+  "body": "so101",
+  "cfg": {
+    "input": "pointcloud",
+    "world": "primitives",
+    "endpoint": "constrained",
+    "planner": "rrtconnect",
+    "timing": "toppra",
+    "tracking": "joint",
+    "conversion": "hqp",
+    "control": "ilc",
+    "actuator": null
+  },
+  "resolved": {
+    "actuator": "cascade",
+    "control": "ilc",
+    "ilc_base": "pd"
+  },
+  "changed": {
+    "control": "ilc"
+  },
+  "episodes": 20,
+  "success": 16,
+  "rate": 0.8,
+  "wilson95": [
+    0.583982565906683,
+    0.9193423379822393
+  ],
+  "mean_stage": 4.35,
+  "stages": [
+    5,
+    0,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    3,
+    4,
+    5,
+    5,
+    5,
+    5,
+    0,
+    5,
+    5
+  ],
+  "post_contact_rate": 0.4,
+  "track_rms_rad": 0.025160660060585992,
+  "not_applicable": "",
+  "trials": 5,
+  "per_trial": [
+    {
+      "trial": 1,
+      "success": 17,
+      "track_rms_rad": 0.0254477244644638
+    },
+    {
+      "trial": 2,
+      "success": 16,
+      "track_rms_rad": 0.025615595295320752
+    },
+    {
+      "trial": 3,
+      "success": 16,
+      "track_rms_rad": 0.025506350790200177
+    },
+    {
+      "trial": 4,
+      "success": 16,
+      "track_rms_rad": 0.024475410820621435
+    },
+    {
+      "trial": 5,
+      "success": 16,
+      "track_rms_rad": 0.025160660060585992
+    }
+  ],
+  "first_vs_last_mcnemar_p": 1.0,
+  "sec_per_episode": 47.02596035003662
+}
