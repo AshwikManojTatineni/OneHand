@@ -100,14 +100,13 @@ compliance. Self-model reach out of 200 (the model file reaches 0/40 per arm thr
 | Franka | Cartesian | Lidar | 199 | 200 | 197 | 196 |
 | Franka | Joint | Mono | 199 | 185 | 108 | 104 |
 | Franka | Joint | Stereo | 191 | 128 | 86 | 94 |
+| Franka | Joint | Lidar | 199 | 200 | 182 | 182 |
 | SO-101 | Cartesian | Mono | 200 | 160 | 200 | 199 |
 | SO-101 | Cartesian | Stereo | 200 | 200 | 197 | 199 |
 | SO-101 | Cartesian | Lidar | 200 | 200 | 198 | 197 |
 | SO-101 | Joint | Mono | 200 | 200 | 155 | 192 |
 | SO-101 | Joint | Stereo | 80 | 120 | 79 | 75 |
 | SO-101 | Joint | Lidar | 200 | 196 | 199 | 196 |
-
-The Franka joint-teleop lidar row is in `results/selfmodel_sensors/SUMMARY.md`.
 
 - Lidar is the most robust on both robots at every level (a Mid-360-class unit may be heavy for the SO-101).
 - Mono degrades with blur and latency when joint teleop takes the board out of view.
