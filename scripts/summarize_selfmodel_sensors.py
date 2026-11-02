@@ -32,7 +32,8 @@ def cell_rows(cs, s):
 def main(path=None):
     path = pathlib.Path(path) if path else OUT / "cells.json"
     cells = json.loads(path.read_text())
-    md = ["# Sensor-swap self-modeling benchmark (Franka, rendered lab)", "",
+    body = "SO-101" if "so101" in str(path) else "Franka"
+    md = [f"# Sensor-swap self-modeling benchmark ({body}, rendered lab)", "",
           "One arm with sampled calibration errors (links, joint axes, encoder offsets, base placement, sensor mount)",
           "is teleoperated through its nominal model. Only the sensor that measures the hand changes. Each sensor's pose",
           "comes from its own pipeline on rendered data: ChArUco PnP (mono), triangulated corners (stereo), scan-to-map",
@@ -84,7 +85,7 @@ def main(path=None):
                 row.append("-" if not cs else (f"{sum(f['reach']['success'] for f in fits)}/{40 * len(cs)}" if fits else "0 fits"))
             md.append(f"| {mode} | {LABEL[s]} | " + " | ".join(row) + " |")
     md.append("")
-    (OUT / "SUMMARY.md").write_text("\n".join(md) + "\n")
+    (path.parent / "SUMMARY.md").write_text("\n".join(md) + "\n")   # next to its own cells.json
     print("\n".join(md))
 
 
