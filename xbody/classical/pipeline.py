@@ -146,7 +146,7 @@ class Episode:
         if c["input"] == "camera":
             return True
         kind = c["world"]
-        self.wm = WorldModel(kind, obstacle_pts=obs, frames=frames, model=m, data=d, post_geom=self.post,
+        self.wm = WorldModel(kind, obstacle_pts=obs, frames=frames, model=self.m_belief, data=d, post_geom=self.post,
                              bounds=bounds, robot_points=self.rp)
         self.wm.cube_geom = self.cube_geom
         return True
