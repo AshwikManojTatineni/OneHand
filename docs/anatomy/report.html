@@ -1,0 +1,471 @@
+<style>
+.rp{margin-top:56px;color:var(--anatomy-text);font-size:14.5px;line-height:1.65}
+.rp h2{color:var(--anatomy-strong);font-size:22px;font-weight:600;margin:56px 0 8px;text-wrap:balance;letter-spacing:-.01em}
+.rp h3{color:var(--anatomy-strong);font-size:16px;font-weight:600;margin:40px 0 4px;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.rp h3 .meta{color:var(--anatomy-muted);font-weight:400;font-size:12.5px;margin-left:8px}
+.rp p{margin:6px 0 10px;max-width:72ch}
+.rp .lead{font-size:15.5px;color:var(--anatomy-strong);max-width:70ch}
+.rp table{width:100%;border-collapse:collapse;margin:10px 0 6px;font-size:13.5px}
+.rp th{text-align:left;color:var(--anatomy-muted);font-weight:500;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--anatomy-lo);padding:6px 10px 6px 0}
+.rp td{vertical-align:top;border-bottom:1px solid var(--anatomy-faint);padding:9px 12px 9px 0}
+.rp td:first-child{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;color:var(--anatomy-strong);white-space:nowrap;font-size:12.5px;width:1%}
+.rp td.eq{min-width:0}
+.rp .scroll{overflow-x:auto}
+.rp code{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:12.5px;color:var(--anatomy-strong)}
+.rp .layer{border-top:1px solid var(--anatomy-lo);margin-top:64px;padding-top:4px}
+.rp .layer>.tag{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--anatomy-muted)}
+.rp ol.flow{padding-left:20px;max-width:72ch}
+.rp ol.flow li{margin:3px 0}
+.rp mjx-container[display="true"]{margin:6px 0!important;overflow-x:auto;overflow-y:hidden}
+@media (max-width:640px){.rp td:first-child{white-space:normal}}
+</style>
+<script>window.MathJax={tex:{inlineMath:[["\\(","\\)"]],displayMath:[["\\[","\\]"]]},svg:{fontCache:"global"}};</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js"></script>
+
+<article class="rp">
+<p class="lead">OneHand (code name <code>xbody-bench</code>) is a zero-training benchmark: can a robot policy or a classical controller built for the 7-joint Franka Panda work on the 5-joint SO-101 when the only adapters allowed are kinematics, calibration and test-time search? This report reads the code layer by layer. Part I is the shape of the whole codebase; Part II goes file by file and function by function, with the mathematics each function implements.</p>
+
+<h2>Part I. The codebase as a graph</h2>
+<p>The repository has 52 Python modules, 7 shell grids and 3 YAML files (6,822 lines, 323 functions), plus 9 Markdown documents. The import graph has 102 edges. Fig 1 draws every file as one block on a bench: the block's height is its line count, the studs on its top are its functions and the rings its classes, and its station is its layer.</p>
+<div class="scroll"><table>
+<tr><th>Layer</th><th>Files</th><th>Role</th></tr>
+<tr><td>Core library</td><td>7</td><td>Body specs, interface K (IK), scene builder, staged scorer, statistics, frozen-policy loader, calibration errors. Everything else imports it: <code>stats</code> has 14 importers, <code>bodies</code> 13, <code>kinematics</code> 11, <code>scene</code> 10.</td></tr>
+<tr><td>Classical stack</td><td>8</td><td>The nine-layer S1 pipeline: perception, world model, endpoint IK, planning, timing, tracking, conversion, control, actuator.</td></tr>
+<tr><td>Self-model</td><td>9</td><td>Product-of-exponentials identification from teleop logs, the sensor lab (mono, stereo, lidar) and the experiments that use them.</td></tr>
+<tr><td>Evaluation scripts</td><td>14</td><td>Command-line evaluations, Phase 0 checks and summarizers that write <code>results/*/SUMMARY.md</code>.</td></tr>
+<tr><td>Grid orchestration</td><td>7</td><td>Shell loops that sweep the evaluation scripts over bodies, interfaces and methods.</td></tr>
+<tr><td>GPU routes</td><td>7</td><td>MJX and Isaac Lab ports of the task with PPO trainers. Written, never run here.</td></tr>
+<tr><td>Protocol and registry</td><td>3</td><td>The frozen protocol and the checkpoint registry.</td></tr>
+<tr><td>Docs and results</td><td>9</td><td>README, RESULTS and the generated summaries.</td></tr>
+</table></div>
+<p>Edges between layers (imports, triggers and dependencies): evaluation → core 32, self-model → core 15, grid → evaluation 8, evaluation → classical 8, classical → core 7, everything else 1 to 4. The graph is a clean stack: the core library imports nothing from the layers above it (its one upward edge is <code>calibration</code> importing <code>selfmodel_diff</code>), and the classical stack depends only on the core.</p>
+<p>One classical episode (<code>Episode.run</code>) runs the layers in this order:</p>
+<ol class="flow">
+<li>Perceive: render depth from the scene and wrist cameras, back-project, remove the robot, fit the cube, cluster obstacles.</li>
+<li>Build the world model (octomap, voxel, ESDF, TSDF, mesh, primitives or pose).</li>
+<li>Solve four endpoints (pre-grasp, grasp, pre-place, place) for each of four grasp yaws and keep the best scored set.</li>
+<li>Plan home → pre-grasp, then pre-grasp → pre-place with the cube attached; shortcut both paths.</li>
+<li>Time each path within the body's velocity, acceleration and jerk limits.</li>
+<li>Track the timed reference with the chosen joint or task-space law, converting task twists to joint rates where needed.</li>
+<li>Score every physics step with the shared staged scorer (reach, grasp, lift, transport, place).</li>
+</ol>
+
+<h2>Part II. File by file</h2>
+
+<!-- ============================================================== CORE -->
+<section class="layer"><span class="tag">Layer · Core library</span>
+
+<h3>xbody/stats.py <span class="meta">53 lines · 6 functions</span></h3>
+<p>The statistics fixed by <code>protocol.yaml</code>. Every comparison in the benchmark is paired on the same seeds and layouts.</p>
+<div class="scroll"><table>
+<tr><th>Function</th><th>What it does</th></tr>
+<tr><td>wilson(k, n)</td><td class="eq">95% Wilson score interval for a success rate \(\hat p = k/n\), with \(z = 1.96\):
+\[ \frac{\hat p + \frac{z^2}{2n}}{1+\frac{z^2}{n}} \;\pm\; \frac{z}{1+\frac{z^2}{n}}\sqrt{\frac{\hat p(1-\hat p)}{n}+\frac{z^2}{4n^2}} \]</td></tr>
+<tr><td>mcnemar_exact(a, b)</td><td class="eq">Exact two-sided McNemar test on paired outcomes. With \(n_{01}\) episodes where only B succeeds, \(n_{10}\) where only A does, \(n = n_{01}+n_{10}\) and \(k=\min(n_{01},n_{10})\):
+\[ p = \min\!\Big(1,\; 2\sum_{i=0}^{k}\binom{n}{i}2^{-n}\Big) \]</td></tr>
+<tr><td>wilcoxon_stage(a, b)</td><td>Wilcoxon signed-rank test on paired stage reached (0–5), via SciPy; returns 1 when the pairs are identical.</td></tr>
+<tr><td>holm(p)</td><td class="eq">Holm step-down correction. Sort \(p_{(1)}\le\dots\le p_{(m)}\):
+\[ \tilde p_{(r)} = \min\!\Big(1,\;\max_{j\le r}(m-j+1)\,p_{(j)}\Big) \]</td></tr>
+<tr><td>retention(t, s)</td><td class="eq">Success retained across bodies: \(R = SR_\text{target}/SR_\text{source}\) (NaN when the source never succeeds).</td></tr>
+<tr><td>stage_retention(t, s)</td><td class="eq">The same on mean stage: \(\bar s_\text{target}/\bar s_\text{source}\).</td></tr>
+</table></div>
+
+<h3>xbody/stages.py <span class="meta">64 lines · 3 functions · 2 classes</span></h3>
+<p>The staged-success scorer shared by every stack, route and body. Each step feeds a body-free <code>StepState</code> (TCP, object, contacts, plate).</p>
+<div class="scroll"><table>
+<tr><th>Function</th><th>What it does</th></tr>
+<tr><td>StageScorer.update(s)</td><td class="eq">Advances a monotone stage counter. With thresholds from the protocol:
+\[ \begin{aligned} &1\text{ reach}: \|p_\text{tcp}-p_\text{obj}\|\le 0.03\text{ m}\\ &2\text{ grasp}: \text{both jaws touch for}\ge 0.5\text{ s}\\ &3\text{ lift}: z_\text{obj}-z_\text{table}\ge 0.05\text{ m held}\ge 1\text{ s}\\ &4\text{ transport}: \|xy_\text{obj}-xy_\text{plate}\|\le r_\text{plate}\text{ while lifted}\\ &5\text{ place}: \text{over plate},\ \|v_\text{obj}\|\lt 0.01,\ \text{jaws open}\ \ge 0.5\text{ s} \end{aligned} \]</td></tr>
+<tr><td>_advance(k, t)</td><td>Sets the stage and logs <code>(name, time)</code>.</td></tr>
+<tr><td>success</td><td>True when the stage reached is 5.</td></tr>
+</table></div>
+
+<h3>xbody/bodies.py <span class="meta">64 lines · 2 functions</span></h3>
+<p><code>SPECS</code> describes each arm for every stack: model file, arm joints, TCP frame, home pose, gripper map, layout offset, torque capability and the v/a/j limits used by the timing layer (Franka 1.0 rad/s, 2.0 rad/s², 20 rad/s³; SO-101 1.0, 3.0, 30). The canonical TCP convention is z = approach direction.</p>
+<div class="scroll"><table>
+<tr><th>Function</th><th>What it does</th></tr>
+<tr><td>tcp_frame(model, spec)</td><td class="eq">Returns (body, position offset, quaternion offset) of the TCP. For the SO-101, whose site approaches along x, it composes a +90° turn about y so that z is the approach: \(q = q_\text{site}\otimes(\cos\frac\pi4, 0, \sin\frac\pi4, 0)\).</td></tr>
+<tr><td>robot_body_ids(model, spec)</td><td>Walks up from the first arm joint to the robot's root body and returns it with all its descendants (used for self-filtering and collision sets).</td></tr>
+</table></div>
+
+<h3>xbody/scene.py <span class="meta">91 lines · 3 functions</span></h3>
+<p>Builds the single benchmark task in MuJoCo with <code>MjSpec</code>: the Menagerie arm, a floor, a 3 cm 30 g cube with friction 1.5, a plate and an obstacle post (r = 1.5 cm, h = 12 cm) between them.</p>
+<div class="scroll"><table>
+<tr><th>Function</th><th>What it does</th></tr>
+<tr><td>build(body, …)</td><td class="eq">The Phase 0 scene without the post. <code>kp_scale</code> rescales servo stiffness and damping together so the damping ratio is kept: \(k_p\to s\,k_p,\ k_d\to\sqrt{s}\,k_d\) (since \(\zeta = k_d / 2\sqrt{k_p m}\)).</td></tr>
+<tr><td>build_task(body, obstacle, torque, …)</td><td class="eq">The full classical scene: plate behind the post, a scene camera, and a wrist camera on the Franka hand aimed at the point between the fingers. Camera axes: \(z_c = -\widehat{(t-p)},\ x_c = \widehat{e_y\times z_c},\ y_c = z_c\times x_c\). <code>torque=True</code> turns position servos into torque motors: gain \((1,0,0)\), bias \(0\), control range = force range.</td></tr>
+<tr><td>sample_layout(rng, body)</td><td class="eq">One cube position drawn the same way for every body (same seed): \(xy \sim U([0.18,0.26]\times[-0.08,0.08]) + \text{offset}_\text{body}\).</td></tr>
+</table></div>
+
+<h3>xbody/kinematics.py <span class="meta">141 lines · 7 functions · 1 class</span></h3>
+<p>Interface K: body-agnostic retargeting of end-effector targets onto any arm. Every solver reads the body only from its MuJoCo model.</p>
+<div class="scroll"><table>
+<tr><th>Function</th><th>What it does</th></tr>
+<tr><td>Body.fk(q)</td><td class="eq">Forward kinematics of the TCP: \(p = x_b + R_b\,o,\quad R = R_b\,R_\text{off}\).</td></tr>
+<tr><td>Body.jacobian(q)</td><td class="eq">Position and rotation Jacobians at the TCP point from <code>mj_jac</code>, restricted to the arm's DoFs: \(J_p, J_r \in \mathbb R^{3\times n}\).</td></tr>
+<tr><td>rot_err(R_t, R)</td><td class="eq">Axis-angle error that rotates \(R\) toward \(R_t\): \(e_r = \log(R_t R^\top)^\vee\).</td></tr>
+<tr><td>solve_ik(body, p_t, R_t, method)</td><td class="eq">Iterative IK for any joint count.
+<b>dls</b> (damped least squares on the stacked task):
+\[ \Delta q = J^\top (J J^\top + \lambda^2 I)^{-1} e,\quad J=\begin{bmatrix}J_p\\ w J_r\end{bmatrix},\ e=\begin{bmatrix}e_p\\ w e_r\end{bmatrix} \]
+<b>newton</b>: the same with \(\lambda\to 0\) (stalls when a 6-D target is unreachable, which is the point).
+<b>hqp</b> (strict priority, position first, orientation in its null space):
+\[ \Delta q = J_p^{+} e_p + N\,(J_r N)^\top\big(J_r N (J_r N)^\top + \lambda I\big)^{-1}(e_r - J_r J_p^{+} e_p),\quad N = I - J_p^{+}J_p \]
+<b>orient="axis"</b> (the 5-DoF projection): only the approach axis is controlled, \(e_r = z\times z_t\), \(J_r \leftarrow (I - zz^\top) J_r\). Each step is clipped to a trust region \(\|\Delta q\|\le 0.2\) and to joint limits; hqp ends with position-only steps so position always wins.</td></tr>
+<tr><td>franka_width_to_ctrl(w)</td><td class="eq">Finger aperture to tendon command: \(u = 255\cdot\text{clip}(w/0.08, 0, 1)\).</td></tr>
+<tr><td>so101_width_to_ctrl(w)</td><td class="eq">Linear jaw-angle map: \(\theta = \theta_c + \text{clip}(w/w_\max,0,1)(\theta_o-\theta_c)\).</td></tr>
+</table></div>
+
+<h3>xbody/calibration.py <span class="meta">114 lines · 8 functions · 1 class</span></h3>
+<p>Calibration errors on any robot, and their identification back into a model file.</p>
+<div class="scroll"><table>
+<tr><th>Function</th><th>What it does</th></tr>
+<tr><td>chain_bodies(m, spec)</td><td>Root robot body, the body of each arm joint, and the TCP body, base to tip.</td></tr>
+<tr><td>_mulq, _quat_rv</td><td class="eq">Quaternion product (normalized) and rotation-vector to quaternion: \(q(\omega) = (\cos\frac{\theta}{2}, \hat\omega\sin\frac\theta2)\), \(\theta = \|\omega\|\).</td></tr>
+<tr><td>perturb(m, spec, seed, errors)</td><td class="eq">Makes a "real" arm in place. Each chain body gets \(\delta p\sim\mathcal N(0,\sigma_\text{link}^2 I)\) and a tilt of \(\mathcal N(0,\sigma_\text{axis})\) about a random axis (larger for the base); each joint gets an encoder zero offset \(\delta_j\sim\mathcal N(0,\sigma_\text{enc})\), applied as a rotation of its body about its own axis, \(R \leftarrow R\,\exp(-\delta_j[a_j]_\times)\), so the encoder reads \(q\) when the joint is at \(q-\delta_j\). Franka: 2 mm, 0.2°, 0.5°; SO-101: 1 mm, 0.5°, 1.5°; base 3 mm, 0.3°.</td></tr>
+<tr><td>ModelFK(q)</td><td class="eq">TCP pose of a model as a 4×4 transform: \(T(q) = \begin{bmatrix} R_b R_\text{off} & x_b + R_b o\\ 0 & 1\end{bmatrix}\).</td></tr>
+<tr><td>calibrate(m, spec, Q, T)</td><td class="eq">The self-model in model-file form: 6 corrections per chain body \(x_i = (\delta p_i, \delta\omega_i)\), fitted by robust nonlinear least squares (soft-L1, 5 mm scale) to logged encoders \(Q\) and measured poses \(T\):
+\[ \min_x \sum_k \rho\Big(\big\|p(q_k;x)-p_k\big\|^2 + L^2\big\|\log(R_k^\top R(q_k;x))^\vee\big\|^2\Big),\quad L = 0.2\text{ m/rad} \]
+Returns the corrected <code>MjModel</code> and the RMS position error before and after.</td></tr>
+</table></div>
+
+<h3>xbody/newt_agent.py <span class="meta">78 lines · 5 functions · 1 class</span></h3>
+<p>Loads a frozen Newt / TD-MPC2 checkpoint on CPU for inference only (route B). No update, buffer or optimizer step is ever called.</p>
+<div class="scroll"><table>
+<tr><th>Function</th><th>What it does</th></tr>
+<tr><td>_import_cpu_tdmpc2()</td><td>Imports TD-MPC2 from <code>third_party/newt_cpu</code> (Newt with two device strings set to CPU).</td></tr>
+<tr><td>build_cfg(task, adim, T)</td><td>Builds Newt's own config outside a Hydra run; observation padded to 128, action to 16.</td></tr>
+<tr><td>FrozenNewtAgent.__init__</td><td>Loads the state dict, keeps one action-mask slot (asserting all slots are equal), loads weights and sets <code>requires_grad=False</code> on every parameter: the no-training rule, enforced in code.</td></tr>
+<tr><td>act(obs, t0)</td><td class="eq">Zero-pads the observation and runs the planner or the prior: \(a_t = \pi(o_t)\) with MPPI planning in the latent world model when <code>mpc=True</code>, \(z_{t+1} = d(z_t, a_t)\), \(z = h(o)\).</td></tr>
+</table></div>
+</section>
+
+<!-- ============================================================== CLASSICAL -->
+<section class="layer"><span class="tag">Layer · Classical robotics stack</span>
+
+<h3>xbody/classical/perception.py <span class="meta">140 lines · 10 functions · 1 class</span></h3>
+<p>Layer 1, the input source: rendered depth point clouds, the robot's own model for self-filtering, colour thresholding for the red cube and a known-model fit. No learned component.</p>
+<div class="scroll"><table>
+<tr><th>Function</th><th>What it does</th></tr>
+<tr><td>red_mask(col)</td><td class="eq">Hue test robust to shadowed faces: \(r\gt 0.12 \wedge r\gt 1.8g \wedge r\gt 1.8b\).</td></tr>
+<tr><td>Perceiver._render</td><td>RGB, depth and segmentation from one camera.</td></tr>
+<tr><td>_backproject(cam, depth)</td><td class="eq">Pinhole back-projection with \(f = \frac{H/2}{\tan(\text{fovy}/2)}\):
+\[ x = \frac{u - W/2 + \frac12}{f}d,\quad y = -\frac{v - H/2+\frac12}{f}d,\quad p_c = (x, y, -d),\quad p_w = R_c p_c + t_c \]</td></tr>
+<tr><td>frames, point_cloud</td><td>All cameras; the scene cloud with robot pixels removed by segmentation (self-filter) and a red mask.</td></tr>
+<tr><td>image_features(cam)</td><td>For visual servoing: the cube's pixel centroid, area and median depth from the wrist camera.</td></tr>
+<tr><td>clusters(P, tol)</td><td>Euclidean clustering: connected components of the radius-tol neighbour graph (k-d tree pairs).</td></tr>
+<tr><td>estimate_cube_pose(points, red)</td><td class="eq">Merges red clusters within two cube sizes, takes the top face, a robust centre from the 5th and 95th percentiles, then fits centre and yaw so every point lies on the 3 cm box surface. With \(L = R_\psi(P-c)\) and \(o = |L| - h\):
+\[ d(P) = \begin{cases}\max_i o_i & \text{inside}\\ \|\max(o,0)\| & \text{outside}\end{cases},\qquad \min_{c_{xy},\psi}\sum\rho\big(d(P)\big) \]</td></tr>
+<tr><td>obstacle_points(points, red, cube)</td><td>Non-floor, non-cube points, clustered; clusters within 4 cm of the cube are dropped.</td></tr>
+</table></div>
+
+<h3>xbody/classical/worldmodel.py <span class="meta">210 lines · 10 functions · 3 classes</span></h3>
+<p>Layer 2: each representation answers one question for the planners, the clearance between robot and obstacles at a configuration \(q\). The robot side is always surface points sampled from its own collision geometry.</p>
+<div class="scroll"><table>
+<tr><th>Function</th><th>What it does</th></tr>
+<tr><td>RobotPoints.world(q)</td><td class="eq">Posed robot surface samples: \(P = \bigcup_g \{x_g + R_g\,s\}\), plus the held cube's points when attached.</td></tr>
+<tr><td>Grid.idx(P)</td><td class="eq">Voxel index at 1 cm: \(i = \lfloor (P - lo)/0.01\rfloor\), with an in-bounds mask.</td></tr>
+<tr><td>_occupancy</td><td>Binary voxel grid from obstacle points.</td></tr>
+<tr><td>_octomap(frames)</td><td class="eq">Probabilistic occupancy in log-odds, ray-cast: each cell along a ray adds \(\ell_\text{miss} = -0.4\), the endpoint \(\ell_\text{hit} = 0.85\); occupied when \(\ell\gt 0.5\).</td></tr>
+<tr><td>_tsdf(frames)</td><td class="eq">Truncated signed distance fusion (truncation \(\tau = 3\) cm). For each voxel centre projected into each depth frame:
+\[ \text{sdf} = d_\text{meas} - z,\quad v = \text{clip}(\text{sdf}/\tau,-1,1),\quad D \leftarrow \frac{D\,W + v}{W+1},\ W\leftarrow W+1 \]
+The surface is \(|D|\lt 1.2\,\text{res}/\tau\), then an ESDF.</td></tr>
+<tr><td>clearance(P)</td><td class="eq">Per point: voxel/octomap return \(-\text{res}\) if occupied (dilated by 3 cells) else 1 m; ESDF/TSDF return \(D(P) - \text{res}/2\) from the Euclidean distance transform; primitives/pose use a vertical cylinder \((c, r, h)\):
+\[ d = \begin{cases}\sqrt{\max(\rho-r,0)^2 + (z-h)^2} & z\gt h\\ \rho - r & \text{else}\end{cases},\quad \rho = \|xy - c\| \]</td></tr>
+<tr><td>prepare()</td><td>Dilation for binary maps and the distance-field gradient for CHOMP.</td></tr>
+<tr><td>clearance_q(q)</td><td class="eq">Minimum robot–obstacle distance. For "mesh", exact geom distances on the given model: \(\min_g \text{mj\_geomDistance}(g, \text{post})\) (this model is the belief arm after the fix on <code>fix/mesh-belief-model</code>); otherwise \(\min \text{clearance}(\text{world}(q))\).</td></tr>
+<tr><td>gradient(P)</td><td class="eq">\(\nabla D\) at points from the precomputed field gradient.</td></tr>
+</table></div>
+
+<h3>xbody/classical/ik.py <span class="meta">238 lines · 13 functions · 2 classes</span></h3>
+<p>Layer 3, endpoint selection: turn a TCP target into a joint goal.</p>
+<div class="scroll"><table>
+<tr><th>Function</th><th>What it does</th></tr>
+<tr><td>_pose_err</td><td class="eq">\(e = (p_t - p,\ w\,e_r)\), \(w = 0.3\).</td></tr>
+<tr><td>newton</td><td>Undamped full-pose Newton through <code>solve_ik</code>.</td></tr>
+<tr><td>lm</td><td class="eq">Levenberg–Marquardt with Marquardt scaling and adaptive damping:
+\[ \Delta q = \big(J^\top J + \lambda\,\text{diag}(J^\top J)\big)^{-1}J^\top e \]
+accept and \(\lambda\leftarrow\lambda/3\) if \(\|e\|\) falls, else \(\lambda\leftarrow 4\lambda\).</td></tr>
+<tr><td>ccd</td><td class="eq">Cyclic coordinate descent, tip to base. For joint \(k\) with anchor \(o\) and axis \(a\), project \(u = p - o\) and \(v = p_t - o\) onto the plane normal to \(a\):
+\[ \Delta\theta_p = \operatorname{atan2}\!\big(a\cdot(u\times v),\, u\cdot v\big) \]
+The last two joints also pull the approach axis: \(q_k \mathrel{+}= (1-w)\Delta\theta_p + w\,\Delta\theta_o\), \(w=0.5\).</td></tr>
+<tr><td>constrained</td><td class="eq">SLSQP with position as an equality and joint limits as bounds:
+\[ \min_q f(q)\ \text{s.t.}\ p(q) = p_t,\quad f = \|e_r\|^2\ \text{or, on 5 DoF,}\ (1 - z\cdot z_t) + 0.02\|e_r\|^2 \]</td></tr>
+<tr><td>AnalyticSO101 (init, _rot, _solve_once, solve)</td><td class="eq">Closed-form IK for the SO-101: base pan + planar 3-link chain + wrist roll, with link vectors read off the model at zero pose. Pan from the bearing minus the lateral offset \(\ell\): \(\rho = \|xy\|,\ r = \sqrt{\rho^2-\ell^2},\ \text{pan} = \operatorname{atan2}(y,x) - \operatorname{atan2}(\ell, r)\). Wrist centre for the requested approach angle \(\varphi_t\): \(W = T - R(\varphi_t-\varphi_0)v_3\). Two-link law of cosines for both elbow branches:
+\[ \cos\beta_2 = \frac{\|W-S\|^2 - L_1^2 - L_2^2}{2L_1L_2},\quad \beta_1 = \operatorname{atan2}(\Delta W) - \operatorname{atan2}(L_2\sin\beta_2, L_1+L_2\cos\beta_2) \]
+then \(t_3 = (\varphi_t - \varphi_0) - t_1 - t_2\), roll from the jaw yaw error. Because the TCP is off the roll axis, <code>solve</code> iterates a fixed point \(p \leftarrow p + (p_t - \text{fk}(q))\), and tilts the approach by ±2…10° when a branch breaks a joint limit.</td></tr>
+<tr><td>_info</td><td>Position, rotation and approach-axis errors of a solution.</td></tr>
+<tr><td>EndpointSolver.__call__</td><td>Dispatches analytic, newton, lm, ccd, constrained or taught (solve once at the nominal layout, then replay the joint goal).</td></tr>
+</table></div>
+
+<h3>xbody/classical/planning.py <span class="meta">408 lines · 22 functions · 1 class</span></h3>
+<p>Layer 4: a joint-space path that the world model calls collision-free with margin \(m = 2.5\) cm, checked every 0.03 rad.</p>
+<div class="scroll"><table>
+<tr><th>Function</th><th>What it does</th></tr>
+<tr><td>Space.valid / motion_ok / sample</td><td class="eq">\(q\) valid iff in limits and \(c(q)\gt m\); a motion \(a\to b\) is checked at \(k = \lceil\|b-a\|_\infty/0.03\rceil\) points.</td></tr>
+<tr><td>shortcut(space, path)</td><td>OMPL-style simplifier: densify, 1,000 random collision-free shortcuts, then drop every vertex whose neighbours connect.</td></tr>
+<tr><td>path_length</td><td class="eq">\(\sum\|q_{i+1}-q_i\|\).</td></tr>
+<tr><td>ompl_plan(name)</td><td>OMPL geometric planners: PRM, PRM*, RRT, RRT-Connect, RRT*, Informed RRT*, KPIECE, seeded for reproducibility.</td></tr>
+<tr><td>lazyprm</td><td>300-node roadmap, k = 10 neighbours, edges checked only on the current shortest path (Dijkstra); failed edges are removed and the search repeats.</td></tr>
+<tr><td>est</td><td class="eq">Expansive space trees: expand node \(i\) with probability \(\propto 1/\text{density}_i\), a step of 0.25 toward a random direction (10% toward the goal).</td></tr>
+<tr><td>kinorrt (and SST)</td><td class="eq">Kinodynamic RRT on a joint double integrator, \(q_{t+1} = q_t + \dot q_t\Delta t + \frac12 u\Delta t^2\), \(\dot q_{t+1} = \dot q_t + u\Delta t\), with \(u = \text{clip}(4(q^* - q) - 2\dot q + \epsilon)\). SST picks the lowest-cost node within \(\delta_{bn}\) of the nearest and prunes by witnesses within \(\delta_s\). A PD steering roll-out \(u = 9(q_g-q) - 6\dot q\) connects to the goal.</td></tr>
+<tr><td>lattice_search</td><td class="eq">A* (\(h = \|q - q_g\|\)), Dijkstra (\(h = 0\)) or a state lattice (extra coupled primitives) on a 0.1 rad grid: \(f = g + h\).</td></tr>
+<tr><td>_init_traj, _clear_grad, _finite_diff_A</td><td class="eq">Straight initial trajectory; finite-difference clearance gradient \(\partial c/\partial q_i\); smoothness metric \(A = K^\top K + 10^{-3}I\) with \(K\) the first-difference matrix.</td></tr>
+<tr><td>chomp</td><td class="eq">Covariant gradient descent on smoothness plus obstacle cost:
+\[ Q \leftarrow Q - \eta\,A^{-1}\big(AQ + \nabla\mathcal F_\text{obs}\big),\quad \nabla\mathcal F_\text{obs} = -50\,(\epsilon - c)\,\nabla c\ \text{ where } c\lt\epsilon \]</td></tr>
+<tr><td>stomp</td><td class="eq">\(K = 12\) noisy roll-outs \(\epsilon_k = L\xi_k\), \(LL^\top = A^{-1}\); cost \(S = 100\sum\max(0, 0.04 - c)^2 + 0.1\,\text{length}\); update \(Q \mathrel{+}= \sum_k w_k\epsilon_k\), \(w_k \propto e^{-10(S_k - S_\min)/(S_\max - S_\min)}\).</td></tr>
+<tr><td>trajopt</td><td class="eq">Sequential convex optimization: \(\min \sum\|q_{t+1}-q_t\|^2\) s.t. the linearized clearance \(c(q_t^0) + \nabla c^\top(q_t - q_t^0)\ge 2m\), inside a trust region that shrinks by 0.7 each outer step.</td></tr>
+<tr><td>potential</td><td class="eq">Attractive + repulsive field: \(f = (q_g - q) + k\big(\frac1c - \frac1{d_0}\big)\frac{1}{c^2}\nabla c\) when \(c\lt d_0\); fixed-length steps; reports a stall in a local minimum.</td></tr>
+<tr><td>dampers</td><td class="eq">Velocity dampers: the clearance rate is bounded, \(\dot d \ge -\xi\frac{d - d_s}{d_i - d_s}\); a violating step is projected onto that half-space, \(v \leftarrow v + \frac{b - g^\top v}{g^\top g}g\).</td></tr>
+<tr><td>straight</td><td>The straight joint segment if it is valid, else nothing.</td></tr>
+</table></div>
+
+<h3>xbody/classical/timing.py <span class="meta">278 lines · 22 functions · 1 class</span></h3>
+<p>Layer 5: a waypoint path becomes a timed reference \(q(t), \dot q(t), \ddot q(t)\) within each body's \(v_\max, a_\max, j_\max\), sampled at 10 ms.</p>
+<div class="scroll"><table>
+<tr><th>Function</th><th>What it does</th></tr>
+<tr><td>Traj (at, duration)</td><td>Timed samples with numeric derivatives and linear interpolation.</td></tr>
+<tr><td>_dedupe, _arc_param</td><td class="eq">Drop repeated waypoints; normalized arc length \(u_i = s_i/s_N\).</td></tr>
+<tr><td>phase_plane</td><td class="eq">Time-optimal \(\dot s(s)\) along \(q(s)\) (classic TOPP). Velocity-limit curve:
+\[ \dot s_\text{MVC}(s) = \min_j\min\!\Big(\frac{v_\max}{|q_j'|},\ \sqrt{\frac{a_\max}{|q_j''|}}\Big) \]
+Acceleration bounds from \(\ddot q_j = q_j'\ddot s + q_j''\dot s^2\), \(|\ddot q_j|\le a_\max\). Integrate forward at the max, backward at the min, \(\dot s_{i+1}^2 = \dot s_i^2 + 2\ddot s\,\Delta s\), take the minimum of both and the MVC, then \(\Delta t_i = \frac{2\Delta s}{\dot s_i + \dot s_{i+1}}\).</td></tr>
+<tr><td>_resample, _spline_profile, topp</td><td>A clamped cubic spline through the waypoints, profiled by the phase plane, resampled at 10 ms.</td></tr>
+<tr><td>toppra_</td><td>TOPP-RA (reachability analysis) from the <code>toppra</code> library with joint velocity and acceleration constraints; falls back to TOPP.</td></tr>
+<tr><td>totg</td><td class="eq">Corners replaced by quadratic Bézier blends of deviation at most \(\delta\): \(d = \min\big(\frac{4\delta}{\|u_2-u_1\|}, \frac{\ell_1}{2}, \frac{\ell_2}{2}\big)\), \(B(w) = (1-w)^2p_1 + 2(1-w)w\,b + w^2p_2\), then the phase-plane profile.</td></tr>
+<tr><td>_iptp_times, iptp</td><td class="eq">MoveIt's iterative parabolic parameterization: start from \(\Delta t_i = \|\Delta q_i\|_\infty / v_\max\); wherever \(\frac{|v_i - v_{i-1}|}{(\Delta t_{i-1}+\Delta t_i)/2}\gt a_\max\), scale both neighbouring durations by \(f^{1/2}\), \(f = \sqrt{a/a_\max}\); then a cubic Hermite spline through the waypoints.</td></tr>
+<tr><td>_segment_profile</td><td class="eq">Trapezoid: \(t_a = v/a\), cruise \(t_c = (D - v t_a)/v\) (triangular if \(D\lt v t_a\): \(t_a = \sqrt{D/a}\)). Double-S (Biagiotti–Melchiorri): jerk phases \(t_j = \min(a/j, \sqrt{v/j})\), peak speed found by bisection when the distance is short.</td></tr>
+<tr><td>_stop_and_go, trapezoid, scurve</td><td>Stop at every waypoint; synchronized per-segment trapezoid or jerk-limited profile on the limiting joint.</td></tr>
+<tr><td>ruckig_</td><td>Ruckig online jerk-limited generation through the waypoints, with IPTP waypoint velocities.</td></tr>
+</table></div>
+
+<h3>xbody/classical/control.py <span class="meta">463 lines · 25 functions · 5 classes</span></h3>
+<p>Layers 7 to 9: reference conversion, feedback control and the actuator interface. The task is 6-D on arms with 6+ joints and 5-D on the SO-101 (position plus the two approach-axis components), so the Jacobian is square only on the SO-101.</p>
+<div class="scroll"><table>
+<tr><th>Function</th><th>What it does</th></tr>
+<tr><td>Dyn (sync, M, h, g, passive)</td><td class="eq">Arm dynamics from MuJoCo: \(M(q)\ddot q + h(q,\dot q) = \tau\), with \(h = C\dot q + g\) (<code>qfrc_bias</code>) and \(g\) from a zero-velocity forward pass.</td></tr>
+<tr><td>task_jacobian, task_error</td><td class="eq">6-D: \(J = [J_p; J_r]\), \(e = (p_r - p, e_r)\). 5-D: \(B\) = two directions orthogonal to the approach \(z\) (from the SVD of \(I - zz^\top\)), \(J = [J_p; B^\top J_r]\), \(e = (p_r - p, B^\top(z\times z_r))\).</td></tr>
+<tr><td>Converter (dls, pinv, jinv, jtrans)</td><td class="eq">Task velocity to joint velocity: \(\dot q = J^\top(JJ^\top+\lambda^2I)^{-1}v\), \(J^+v\), \(J^{-1}v\) (square only), \(2J^\top v\).</td></tr>
+<tr><td>Converter (qp, cbf, hqp) and _qp</td><td class="eq">OSQP problem \(\min_{\dot q}\|J\dot q - v\|^2 + 10^{-4}\|\dot q\|^2\) s.t. joint-limit rates \(\frac{q_\min - q}{\Delta t}\le\dot q\le\frac{q_\max-q}{\Delta t}\), \(|\dot q|\le 2\). <b>qp/cbf</b> add a barrier on clearance, \(\nabla c^\top\dot q \ge -\gamma(c - 0.01)\), and cbf also on table height, \(J_{p,z}\dot q\ge -5(z - 0.004)\). <b>hqp</b> solves position first, then orientation with the position rate fixed as an equality.</td></tr>
+<tr><td>ILCMemory (step, end_trial)</td><td class="eq">PD-type iterative learning control with a Q-filter (25-sample zero-phase moving average):
+\[ u_{j+1}(t) = Q\big[u_j(t) + \Gamma_p e_j(t+1) + \Gamma_d \dot e_j(t+1)\big] \]</td></tr>
+<tr><td>JointLaw.gains</td><td class="eq">Inertia-scaled PD gains: \(K_p = \omega^2 M_{ii}\), \(K_d = 2\zeta\omega M_{ii}\), \(\omega = 25\), \(\zeta = 1\).</td></tr>
+<tr><td>JointLaw.__call__</td><td class="eq">With \(e = q_r - q\):
+<b>cascade</b> (servo arms): \(q_\text{cmd} = q_r + 0.5e\ (+0.02\dot e)(+2\!\int e)\).
+<b>p/pd/pid</b>: \(\tau = K_pe + K_d\dot e + 5K_p\!\int e\).
+<b>pdg</b>: \(\tau = K_pe + K_d\dot e + g(q)\).
+<b>ct</b>: \(\tau = M(\ddot q_r + 50\dot e + 625e) + h\).
+<b>smc</b>: \(s = \dot e + \lambda e\), \(\tau = M(\ddot q_r + \lambda\dot e) + h + 10M_{ii}\,\text{sat}(s/\phi)\).
+<b>backstepping</b>: \(z_1 = q - q_r\), \(\alpha = \dot q_r - k_1z_1\), \(z_2 = \dot q - \alpha\), \(\tau = M(\dot\alpha - z_1 - k_2z_2) + h\).
+<b>passivity</b>: \(\dot q_\rho = \dot q_r + \lambda e\), \(s = \dot q - \dot q_\rho\), \(\tau = M\ddot q_\rho + h - 50M_{ii}s\).
+<b>slotine–li adaptive</b>: \(Y = [\ddot q_\rho, \dot q_\rho, 1]\), \(\dot{\hat\theta} = -\Gamma Y^\top s\), \(\tau = Y\hat\theta - K_ds\).
+<b>mrac</b>: reference model \(\ddot q_m = \ddot q_r + 2\omega_n(\dot q_r - \dot q_m) + \omega_n^2(q_r - q_m)\), \(\dot{\hat\theta} = \Gamma\phi\sigma\), \(\sigma = \dot e_m + 5e_m\).
+<b>jimp</b>: softer PD + gravity (\(\omega = 12\)). <b>ilc</b>: base law + learned feedforward.</td></tr>
+<tr><td>_linearize, _linear (lqr, lqg)</td><td class="eq">Finite-difference linearization \(x_{t+1} = Ax_t + Bu_t\) (<code>mjd_transitionFD</code>), refreshed every 100 steps. LQR from the discrete Riccati equation:
+\[ P = A^\top PA - A^\top PB(R + B^\top PB)^{-1}B^\top PA + Q,\quad K = (R + B^\top PB)^{-1}B^\top PA \]
+\(\tau = M\ddot q_r + h - K(x - x_r)\). LQG adds a per-joint Kalman filter on noisy encoders (velocity unmeasured): \(\hat x^- = F\hat x + G\,\ddot q_\text{model}\), \(K_k = P^-H^\top/(HP^-H^\top + R_k)\).</td></tr>
+<tr><td>_mpc_solve</td><td class="eq">Linear MPC over \(N = 15\) steps, condensed: \(X = \Phi x_0 + \Gamma U\),
+\[ \min_U\ U^\top(\Gamma^\top\bar Q\Gamma + \bar R)U + 2x_0^\top\Phi^\top\bar Q\Gamma U\quad\text{s.t.}\ -u_\max - u_\text{ff}\le U\le u_\max - u_\text{ff} \]
+with the LQR cost-to-go as the terminal weight; re-solved every 2 steps.</td></tr>
+<tr><td>_nmpc</td><td class="eq">Sampling-based nonlinear MPC (MPPI) with full MuJoCo roll-outs: \(K = 12\) noisy sequences over \(H = 8\) blocks, \(w_k\propto e^{-(S_k - S_\min)/\sigma_S}\), \(U \leftarrow U + \sum w_k\epsilon_k\), shifted each update.</td></tr>
+<tr><td>_hinf_gain</td><td class="eq">H∞ state feedback for the feedback-linearized double integrator with attenuation \(\gamma = 2\): the game Riccati equation as a CARE with indefinite \(R = \text{diag}(1, -\gamma^2)\); \(K = B^\top P\).</td></tr>
+<tr><td>TaskLaw.__call__</td><td class="eq">Task-space torque laws. Operational-space inertia \(\Lambda = (JM^{-1}J^\top)^{+}\), dynamically consistent null space \(N = I - J^\top\Lambda JM^{-1}\), posture term \(\tau_0 = N\,M_{ii}(25(q_h - q) - 10\dot q)\).
+<b>osc</b>: \(\tau = J^\top\Lambda(K_xe + D_x\dot e) + h + \tau_0\), \(D_x = 2\sqrt{K_x}\).
+<b>cimp</b>: softer Cartesian impedance + gravity.
+<b>force/hybrid</b>: in contact, \(F_z = f_d + 0.5(f_d - f_z) + 5\!\int(f_d - f_z)\), \(f_d = -3\) N; hybrid keeps xy and orientation in position with a selection matrix.
+<b>ptask</b>: impedance whose spring power \(\dot x^\top F_k\) is drawn from an energy tank refilled by damping, \(E \leftarrow \text{clip}(E + (P_d - P_k)\Delta t, 0, 5)\); an empty tank leaves only damping.</td></tr>
+</table></div>
+
+<h3>xbody/classical/pipeline.py <span class="meta">444 lines · 16 functions · 1 class</span></h3>
+<p>One episode of the full classical stack (S1), every layer swappable through <code>cfg</code>. Default: point cloud → primitives → constrained IK → RRT-Connect → TOPP-RA → joint tracking → HQP conversion → PD+gravity (torque) or servo PD (cascade).</p>
+<div class="scroll"><table>
+<tr><th>Function</th><th>What it does</th></tr>
+<tr><td>real_interface(body)</td><td>"torque" for the Franka, "cascade" (embedded position servo) for the SO-101.</td></tr>
+<tr><td>Episode.__init__</td><td>Resolves defaults, builds the scene, and for self-model runs keeps two models: the perturbed real arm <code>m</code> (physics, rendering, scoring) and the belief <code>m_belief</code> (IK, FK, planning).</td></tr>
+<tr><td>reset(cube_xy)</td><td>Home pose, cube placement, gripper open, the control law (and ILC gains: half the feedback gains).</td></tr>
+<tr><td>perceive()</td><td>Layers 1–2: known geometry or rendered perception; builds the world model on the belief arm.</td></tr>
+<tr><td>clearance(q, holding)</td><td>World-model clearance; for "mesh" the held cube is moved to the TCP first.</td></tr>
+<tr><td>endpoints()</td><td class="eq">Solves pre-grasp, grasp, pre-place and place for yaws 0°, 90°, 180°, 270° and keeps the best score: \(\text{score} = \min_i c(q_i) - 10\max_i e_{p,i}\).</td></tr>
+<tr><td>plan, timed</td><td>Layer 4 with a 3 s budget (cube attached when holding) and shortcutting; layer 5 timing.</td></tr>
+<tr><td>_wrench_z</td><td class="eq">Vertical contact force on the robot: \(f_z = \sum_c \pm|f_n|\,n_z\).</td></tr>
+<tr><td>_step(u)</td><td>Saturates torques, steps physics, flags post contact, updates the scorer.</td></tr>
+<tr><td>state()</td><td>The scorer's <code>StepState</code>, with the TCP from the true arm so scoring sees where the hand really is.</td></tr>
+<tr><td>hold, track</td><td class="eq">Follow a timed reference. Cartesian tracking: \(v = \dot p_r + 20\,e\), then \(\dot q = \text{conv}(q, v)\), \(q_\text{cmd} = q + \dot q\Delta t\). Admittance adds \(\ddot z = (f_z - 40z - 12\dot z)/0.5\) to the reference height.</td></tr>
+<tr><td>_clear_grad</td><td>Finite-difference clearance gradient for the QP and CBF converters.</td></tr>
+<tr><td>servo(kind)</td><td class="eq">Visual servoing from the wrist camera, normalized image point \((x, y)\), depth \(Z\). <b>IBVS</b>: \(L = \begin{bmatrix}-1/Z & 0 & x/Z\\ 0 & -1/Z & y/Z\end{bmatrix}\), \(v_c = -\lambda L^+ s\). <b>PBVS</b>: the back-projected target in the world, \(v = 2(p^* - p)\). <b>2.5-D</b>: image error in xy, \(v_z = -\lambda\log(z/z^*)\).</td></tr>
+<tr><td>run, run_vs_branch</td><td>The full pick-and-place sequence (move, descend, close, lift, plan, descend, open, retreat); the camera-only branch with no map and no planner.</td></tr>
+<tr><td>result()</td><td class="eq">Metrics: stage, success, saturation fraction, tracking RMS \(\sqrt{\sum\|q_r - q\|^2/(Nn)}\), planning time and path length.</td></tr>
+</table></div>
+</section>
+
+<!-- ============================================================== SELF-MODEL -->
+<section class="layer"><span class="tag">Layer · Self-modeling experiments</span>
+
+<h3>xbody/selfmodel_diff.py <span class="meta">283 lines · 30 functions · 2 classes</span></h3>
+<p>Identifies an arm's kinematics from teleop logs alone (encoders \(q_k\) and measured hand poses \(T_k\)), as a product of exponentials about the first configuration:
+\[ T(q) = e^{[S_1](q_1 - q_{\text{ref},1})}\cdots e^{[S_n](q_n - q_{\text{ref},n})}\,M \]
+Fitting \(q - q_\text{ref}\) absorbs constant encoder offsets. This is classical calibration (6 numbers per joint), not training.</p>
+<div class="scroll"><table>
+<tr><th>Function</th><th>What it does</th></tr>
+<tr><td>hat, so3_exp, so3_log</td><td class="eq">\([\omega]_\times\); Rodrigues \(e^{[\omega]} = I + \frac{\sin\theta}{\theta}K + \frac{1-\cos\theta}{\theta^2}K^2\); \(\log R = \frac{\theta}{2\sin\theta}(R - R^\top)^\vee\), \(\theta = \arccos\frac{\text{tr}R - 1}{2}\), with care near 0 and π.</td></tr>
+<tr><td>se3_exp (and _batch)</td><td class="eq">Revolute screw \(S = (\omega, v)\), \(\|\omega\| = 1\): \(e^{[S]\theta} = \begin{bmatrix}e^{[\omega]\theta} & G(\theta)v\\0&1\end{bmatrix}\), \(G = I\theta + (1-\cos\theta)[\omega] + (\theta - \sin\theta)[\omega]^2\).</td></tr>
+<tr><td>pose, inv (and _batch)</td><td class="eq">Homogeneous transforms; \(T^{-1} = \begin{bmatrix}R^\top & -R^\top p\\0&1\end{bmatrix}\).</td></tr>
+<tr><td>twist_of, rotvec_batch, twists_batch</td><td class="eq">A relative motion as a 6-vector with rotation scaled by \(L = 0.2\) m/rad: \(\xi = (L\log R, t)\).</td></tr>
+<tr><td>project_rot</td><td class="eq">Nearest rotation: \(R = UV^\top\) from the SVD, flipping a sign when \(\det\lt0\).</td></tr>
+<tr><td>PoEModel.screw / encode</td><td class="eq">Each screw stored as 5 numbers, axis angles \((\vartheta, \phi)\) and a point \(p\) on the axis: \(\omega = (\sin\vartheta\cos\phi, \sin\vartheta\sin\phi, \cos\vartheta)\), \(v = -\omega\times p\).</td></tr>
+<tr><td>product, fk, products</td><td>\(P(q)\) and \(T(q) = P(q)M\), single and batched.</td></tr>
+<tr><td>fit (differential stage)</td><td class="eq">\(M\) cancels in relative transforms \(D_k = T_{k+1}T_k^{-1} = P(q_{k+1})P(q_k)^{-1}\), so the screws are fitted on changes only:
+\[ \min_x\sum_k\big\|\xi\big(P_x(q_{k+1})P_x(q_k)^{-1}\big) - \xi(D_k)\big\|^2 \]</td></tr>
+<tr><td>set_M</td><td class="eq">\(M = \text{avg}_k\,P(q_k)^{-1}T_k\), with the rotation projected back onto SO(3).</td></tr>
+<tr><td>refine_absolute</td><td class="eq">Second stage on absolute poses, screws and \(M\) together:
+\[ \min_{x,M}\sum_k \|p_k(x, M) - p_k\|^2 + L^2\|\log(R_k^\top R_k(x,M))\|^2 \]
+Differences of noisy poses carry the noise twice and cannot see drift along the chain; absolute poses pin it. (This is why "changes only" stays at 20–36 mm and "changes + absolute" reaches 1–2 mm.)</td></tr>
+<tr><td>init_from_jacobian</td><td>Initial screws from a 6×n spatial Jacobian: \(\omega_i = J_{r,i}/\|J_{r,i}\|\), \(v_i\) scaled the same way.</td></tr>
+<tr><td>spatial_jacobian_ls</td><td class="eq">Ridge least squares for \(\Xi = J\,\Delta Q\): \(J^\top = (\Delta Q^\top\Delta Q + \epsilon I)^{-1}\Delta Q^\top\Xi\).</td></tr>
+<tr><td>_solve</td><td>Levenberg–Marquardt, or TRF with a soft-L1 loss (5 mm scale) when sensor poses can be wrong.</td></tr>
+<tr><td>fit_poe</td><td>Blind fit (screws from a local Jacobian over the first 100 steps) or calibration (from the nominal Jacobian), optionally with the absolute stage.</td></tr>
+<tr><td>LocalJacobian (predict, update)</td><td class="eq">Model-free baseline, recursive least squares with forgetting \(\lambda = 0.98\):
+\[ g = \frac{P\Delta q}{\lambda + \Delta q^\top P\Delta q},\quad J \leftarrow J + (\Delta x - J\Delta q)g^\top,\quad P\leftarrow\frac{P - gq^\top P}{\lambda} \]</td></tr>
+<tr><td>delta_x</td><td>Change of TCP position and scaled rotation vector between two poses.</td></tr>
+<tr><td>ik(fk, T, q0)</td><td class="eq">Bounded least-squares IK on any model: \(\min_q\|p(q) - p^*\|^2 + L^2\|\log(R^{*\top}R(q))\|^2\).</td></tr>
+</table></div>
+
+<h3>xbody/selfmodel_sensing.py <span class="meta">239 lines · 13 functions · 3 classes</span></h3>
+<p>Sensor pipelines from rendered data to a measured sensor pose. Each pipeline sees only what a real one would: the image or ranges, its own imperfect calibration, and the board or room model.</p>
+<div class="scroll"><table>
+<tr><th>Function</th><th>What it does</th></tr>
+<tr><td>intrinsics()</td><td class="eq">\(K = \begin{bmatrix}f&0&W/2\\0&f&H/2\\0&0&1\end{bmatrix}\), \(f = \frac{H/2}{\tan(\text{fovy}/2)}\).</td></tr>
+<tr><td>Rig</td><td class="eq">True and estimated calibration: \(f_\text{est} = f(1 + \mathcal N(0, 0.002))\), principal point ±0.5 px, distortion \(k_1\) ±2%, stereo extrinsics ±0.03°, ±0.2 mm; a remap table for lens distortion.</td></tr>
+<tr><td>degrade(img)</td><td>Distortion, exposure change, Gaussian defocus and sensor noise, to grey.</td></tr>
+<tr><td>BoardDetector.corners</td><td>ChArUco corners and ids (needs at least 6).</td></tr>
+<tr><td>mono_pose</td><td class="eq">PnP: planar IPPE, then LM refinement of \(\min_{R,t}\sum\|\pi(K, D, RX_i + t) - u_i\|^2\); rejected if the reprojection RMS exceeds 1.5 px. Returns the camera in the board frame, \(T = (R, t)^{-1}\).</td></tr>
+<tr><td>stereo_pose</td><td>Corners matched by id, undistorted, triangulated with the calibrated rig, then Kabsch onto the board model; rejected above 1 cm RMS.</td></tr>
+<tr><td>kabsch(A, B)</td><td class="eq">Best rigid fit \(B \approx RA + t\): \(H = (A - \bar A)^\top(B - \bar B) = U\Sigma V^\top\), \(R = V\,\text{diag}(1, 1, \det(VU^\top))\,U^\top\), \(t = \bar b - R\bar a\).</td></tr>
+<tr><td>lidar_dirs, lidar_scan</td><td class="eq">A Mid-360-like pattern (360° × −7…52°, 2° steps): \(d = (\cos e\cos a, \cos e\sin a, \sin e)\); ray-cast against the room only, with range noise and dropouts.</td></tr>
+<tr><td>room_map</td><td>Points and normals on the room's visible surfaces (floor, inner wall faces, clutter boxes) at 1 cm.</td></tr>
+<tr><td>LidarLocalizer.localize</td><td class="eq">Point-to-plane ICP from the previous estimate. Linearized residual for a world twist \(\xi = (\omega, t)\):
+\[ r_i = n_i^\top(x_i - q_i),\quad A_i = [\,x_i\times n_i,\ n_i\,],\quad (A^\top WA)\xi = -A^\top Wr \]
+with Huber weights \(w_i = \min(1, 0.02/|r_i|)\). Rejects degenerate geometry (smallest/largest eigenvalue of the recentred \(A^\top A\) below \(2\times10^{-3}\)) and slips (under 85% inliers or a median residual above 3 cm).</td></tr>
+</table></div>
+
+<h3>xbody/selfmodel_lab.py <span class="meta">183 lines · 7 functions</span></h3>
+<p>The realistic self-modeling lab: the arm with a sensor head (stereo cameras and a lidar) in a room with a ChArUco board, clutter and walls. <code>REALISM</code> defines the ladder R0 (ideal), R1 (image noise, distortion, calibration error, exposure, lidar noise and dropout), R2 (+ motion blur and 15 ms latency), R3 (+ joint compliance).</p>
+<div class="scroll"><table>
+<tr><th>Function</th><th>What it does</th></tr>
+<tr><td>board_image, charuco</td><td>Renders and caches the ChArUco texture; the matching OpenCV board.</td></tr>
+<tr><td>_quat_small, _mulq</td><td>A small random rotation of \(\mathcal N(0, \sigma)\) degrees; quaternion product.</td></tr>
+<tr><td>_chain_names</td><td>Base and chain body names from the nominal model.</td></tr>
+<tr><td>build(seed)</td><td>Compiles the lab. <code>seed=None</code> is the nominal robot; a seed gives the k-th real arm with link, axis, base, sensor-mount and encoder errors.</td></tr>
+<tr><td>env_geom_ids</td><td>Static room geoms (everything not on the robot).</td></tr>
+</table></div>
+
+<h3>scripts/selfmodel_teleop.py <span class="meta">332 lines · 17 functions · 1 class</span></h3>
+<p>Pilot: a teleoperator drives the real (perturbed) arm through its nominal model; the self-model is rebuilt from the logs and compared with the model file, the differential fit, the absolute refinement, classical calibration, the local Jacobian and the frozen TD-MPC2 latent.</p>
+<div class="scroll"><table>
+<tr><th>Function</th><th>What it does</th></tr>
+<tr><td>_links, nominal_body, real_robot</td><td>Chain bodies; the nominal arm; the real arm with sampled link, axis, TCP and encoder errors.</td></tr>
+<tr><td>T_of, measure</td><td class="eq">Pose as a transform; a noisy measurement \(\tilde T = (p + \mathcal N(0,\sigma_p^2),\ e^{[\mathcal N(0,\sigma_r^2)]}R)\), with noise levels none, low (0.5 mm, 0.1°), mid (1 mm, 0.3°), high (3 mm, 1°).</td></tr>
+<tr><td>teleop, teleop_commands</td><td class="eq">Joint teleop (wiggle each joint, then a random walk) or Cartesian teleop (1 cm / 2° increments through nominal IK). The real arm reaches \(q_\text{true} = q_\text{cmd} - \delta_\text{enc}\); encoders read \(q_\text{cmd} + \mathcal N(0, 10^{-4})\).</td></tr>
+<tr><td>nominal_J</td><td class="eq">Nominal spatial Jacobian: \(J_s = [L J_r;\ J_p - J_r\times p]\) (velocity of the world-origin point).</td></tr>
+<tr><td>one_step, one_step_local</td><td class="eq">Relative one-step error \(\frac{\overline{\|\Delta\hat p - \Delta p\|^2}}{\overline{\|\Delta p\|^2}}\), for each model and for the online local Jacobian.</td></tr>
+<tr><td>fk_errors</td><td>Median and 95th-percentile position and rotation error over 300 random configurations.</td></tr>
+<tr><td>reach</td><td>Open-loop reach: IK on the model, run on the real arm, success within 5 mm and 2°, with a Wilson interval.</td></tr>
+<tr><td>run_cell, maniskill_same_data, main</td><td>One cell (seed × teleop mode × steps × noise); the same fits on the recorded ManiSkill episodes; the parallel grid.</td></tr>
+</table></div>
+
+<h3>scripts/selfmodel_sensors.py <span class="meta">247 lines · 11 functions · 1 class</span></h3>
+<p>Sensor-swap benchmark: the same arm, teleop and trajectory; only the sensor that measures the hand changes (oracle, mono, stereo, lidar) across realism levels R0 to R3.</p>
+<div class="scroll"><table>
+<tr><th>Function</th><th>What it does</th></tr>
+<tr><td>Arm.link_angles</td><td class="eq">Joint compliance: links sag under gravity away from the motor-side encoders, \(q_\text{link} = q_\text{motor} - g(q)/k_j\) (Franka 8k–20k N·m/rad, SO-101 10–40).</td></tr>
+<tr><td>Arm.set, frame, fk_joint</td><td>Pose the lab; camera frame (flipped to OpenCV axes) or lidar frame; the frame pose when the encoders read \(q\).</td></tr>
+<tr><td>record</td><td>Teleop the real arm and log encoders plus every sensor's measurement (with blur and latency at R2+).</td></tr>
+<tr><td>pose_err, fk_errors, reach</td><td>Pose error in mm and degrees; FK error and open-loop reach against the real arm.</td></tr>
+<tr><td>run_job, main</td><td>Per sensor: valid-frame rate, sensor pose error, then robust differential + absolute fits (at least 60 valid frames).</td></tr>
+</table></div>
+
+<h3>scripts/eval_selfmodel_task.py <span class="meta">122 lines · 7 functions</span></h3>
+<p>Does self-modeling change task success? The classical default pipeline on the 20 classical layouts, three ways: ideal arm, real arm planned with the model file, real arm planned with the calibrated model.</p>
+<div class="scroll"><table>
+<tr><th>Function</th><th>What it does</th></tr>
+<tr><td>layouts, run_episodes</td><td>The seeded classical layouts; one <code>Episode</code> per layout with a given config.</td></tr>
+<tr><td>fk_error</td><td>Median and 95th-percentile TCP error of a model against the real arm.</td></tr>
+<tr><td>arm_job(seed)</td><td>Perturb a real arm, log 400 Cartesian teleop poses at mid noise, <code>calibrate</code>, then run the nominal and self-model cells (<code>real_arm</code> vs <code>real_arm</code> + <code>belief_model</code>).</td></tr>
+<tr><td>ideal_job, main</td><td>The ideal cell; pooled success with Wilson intervals and the paired McNemar test (Franka 55 → 81 of 100, SO-101 56 → 85, p &lt; 1e-4).</td></tr>
+</table></div>
+
+<h3>scripts/selfmodel_readout_route_b.py <span class="meta">60 lines · 2 functions</span></h3>
+<div class="scroll"><table>
+<tr><th>Function</th><th>What it does</th></tr>
+<tr><td>one_step_errors</td><td class="eq">Training-free readout of the frozen world model's self-knowledge: \(\hat z_{t+1} = d(h(o_t), a_t)\) vs \(z_{t+1} = h(o_{t+1})\). Error \(\overline{\|\hat z - z\|^2}\), cosine similarity, and a no-change baseline \(\overline{\|z_t - z_{t+1}\|^2}\) so a body that barely moves is not rewarded.</td></tr>
+<tr><td>main</td><td>Ratio error(body)/error(Franka home) for each recorded body (1.0 = knows the new body as well as its own; measured 52 to 124 on the SO100).</td></tr>
+</table></div>
+
+<h3>scripts/summarize_selfmodel_teleop.py, summarize_selfmodel_sensors.py <span class="meta">90 + 93 lines</span></h3>
+<p>Pool the cells, compute Wilson intervals and write <code>results/selfmodel_teleop*/SUMMARY.md</code> and <code>results/selfmodel_sensors*/SUMMARY.md</code>. No new mathematics beyond <code>stats.wilson</code>.</p>
+</section>
+
+<!-- ============================================================== EVAL -->
+<section class="layer"><span class="tag">Layer · Evaluation and analysis scripts</span>
+
+<h3>scripts/eval_route_b_transfer.py <span class="meta">217 lines · 10 functions · 1 class</span></h3>
+<p>Route B rung R6: the frozen Franka TD-MPC2 PickCube policy drives the SO100. Interface K maps the Franka's end-effector deltas onto SO100 joints; K+P adds a virtual Franka twin that supplies the joint block of the observation.</p>
+<div class="scroll"><table>
+<tr><th>Function</th><th>What it does</th></tr>
+<tr><td>SO100Kinematics.tcp_world, approach_world, capture_axis</td><td>TCP as the midpoint of the jaw tips (Pinocchio FK); the jaw axis that points down at reset.</td></tr>
+<tr><td>SO100Kinematics.solve</td><td class="eq">Differential IK with a finite-difference Jacobian, \(\Delta q = J^\top(JJ^\top + 0.02^2I)^{-1}e\); "hqp-axis" adds the approach-axis task \(e_a = a\times(0,0,-1)\) in the position null space.</td></tr>
+<tr><td>calibrate_jaw</td><td>Measures jaw aperture against gripper angle at 23 angles (a measurement, not training) for the width map.</td></tr>
+<tr><td>franka_twin</td><td>The Menagerie Franka as a kinematic twin for interface P.</td></tr>
+<tr><td>main</td><td class="eq">Per step: frame-align scene coordinates (shift \(+0.46\) m in x), build the Franka observation (twin joints from HQP IK on the SO100 TCP), act, map \(\Delta p = \text{clip}(a_{1:3})\cdot 0.1\) m to SO100 joints and the finger width to a jaw angle by interpolation in the measured table. Scores a 0–4 stage and writes the summary with a Wilson interval.</td></tr>
+</table></div>
+
+<h3>scripts/eval_route_b_home.py, eval_route_b_r3.py <span class="meta">66 + 115 lines</span></h3>
+<p><code>eval_route_b_home</code>: Gate 1, each frozen checkpoint on its own body (Franka home 50/50). <code>eval_route_b_r3</code>: rung R3, the Franka policy on the xArm6 through ManiSkill's own EE-delta controller; K maps the Franka finger width to the xArm6 knuckle delta (\(\Delta k = 0.15\) per step toward the target), and <code>--naive-gripper</code> passes the raw value (an ablation that drives the gripper backwards).</p>
+
+<h3>scripts/eval_s1.py <span class="meta">194 lines · 7 functions · 1 class</span></h3>
+<p>The early S1 pipeline on an obstacle-free scene, also the Gate 0 scripted expert.</p>
+<div class="scroll"><table>
+<tr><th>Function</th><th>What it does</th></tr>
+<tr><td>profile(s, kind)</td><td class="eq">Normalized progress. Quintic minimum-jerk \(u = 10s^3 - 15s^4 + 6s^5\); trapezoid with 25% ramps, \(v = 1/(1-a)\): \(u = \frac{v}{2a}s^2\) on the ramp, \(\frac{va}{2} + v(s - a)\) cruising.</td></tr>
+<tr><td>Robot (reset, jaws_touch, state)</td><td>Scene, contacts and the scorer's state.</td></tr>
+<tr><td>run_episode</td><td class="eq">Eight waypoints (above cube, at cube, close, lift, above plate, lower, open, retreat). Segment time \(T = \max(0.4, d/0.15)\) s; with the approach axis held down, the grasp yaw snaps to the nearest cube face, \(\psi = \frac\pi2\,\text{round}(2\psi/\pi)\).</td></tr>
+</table></div>
+
+<h3>scripts/eval_classical.py, eval_ilc.py <span class="meta">59 + 63 lines</span></h3>
+<p><code>eval_classical</code>: one decision-tree configuration on one body over N seeded episodes, with Wilson intervals and mean stage. <code>eval_ilc</code>: repeated trials per layout with a shared <code>ILCMemory</code>, tracking RMS per trial and first-versus-last McNemar (the Franka's error falls 13%, success unchanged).</p>
+
+<h3>scripts/eval_learned_mjx.py <span class="meta">123 lines · 2 functions</span></h3>
+<p>Scores an MJX-trained PPO policy in the CPU MuJoCo scene with the classical seeds and the same <code>StageScorer</code>, so learned and classical numbers come from one harness.</p>
+
+<h3>scripts/test_k_interface.py, test_planners.py, test_world_models.py <span class="meta">66 + 71 + 78 lines</span></h3>
+<p>Phase 0 checks: top-down grasp IK over the task region on both arms; every planner on the transit past the post (success, time, path length, collision checks); cube pose error and each world model's clearance at a free and a colliding configuration.</p>
+
+<h3>scripts/summarize_classical.py, summarize_phase0.py <span class="meta">100 + 176 lines</span></h3>
+<p>Write <code>results/classical/SUMMARY.md</code> (every method per layer on both bodies) and <code>results/phase0/SUMMARY.md</code> (retention \(SR_t/SR_s\), paired McNemar and Wilcoxon on the same seeds, Holm correction, and the self-model correlation).</p>
+
+<h3>scripts/check_registry.py, export_layouts.py <span class="meta">54 + 28 lines</span></h3>
+<p>Check each Hugging Face checkpoint for existence, gating and licence and write <code>checkpoints_status.yaml</code>; export the classical layouts (cube xy per seed) so MJX and Isaac evaluate the same episodes.</p>
+</section>
+
+<!-- ============================================================== GRID / GPU / PROTOCOL -->
+<section class="layer"><span class="tag">Layers · Grid orchestration, GPU routes, protocol</span>
+
+<h3>scripts/run_*.sh, smoke_classical.sh <span class="meta">7 files, 10–35 lines</span></h3>
+<p>Resumable loops: <code>run_classical_grid</code> sweeps every decision-tree variant through <code>eval_classical</code>; <code>run_route_b_grid</code>, <code>run_route_b_mpc_cells</code>, <code>run_route_b_r3_grid</code> and <code>run_route_b_r3_mpc</code> sweep the route B interfaces, IK solvers and planning-on cells; <code>run_s1_grid</code> the S1 variants; <code>smoke_classical</code> a two-episode check. A cell whose result file exists is skipped.</p>
+
+<h3>xbody/learned/mjx_pick.py <span class="meta">194 lines · 14 functions · 1 class</span></h3>
+<p>The classical task as an MJX (MuJoCo Playground) environment. Action: 7 joint-target increments and an absolute gripper command; observation: proprioception, TCP and cube poses, plate and post relative to cube and TCP.</p>
+<div class="scroll"><table>
+<tr><th>Function</th><th>What it does</th></tr>
+<tr><td>reset, step</td><td class="eq">Cube drawn in the classical region; \(u_\text{arm} \leftarrow \text{clip}(u_\text{arm} + 0.05a_{1:7})\), \(u_\text{grip} = \frac{a_8+1}{2}u_\text{open}\). Done when the cube leaves by 0.6 m, falls or the state is NaN.</td></tr>
+<tr><td>_reward</td><td class="eq">Dense staged shaping, with sticky flags for reached, lifted and placed:
+\[ r = 1\,(1 - \tanh 10d_{tc}) + 2\,\text{held}\cdot\text{reached} + 4\,\text{held}\cdot h + 6\,\text{lifted}(1 - \tanh 5d_p) + 10\,\text{placed} - 2\,\text{near\_post} - 0.01\|a_t - a_{t-1}\|^2 \]
+with \(h = \text{clip}((z_c - z_0)/0.05, 0, 1)\). The benchmark number is still the staged success, not this reward.</td></tr>
+<tr><td>_tcp, _held, _obs</td><td>TCP pose; held = within 2.5 cm with both fingers between 9 and 21 mm; the observation vector.</td></tr>
+</table></div>
+
+<h3>isaac/onehand_isaac/pick_place_post_env.py, isaac/scripts/run.py, rsl_rl_ppo_cfg.py <span class="meta">206 + 122 + 18 lines</span></h3>
+<p>The same task and the same reward as a direct-workflow Isaac Lab environment (<code>_get_rewards</code> is the formula above in PyTorch), an RSL-RL PPO configuration, and a train/evaluate launcher that can replay the exported classical layouts. <code>scripts/train_mjx_ppo.py</code> is the Brax PPO trainer for the MJX version. None of these have been run.</p>
+
+<h3>protocol.yaml, registry/checkpoints.yaml, checkpoints_status.yaml</h3>
+<p>The frozen protocol: network weight updates banned; test-time search and in-context demos allowed; the task (3 cm, 30 g cube; plate r = 6 cm); the stage thresholds used by <code>stages.py</code>; rungs R0–R6 and interfaces K … H; 50 screening and 200 final roll-outs per cell from seed 20261028; gates G0–G3; Wilson, McNemar, Wilcoxon and Holm. The registry lists every checkpoint by route; the status file is generated.</p>
+</section>
+</article>

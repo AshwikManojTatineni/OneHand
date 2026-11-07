@@ -1,0 +1,799 @@
+{
+ "files": [
+  {
+   "path": "isaac/onehand_isaac/__init__.py",
+   "lines": 12,
+   "functions": 0,
+   "classes": 0,
+   "layer": "GPU Training Routes"
+  },
+  {
+   "path": "isaac/onehand_isaac/agents/__init__.py",
+   "lines": 0,
+   "functions": 0,
+   "classes": 0,
+   "layer": "GPU Training Routes"
+  },
+  {
+   "path": "isaac/onehand_isaac/agents/rsl_rl_ppo_cfg.py",
+   "lines": 18,
+   "functions": 0,
+   "classes": 1,
+   "layer": "GPU Training Routes"
+  },
+  {
+   "path": "isaac/onehand_isaac/pick_place_post_env.py",
+   "lines": 206,
+   "functions": 10,
+   "classes": 2,
+   "layer": "GPU Training Routes"
+  },
+  {
+   "path": "isaac/scripts/run.py",
+   "lines": 122,
+   "functions": 3,
+   "classes": 0,
+   "layer": "GPU Training Routes"
+  },
+  {
+   "path": "protocol.yaml",
+   "lines": 46,
+   "functions": 0,
+   "classes": 0,
+   "layer": "Protocol and Checkpoint Registry"
+  },
+  {
+   "path": "registry/checkpoints.yaml",
+   "lines": 24,
+   "functions": 0,
+   "classes": 0,
+   "layer": "Protocol and Checkpoint Registry"
+  },
+  {
+   "path": "registry/checkpoints_status.yaml",
+   "lines": 156,
+   "functions": 0,
+   "classes": 0,
+   "layer": "Protocol and Checkpoint Registry"
+  },
+  {
+   "path": "scripts/check_registry.py",
+   "lines": 54,
+   "functions": 2,
+   "classes": 0,
+   "layer": "Evaluation and Analysis Scripts"
+  },
+  {
+   "path": "scripts/eval_classical.py",
+   "lines": 59,
+   "functions": 1,
+   "classes": 0,
+   "layer": "Evaluation and Analysis Scripts"
+  },
+  {
+   "path": "scripts/eval_ilc.py",
+   "lines": 63,
+   "functions": 1,
+   "classes": 0,
+   "layer": "Evaluation and Analysis Scripts"
+  },
+  {
+   "path": "scripts/eval_learned_mjx.py",
+   "lines": 123,
+   "functions": 2,
+   "classes": 0,
+   "layer": "Evaluation and Analysis Scripts"
+  },
+  {
+   "path": "scripts/eval_route_b_home.py",
+   "lines": 66,
+   "functions": 1,
+   "classes": 0,
+   "layer": "Evaluation and Analysis Scripts"
+  },
+  {
+   "path": "scripts/eval_route_b_r3.py",
+   "lines": 115,
+   "functions": 1,
+   "classes": 0,
+   "layer": "Evaluation and Analysis Scripts"
+  },
+  {
+   "path": "scripts/eval_route_b_transfer.py",
+   "lines": 217,
+   "functions": 8,
+   "classes": 1,
+   "layer": "Evaluation and Analysis Scripts"
+  },
+  {
+   "path": "scripts/eval_s1.py",
+   "lines": 194,
+   "functions": 7,
+   "classes": 1,
+   "layer": "Evaluation and Analysis Scripts"
+  },
+  {
+   "path": "scripts/eval_selfmodel_task.py",
+   "lines": 122,
+   "functions": 7,
+   "classes": 0,
+   "layer": "Self-Modeling Experiments"
+  },
+  {
+   "path": "scripts/export_layouts.py",
+   "lines": 28,
+   "functions": 0,
+   "classes": 0,
+   "layer": "Evaluation and Analysis Scripts"
+  },
+  {
+   "path": "scripts/run_classical_grid.sh",
+   "lines": 35,
+   "functions": 0,
+   "classes": 0,
+   "layer": "Experiment Grid Orchestration"
+  },
+  {
+   "path": "scripts/run_route_b_grid.sh",
+   "lines": 16,
+   "functions": 0,
+   "classes": 0,
+   "layer": "Experiment Grid Orchestration"
+  },
+  {
+   "path": "scripts/run_route_b_mpc_cells.sh",
+   "lines": 10,
+   "functions": 0,
+   "classes": 0,
+   "layer": "Experiment Grid Orchestration"
+  },
+  {
+   "path": "scripts/run_route_b_r3_grid.sh",
+   "lines": 15,
+   "functions": 0,
+   "classes": 0,
+   "layer": "Experiment Grid Orchestration"
+  },
+  {
+   "path": "scripts/run_route_b_r3_mpc.sh",
+   "lines": 11,
+   "functions": 0,
+   "classes": 0,
+   "layer": "Experiment Grid Orchestration"
+  },
+  {
+   "path": "scripts/run_s1_grid.sh",
+   "lines": 14,
+   "functions": 0,
+   "classes": 0,
+   "layer": "Experiment Grid Orchestration"
+  },
+  {
+   "path": "scripts/selfmodel_readout_route_b.py",
+   "lines": 60,
+   "functions": 2,
+   "classes": 0,
+   "layer": "Self-Modeling Experiments"
+  },
+  {
+   "path": "scripts/selfmodel_sensors.py",
+   "lines": 247,
+   "functions": 11,
+   "classes": 1,
+   "layer": "Self-Modeling Experiments"
+  },
+  {
+   "path": "scripts/selfmodel_teleop.py",
+   "lines": 332,
+   "functions": 20,
+   "classes": 1,
+   "layer": "Self-Modeling Experiments"
+  },
+  {
+   "path": "scripts/smoke_classical.sh",
+   "lines": 20,
+   "functions": 0,
+   "classes": 0,
+   "layer": "Experiment Grid Orchestration"
+  },
+  {
+   "path": "scripts/summarize_classical.py",
+   "lines": 100,
+   "functions": 2,
+   "classes": 0,
+   "layer": "Evaluation and Analysis Scripts"
+  },
+  {
+   "path": "scripts/summarize_phase0.py",
+   "lines": 176,
+   "functions": 4,
+   "classes": 0,
+   "layer": "Evaluation and Analysis Scripts"
+  },
+  {
+   "path": "scripts/summarize_selfmodel_sensors.py",
+   "lines": 93,
+   "functions": 2,
+   "classes": 0,
+   "layer": "Self-Modeling Experiments"
+  },
+  {
+   "path": "scripts/summarize_selfmodel_teleop.py",
+   "lines": 90,
+   "functions": 2,
+   "classes": 0,
+   "layer": "Self-Modeling Experiments"
+  },
+  {
+   "path": "scripts/test_k_interface.py",
+   "lines": 66,
+   "functions": 4,
+   "classes": 0,
+   "layer": "Evaluation and Analysis Scripts"
+  },
+  {
+   "path": "scripts/test_planners.py",
+   "lines": 71,
+   "functions": 2,
+   "classes": 0,
+   "layer": "Evaluation and Analysis Scripts"
+  },
+  {
+   "path": "scripts/test_world_models.py",
+   "lines": 78,
+   "functions": 2,
+   "classes": 0,
+   "layer": "Evaluation and Analysis Scripts"
+  },
+  {
+   "path": "scripts/train_mjx_ppo.py",
+   "lines": 78,
+   "functions": 2,
+   "classes": 0,
+   "layer": "GPU Training Routes"
+  },
+  {
+   "path": "xbody/bodies.py",
+   "lines": 64,
+   "functions": 2,
+   "classes": 0,
+   "layer": "Core Benchmark Library"
+  },
+  {
+   "path": "xbody/calibration.py",
+   "lines": 114,
+   "functions": 9,
+   "classes": 1,
+   "layer": "Core Benchmark Library"
+  },
+  {
+   "path": "xbody/classical/__init__.py",
+   "lines": 0,
+   "functions": 0,
+   "classes": 0,
+   "layer": "Classical Robotics Stack"
+  },
+  {
+   "path": "xbody/classical/control.py",
+   "lines": 463,
+   "functions": 24,
+   "classes": 5,
+   "layer": "Classical Robotics Stack"
+  },
+  {
+   "path": "xbody/classical/ik.py",
+   "lines": 238,
+   "functions": 14,
+   "classes": 2,
+   "layer": "Classical Robotics Stack"
+  },
+  {
+   "path": "xbody/classical/perception.py",
+   "lines": 140,
+   "functions": 12,
+   "classes": 1,
+   "layer": "Classical Robotics Stack"
+  },
+  {
+   "path": "xbody/classical/pipeline.py",
+   "lines": 444,
+   "functions": 18,
+   "classes": 1,
+   "layer": "Classical Robotics Stack"
+  },
+  {
+   "path": "xbody/classical/planning.py",
+   "lines": 408,
+   "functions": 23,
+   "classes": 1,
+   "layer": "Classical Robotics Stack"
+  },
+  {
+   "path": "xbody/classical/timing.py",
+   "lines": 278,
+   "functions": 21,
+   "classes": 1,
+   "layer": "Classical Robotics Stack"
+  },
+  {
+   "path": "xbody/classical/worldmodel.py",
+   "lines": 210,
+   "functions": 12,
+   "classes": 3,
+   "layer": "Classical Robotics Stack"
+  },
+  {
+   "path": "xbody/kinematics.py",
+   "lines": 141,
+   "functions": 8,
+   "classes": 1,
+   "layer": "Core Benchmark Library"
+  },
+  {
+   "path": "xbody/learned/mjx_pick.py",
+   "lines": 194,
+   "functions": 12,
+   "classes": 1,
+   "layer": "GPU Training Routes"
+  },
+  {
+   "path": "xbody/newt_agent.py",
+   "lines": 78,
+   "functions": 4,
+   "classes": 1,
+   "layer": "Core Benchmark Library"
+  },
+  {
+   "path": "xbody/scene.py",
+   "lines": 91,
+   "functions": 3,
+   "classes": 0,
+   "layer": "Core Benchmark Library"
+  },
+  {
+   "path": "xbody/selfmodel_diff.py",
+   "lines": 283,
+   "functions": 35,
+   "classes": 2,
+   "layer": "Self-Modeling Experiments"
+  },
+  {
+   "path": "xbody/selfmodel_lab.py",
+   "lines": 183,
+   "functions": 7,
+   "classes": 0,
+   "layer": "Self-Modeling Experiments"
+  },
+  {
+   "path": "xbody/selfmodel_sensing.py",
+   "lines": 239,
+   "functions": 14,
+   "classes": 3,
+   "layer": "Self-Modeling Experiments"
+  },
+  {
+   "path": "xbody/stages.py",
+   "lines": 64,
+   "functions": 3,
+   "classes": 2,
+   "layer": "Core Benchmark Library"
+  },
+  {
+   "path": "xbody/stats.py",
+   "lines": 53,
+   "functions": 6,
+   "classes": 0,
+   "layer": "Core Benchmark Library"
+  }
+ ],
+ "edges": [
+  [
+   "isaac/onehand_isaac/__init__.py",
+   "isaac/onehand_isaac/agents/rsl_rl_ppo_cfg.py"
+  ],
+  [
+   "isaac/onehand_isaac/__init__.py",
+   "isaac/onehand_isaac/pick_place_post_env.py"
+  ],
+  [
+   "isaac/scripts/run.py",
+   "isaac/onehand_isaac/__init__.py"
+  ],
+  [
+   "isaac/scripts/run.py",
+   "isaac/onehand_isaac/agents/rsl_rl_ppo_cfg.py"
+  ],
+  [
+   "isaac/scripts/run.py",
+   "isaac/onehand_isaac/pick_place_post_env.py"
+  ],
+  [
+   "registry/checkpoints_status.yaml",
+   "registry/checkpoints.yaml"
+  ],
+  [
+   "scripts/check_registry.py",
+   "registry/checkpoints.yaml"
+  ],
+  [
+   "scripts/eval_classical.py",
+   "xbody/classical/pipeline.py"
+  ],
+  [
+   "scripts/eval_classical.py",
+   "xbody/scene.py"
+  ],
+  [
+   "scripts/eval_classical.py",
+   "xbody/stats.py"
+  ],
+  [
+   "scripts/eval_ilc.py",
+   "xbody/classical/control.py"
+  ],
+  [
+   "scripts/eval_ilc.py",
+   "xbody/classical/pipeline.py"
+  ],
+  [
+   "scripts/eval_ilc.py",
+   "xbody/scene.py"
+  ],
+  [
+   "scripts/eval_ilc.py",
+   "xbody/stats.py"
+  ],
+  [
+   "scripts/eval_learned_mjx.py",
+   "xbody/bodies.py"
+  ],
+  [
+   "scripts/eval_learned_mjx.py",
+   "xbody/learned/mjx_pick.py"
+  ],
+  [
+   "scripts/eval_learned_mjx.py",
+   "xbody/scene.py"
+  ],
+  [
+   "scripts/eval_learned_mjx.py",
+   "xbody/stages.py"
+  ],
+  [
+   "scripts/eval_learned_mjx.py",
+   "xbody/stats.py"
+  ],
+  [
+   "scripts/eval_route_b_home.py",
+   "xbody/newt_agent.py"
+  ],
+  [
+   "scripts/eval_route_b_home.py",
+   "xbody/stats.py"
+  ],
+  [
+   "scripts/eval_route_b_r3.py",
+   "scripts/eval_route_b_transfer.py"
+  ],
+  [
+   "scripts/eval_route_b_r3.py",
+   "xbody/kinematics.py"
+  ],
+  [
+   "scripts/eval_route_b_r3.py",
+   "xbody/newt_agent.py"
+  ],
+  [
+   "scripts/eval_route_b_r3.py",
+   "xbody/stats.py"
+  ],
+  [
+   "scripts/eval_route_b_transfer.py",
+   "xbody/kinematics.py"
+  ],
+  [
+   "scripts/eval_route_b_transfer.py",
+   "xbody/newt_agent.py"
+  ],
+  [
+   "scripts/eval_route_b_transfer.py",
+   "xbody/stats.py"
+  ],
+  [
+   "scripts/eval_s1.py",
+   "xbody/bodies.py"
+  ],
+  [
+   "scripts/eval_s1.py",
+   "xbody/kinematics.py"
+  ],
+  [
+   "scripts/eval_s1.py",
+   "xbody/scene.py"
+  ],
+  [
+   "scripts/eval_s1.py",
+   "xbody/stages.py"
+  ],
+  [
+   "scripts/eval_s1.py",
+   "xbody/stats.py"
+  ],
+  [
+   "scripts/eval_selfmodel_task.py",
+   "scripts/selfmodel_teleop.py"
+  ],
+  [
+   "scripts/eval_selfmodel_task.py",
+   "xbody/bodies.py"
+  ],
+  [
+   "scripts/eval_selfmodel_task.py",
+   "xbody/calibration.py"
+  ],
+  [
+   "scripts/eval_selfmodel_task.py",
+   "xbody/classical/pipeline.py"
+  ],
+  [
+   "scripts/eval_selfmodel_task.py",
+   "xbody/scene.py"
+  ],
+  [
+   "scripts/eval_selfmodel_task.py",
+   "xbody/selfmodel_diff.py"
+  ],
+  [
+   "scripts/eval_selfmodel_task.py",
+   "xbody/stats.py"
+  ],
+  [
+   "scripts/export_layouts.py",
+   "xbody/bodies.py"
+  ],
+  [
+   "scripts/export_layouts.py",
+   "xbody/scene.py"
+  ],
+  [
+   "scripts/run_classical_grid.sh",
+   "scripts/eval_classical.py"
+  ],
+  [
+   "scripts/run_route_b_grid.sh",
+   "scripts/eval_route_b_transfer.py"
+  ],
+  [
+   "scripts/run_route_b_mpc_cells.sh",
+   "scripts/eval_route_b_transfer.py"
+  ],
+  [
+   "scripts/run_route_b_r3_grid.sh",
+   "scripts/eval_route_b_home.py"
+  ],
+  [
+   "scripts/run_route_b_r3_grid.sh",
+   "scripts/eval_route_b_r3.py"
+  ],
+  [
+   "scripts/run_route_b_r3_mpc.sh",
+   "scripts/eval_route_b_r3.py"
+  ],
+  [
+   "scripts/run_s1_grid.sh",
+   "scripts/eval_s1.py"
+  ],
+  [
+   "scripts/selfmodel_readout_route_b.py",
+   "xbody/newt_agent.py"
+  ],
+  [
+   "scripts/selfmodel_sensors.py",
+   "scripts/selfmodel_teleop.py"
+  ],
+  [
+   "scripts/selfmodel_sensors.py",
+   "xbody/bodies.py"
+  ],
+  [
+   "scripts/selfmodel_sensors.py",
+   "xbody/kinematics.py"
+  ],
+  [
+   "scripts/selfmodel_sensors.py",
+   "xbody/selfmodel_diff.py"
+  ],
+  [
+   "scripts/selfmodel_sensors.py",
+   "xbody/selfmodel_lab.py"
+  ],
+  [
+   "scripts/selfmodel_sensors.py",
+   "xbody/selfmodel_sensing.py"
+  ],
+  [
+   "scripts/selfmodel_sensors.py",
+   "xbody/stats.py"
+  ],
+  [
+   "scripts/selfmodel_teleop.py",
+   "xbody/bodies.py"
+  ],
+  [
+   "scripts/selfmodel_teleop.py",
+   "xbody/kinematics.py"
+  ],
+  [
+   "scripts/selfmodel_teleop.py",
+   "xbody/selfmodel_diff.py"
+  ],
+  [
+   "scripts/selfmodel_teleop.py",
+   "xbody/stats.py"
+  ],
+  [
+   "scripts/smoke_classical.sh",
+   "scripts/eval_classical.py"
+  ],
+  [
+   "scripts/summarize_classical.py",
+   "xbody/stats.py"
+  ],
+  [
+   "scripts/summarize_phase0.py",
+   "xbody/stats.py"
+  ],
+  [
+   "scripts/summarize_selfmodel_sensors.py",
+   "xbody/stats.py"
+  ],
+  [
+   "scripts/summarize_selfmodel_teleop.py",
+   "xbody/stats.py"
+  ],
+  [
+   "scripts/test_k_interface.py",
+   "xbody/kinematics.py"
+  ],
+  [
+   "scripts/test_planners.py",
+   "xbody/bodies.py"
+  ],
+  [
+   "scripts/test_planners.py",
+   "xbody/classical/ik.py"
+  ],
+  [
+   "scripts/test_planners.py",
+   "xbody/classical/planning.py"
+  ],
+  [
+   "scripts/test_planners.py",
+   "xbody/classical/worldmodel.py"
+  ],
+  [
+   "scripts/test_planners.py",
+   "xbody/kinematics.py"
+  ],
+  [
+   "scripts/test_planners.py",
+   "xbody/scene.py"
+  ],
+  [
+   "scripts/test_world_models.py",
+   "xbody/bodies.py"
+  ],
+  [
+   "scripts/test_world_models.py",
+   "xbody/classical/perception.py"
+  ],
+  [
+   "scripts/test_world_models.py",
+   "xbody/classical/worldmodel.py"
+  ],
+  [
+   "scripts/test_world_models.py",
+   "xbody/kinematics.py"
+  ],
+  [
+   "scripts/test_world_models.py",
+   "xbody/scene.py"
+  ],
+  [
+   "scripts/train_mjx_ppo.py",
+   "xbody/learned/mjx_pick.py"
+  ],
+  [
+   "xbody/calibration.py",
+   "xbody/bodies.py"
+  ],
+  [
+   "xbody/calibration.py",
+   "xbody/selfmodel_diff.py"
+  ],
+  [
+   "xbody/classical/control.py",
+   "xbody/kinematics.py"
+  ],
+  [
+   "xbody/classical/ik.py",
+   "xbody/kinematics.py"
+  ],
+  [
+   "xbody/classical/pipeline.py",
+   "xbody/bodies.py"
+  ],
+  [
+   "xbody/classical/pipeline.py",
+   "xbody/calibration.py"
+  ],
+  [
+   "xbody/classical/pipeline.py",
+   "xbody/classical/__init__.py"
+  ],
+  [
+   "xbody/classical/pipeline.py",
+   "xbody/classical/control.py"
+  ],
+  [
+   "xbody/classical/pipeline.py",
+   "xbody/classical/ik.py"
+  ],
+  [
+   "xbody/classical/pipeline.py",
+   "xbody/classical/perception.py"
+  ],
+  [
+   "xbody/classical/pipeline.py",
+   "xbody/classical/planning.py"
+  ],
+  [
+   "xbody/classical/pipeline.py",
+   "xbody/classical/timing.py"
+  ],
+  [
+   "xbody/classical/pipeline.py",
+   "xbody/classical/worldmodel.py"
+  ],
+  [
+   "xbody/classical/pipeline.py",
+   "xbody/kinematics.py"
+  ],
+  [
+   "xbody/classical/pipeline.py",
+   "xbody/scene.py"
+  ],
+  [
+   "xbody/classical/pipeline.py",
+   "xbody/stages.py"
+  ],
+  [
+   "xbody/learned/mjx_pick.py",
+   "xbody/bodies.py"
+  ],
+  [
+   "xbody/learned/mjx_pick.py",
+   "xbody/scene.py"
+  ],
+  [
+   "xbody/scene.py",
+   "xbody/bodies.py"
+  ],
+  [
+   "xbody/selfmodel_lab.py",
+   "xbody/bodies.py"
+  ],
+  [
+   "xbody/selfmodel_lab.py",
+   "xbody/calibration.py"
+  ],
+  [
+   "xbody/selfmodel_sensing.py",
+   "xbody/selfmodel_diff.py"
+  ],
+  [
+   "xbody/selfmodel_sensing.py",
+   "xbody/selfmodel_lab.py"
+  ]
+ ]
+}
