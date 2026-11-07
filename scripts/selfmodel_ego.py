@@ -103,7 +103,7 @@ class SensorRig:
             found = self.det.corners(imgs["cam_l"])
             T = (S.mono_pose(imgs["cam_l"], self.rig, self.det, found=found) if self.sensor == "mono"
                  else S.stereo_pose(imgs["cam_l"], imgs["cam_r"], self.rig, self.det, found_l=found))
-            return None if T is None else SS.T_WORLD_BOARD @ T
+            return SS.T_WORLD_BOARD @ T if _rigid(T) else None
         scan = S.lidar_scan(self.real.m, self.real.d, self.real.site, self.dirs, self.rig, self.rng)
         if self.model is not None:              # the self-model predicts where its sensor is
             prior = self.model.fk1(np.asarray(cmd, float))
@@ -172,8 +172,17 @@ def noise_inflation(chain, Q, T):
     return (1 + rho) / (1 - rho), rho
 
 
+def _rigid(y):
+    """A usable sensor pose: detected, finite and a proper rigid transform (a degenerate PnP at R3 can return
+    neither)."""
+    if y is None or not np.all(np.isfinite(y)):
+        return False
+    R = np.asarray(y)[:3, :3]
+    return bool(np.allclose(R.T @ R, np.eye(3), atol=1e-3) and abs(np.linalg.det(R) - 1) < 1e-3)
+
+
 def learn(A, Y, jumps, log=None):
-    ok = np.array([y is not None for y in Y])
+    ok = np.array([_rigid(y) for y in Y])
     idx = np.where(ok)[0]
     Q, T = A[idx], np.array([Y[i] for i in idx])
     valid = (np.diff(idx) == 1) & ~jumps[idx[1:]]
@@ -199,7 +208,7 @@ def run_cell(sensor, level, babbling, seed, cfg, log=print):
         lo, hi = rig.lo + 0.15 * (rig.hi - rig.lo), rig.hi - 0.15 * (rig.hi - rig.lo)
         models = None
         while sum(y is not None for y in Y) < cfg["n_learn"]:
-            ok = np.array([y is not None for y in Y])
+            ok = np.array([_rigid(y) for y in Y])
             idx = np.where(ok)[0]
             Q, T = A[idx], np.array([Y[i] for i in idx])
             if models is None:

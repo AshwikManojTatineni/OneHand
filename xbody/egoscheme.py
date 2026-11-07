@@ -152,7 +152,8 @@ def pack_init(order, types, init, Q, T):
     ch = Chain(tuple(order), tuple(types), Q[0].copy(), np.r_[x, np.zeros(6)])
     P = ch.fk(Q)
     A = np.einsum("nij,njk->nik", sd.inv_batch(P), T)
-    M = sd.pose(np.mean(A[:, :3, 3], 0), sd.project_rot(np.mean(A[:, :3, :3], 0)))
+    A = A[np.all(np.isfinite(A.reshape(len(A), -1)), 1)]     # a diverged initial screw can blow up a few frames
+    M = sd.pose(np.mean(A[:, :3, 3], 0), sd.project_rot(np.mean(A[:, :3, :3], 0))) if len(A) else np.eye(4)
     ch.x[-6:] = np.r_[sd.so3_log(M[:3, :3]), M[:3, 3]]
     return ch
 
