@@ -1,0 +1,438 @@
+franka mono R3 random seed 2: order 0123456 ok types RRRRRRR | valid 400/535 | fwd bayes 2.09 poe 2.08 nominal 10.47 mm | reach 30/30 | none->none 0.9->0.9mm constant->constant 20.8->1.2mm linear->linear 57.8->1.9mm (471s)
+franka mono R3 active seed 0: order 0123456 ok types RRRRRRR | valid 413/565 | fwd bayes 1.60 poe 1.60 nominal 12.33 mm | reach 30/30 | none->none 0.9->0.9mm constant->constant 10.1->0.5mm linear->linear 23.9->0.5mm (712s)
+franka mono R3 active seed 1: order 5432106 WRONG types RRRRRRR | valid 410/621 | fwd bayes 564.41 poe 1.36 nominal 10.09 mm | reach 0/30 | none->none 162.2->162.2mm constant->none 167.9->167.9mm linear->none 203.5->203.5mm (587s)
+franka mono R3 active seed 2: order 0123456 ok types RRRRRRR | valid 404/612 | fwd bayes 1.48 poe 1.50 nominal 11.45 mm | reach 30/30 | none->none 1.0->1.0mm constant->constant 20.9->1.0mm linear->linear 56.6->2.0mm (733s)
+{
+ "oracle_R1_random": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 0.27150451939169645,
+  "fwd_poe": 0.2715045774763407,
+  "fwd_nominal": 10.747135879051658,
+  "reach_bayes": 90,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 3,
+    "unc": 0.27391246847795897,
+    "cor": 0.27391246847795897
+   },
+   "constant": {
+    "right": 3,
+    "unc": 39.25224951547823,
+    "cor": 0.3817609496859036
+   },
+   "linear": {
+    "right": 3,
+    "unc": 65.20076941104793,
+    "cor": 0.5907938425196255
+   }
+  }
+ },
+ "oracle_R1_active": {
+  "cells": 3,
+  "order_correct": 2,
+  "types_correct": 3,
+  "fwd_bayes": 0.2514958428357926,
+  "fwd_poe": 0.25149587452725514,
+  "fwd_nominal": 11.86137132394143,
+  "reach_bayes": 62,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 3,
+    "unc": 0.2762604898584202,
+    "cor": 0.2762604898584202
+   },
+   "constant": {
+    "right": 3,
+    "unc": 39.27168510110662,
+    "cor": 0.26330231479402755
+   },
+   "linear": {
+    "right": 2,
+    "unc": 64.74326675000903,
+    "cor": 0.680209611783641
+   }
+  }
+ },
+ "oracle_R3_random": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 0.8029201598707001,
+  "fwd_poe": 0.801642754149656,
+  "fwd_nominal": 11.084067213556073,
+  "reach_bayes": 90,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 3,
+    "unc": 0.6767744638164022,
+    "cor": 0.6767744638164022
+   },
+   "constant": {
+    "right": 3,
+    "unc": 38.94279279110722,
+    "cor": 0.7342757579052157
+   },
+   "linear": {
+    "right": 3,
+    "unc": 64.56139890486767,
+    "cor": 0.9293105466689999
+   }
+  }
+ },
+ "oracle_R3_active": {
+  "cells": 3,
+  "order_correct": 2,
+  "types_correct": 3,
+  "fwd_bayes": 0.8783315287388813,
+  "fwd_poe": 0.7173102090998129,
+  "fwd_nominal": 12.046042375548177,
+  "reach_bayes": 61,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 3,
+    "unc": 0.909583414175614,
+    "cor": 0.909583414175614
+   },
+   "constant": {
+    "right": 3,
+    "unc": 39.281773845215376,
+    "cor": 0.8002090608876999
+   },
+   "linear": {
+    "right": 2,
+    "unc": 64.53273875114863,
+    "cor": 1.226306064969128
+   }
+  }
+ },
+ "mono_R1_random": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 2.5429092686117047,
+  "fwd_poe": 2.3929746744662586,
+  "fwd_nominal": 12.148664518757366,
+  "reach_bayes": 86,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 3,
+    "unc": 1.4356520322221549,
+    "cor": 1.4356520322221549
+   },
+   "constant": {
+    "right": 2,
+    "unc": 21.201340729200922,
+    "cor": 1.3909829059428314
+   },
+   "linear": {
+    "right": 3,
+    "unc": 53.30740103789062,
+    "cor": 1.8979235683230862
+   }
+  }
+ },
+ "mono_R1_active": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 1.437750417168468,
+  "fwd_poe": 1.4525044999059236,
+  "fwd_nominal": 11.209709423116664,
+  "reach_bayes": 90,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 3,
+    "unc": 1.0207926340606268,
+    "cor": 1.0207926340606268
+   },
+   "constant": {
+    "right": 2,
+    "unc": 21.306097524222782,
+    "cor": 1.099831738453195
+   },
+   "linear": {
+    "right": 3,
+    "unc": 52.642108344205525,
+    "cor": 0.7986905013292016
+   }
+  }
+ },
+ "mono_R3_random": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 2.089143170335012,
+  "fwd_poe": 2.0769141721433266,
+  "fwd_nominal": 10.53491037407388,
+  "reach_bayes": 90,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 3,
+    "unc": 3.4538270932575843,
+    "cor": 3.4538270932575843
+   },
+   "constant": {
+    "right": 2,
+    "unc": 20.800163687067254,
+    "cor": 2.750438189171227
+   },
+   "linear": {
+    "right": 3,
+    "unc": 57.77775399858542,
+    "cor": 2.770012373825957
+   }
+  }
+ },
+ "mono_R3_active": {
+  "cells": 3,
+  "order_correct": 2,
+  "types_correct": 3,
+  "fwd_bayes": 1.5951929511373422,
+  "fwd_poe": 1.499862725184033,
+  "fwd_nominal": 11.44898274894426,
+  "reach_bayes": 60,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 3,
+    "unc": 1.0317915468611771,
+    "cor": 1.0317915468611771
+   },
+   "constant": {
+    "right": 2,
+    "unc": 20.921386288934425,
+    "cor": 0.9666883420441219
+   },
+   "linear": {
+    "right": 2,
+    "unc": 56.62664549543904,
+    "cor": 2.047998394428879
+   }
+  }
+ },
+ "stereo_R1_random": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 11.187425218401643,
+  "fwd_poe": 11.163916852063462,
+  "fwd_nominal": 11.032507848808308,
+  "reach_bayes": 37,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 2,
+    "unc": 6.13282264967501,
+    "cor": 6.13282264967501
+   },
+   "constant": {
+    "right": 1,
+    "unc": 26.906886221467648,
+    "cor": 8.48064820889114
+   },
+   "linear": {
+    "right": 3,
+    "unc": 55.12307046380116,
+    "cor": 5.999855917820931
+   }
+  }
+ },
+ "stereo_R1_active": {
+  "cells": 3,
+  "order_correct": 1,
+  "types_correct": 3,
+  "fwd_bayes": 634.9064571153908,
+  "fwd_poe": 10.632428125010087,
+  "fwd_nominal": 10.626090999220505,
+  "reach_bayes": 5,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 2,
+    "unc": 152.37304502972972,
+    "cor": 152.37304502972972
+   },
+   "constant": {
+    "right": 1,
+    "unc": 146.0686322649853,
+    "cor": 146.0686322649853
+   },
+   "linear": {
+    "right": 1,
+    "unc": 150.61915793828442,
+    "cor": 150.61915793828442
+   }
+  }
+ },
+ "stereo_R3_random": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 12.231386806351285,
+  "fwd_poe": 12.117610097013824,
+  "fwd_nominal": 11.664362923438562,
+  "reach_bayes": 34,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 2,
+    "unc": 10.012303700150639,
+    "cor": 10.012303700150639
+   },
+   "constant": {
+    "right": 1,
+    "unc": 27.080785528938257,
+    "cor": 8.96694116054009
+   },
+   "linear": {
+    "right": 3,
+    "unc": 53.09285943868596,
+    "cor": 11.191891624037648
+   }
+  }
+ },
+ "stereo_R3_active": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 10.608044968355212,
+  "fwd_poe": 10.608053568660896,
+  "fwd_nominal": 11.63011717423949,
+  "reach_bayes": 39,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 2,
+    "unc": 6.021207149993179,
+    "cor": 6.021207149993179
+   },
+   "constant": {
+    "right": 2,
+    "unc": 23.98251814071673,
+    "cor": 6.766188375993264
+   },
+   "linear": {
+    "right": 3,
+    "unc": 54.8260052310781,
+    "cor": 7.660224659452902
+   }
+  }
+ },
+ "lidar_R1_random": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 0.9278756451621393,
+  "fwd_poe": 0.9278756609346066,
+  "fwd_nominal": 10.520681868234607,
+  "reach_bayes": 90,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 2,
+    "unc": 1.002281399889095,
+    "cor": 1.1587067928665642
+   },
+   "constant": {
+    "right": 3,
+    "unc": 37.19926518443262,
+    "cor": 1.0315282732236746
+   },
+   "linear": {
+    "right": 3,
+    "unc": 57.25856039054023,
+    "cor": 1.196514892331954
+   }
+  }
+ },
+ "lidar_R1_active": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 0.5769570507915929,
+  "fwd_poe": 0.5769569367552588,
+  "fwd_nominal": 10.769581922100805,
+  "reach_bayes": 90,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 3,
+    "unc": 0.5872512348596837,
+    "cor": 0.5872512348596837
+   },
+   "constant": {
+    "right": 3,
+    "unc": 37.18323769809222,
+    "cor": 0.580534056060742
+   },
+   "linear": {
+    "right": 3,
+    "unc": 56.96148850017024,
+    "cor": 0.9493062417638791
+   }
+  }
+ },
+ "lidar_R3_random": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 1.4121356670372758,
+  "fwd_poe": 1.4121357422018237,
+  "fwd_nominal": 10.976356321618745,
+  "reach_bayes": 90,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 3,
+    "unc": 1.3270640462526055,
+    "cor": 1.3270640462526055
+   },
+   "constant": {
+    "right": 2,
+    "unc": 36.43803446099169,
+    "cor": 1.642738580221824
+   },
+   "linear": {
+    "right": 3,
+    "unc": 55.10272970974221,
+    "cor": 1.5936010167247059
+   }
+  }
+ },
+ "lidar_R3_active": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 0.834686538422267,
+  "fwd_poe": 0.8346865030370831,
+  "fwd_nominal": 10.949854925333444,
+  "reach_bayes": 90,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 3,
+    "unc": 0.8131549498906078,
+    "cor": 0.8131549498906078
+   },
+   "constant": {
+    "right": 3,
+    "unc": 36.83702893920296,
+    "cor": 0.9414491059706898
+   },
+   "linear": {
+    "right": 3,
+    "unc": 55.92833051010466,
+    "cor": 1.157702344059907
+   }
+  }
+ }
+}

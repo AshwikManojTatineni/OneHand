@@ -1,0 +1,483 @@
+so101 oracle R1 random seed 0: order 01234 ok types RRRRR | valid 400/400 | fwd bayes 0.24 poe 0.22 nominal 5.46 mm | reach 30/30 | none->none 0.3->0.3mm constant->constant 7.3->0.2mm linear->linear 10.8->0.5mm (72s)
+so101 oracle R1 random seed 1: order 01234 ok types RRRRR | valid 400/400 | fwd bayes 0.19 poe 0.19 nominal 9.06 mm | reach 30/30 | none->none 0.2->0.2mm constant->constant 13.5->0.2mm linear->linear 19.2->1.0mm (84s)
+so101 oracle R1 random seed 2: order 01234 ok types RRRRR | valid 400/400 | fwd bayes 0.23 poe 0.23 nominal 10.65 mm | reach 30/30 | none->none 0.2->0.2mm constant->constant 13.6->0.2mm linear->linear 20.8->0.3mm (81s)
+so101 oracle R1 active seed 0: order 01234 ok types RRRRR | valid 400/400 | fwd bayes 0.17 poe 0.17 nominal 5.73 mm | reach 30/30 | none->none 0.2->0.2mm constant->constant 7.2->0.1mm linear->linear 10.7->0.4mm (147s)
+so101 oracle R1 active seed 1: order 01234 ok types RRRRR | valid 400/400 | fwd bayes 0.24 poe 0.22 nominal 9.27 mm | reach 30/30 | none->none 0.2->0.2mm constant->constant 13.5->0.2mm linear->linear 19.3->0.9mm (139s)
+so101 oracle R1 active seed 2: order 01234 ok types RRRRR | valid 400/400 | fwd bayes 0.22 poe 0.20 nominal 10.82 mm | reach 30/30 | none->none 0.2->0.2mm constant->constant 13.4->0.2mm linear->linear 20.8->0.2mm (161s)
+so101 oracle R3 random seed 0: order 01234 ok types RRRRR | valid 400/400 | fwd bayes 1.10 poe 1.87 nominal 7.64 mm | reach 30/30 | none->none 1.1->1.1mm constant->constant 7.8->1.3mm linear->linear 11.1->1.4mm (73s)
+so101 oracle R3 random seed 1: order 01234 ok types RRRRR | valid 400/400 | fwd bayes 1.87 poe 2.90 nominal 11.93 mm | reach 30/30 | none->none 1.2->1.2mm constant->constant 15.0->2.0mm linear->linear 20.4->2.0mm (93s)
+so101 oracle R3 random seed 2: order 01234 ok types RRRRR | valid 400/400 | fwd bayes 1.48 poe 2.20 nominal 10.62 mm | reach 30/30 | none->none 1.2->1.2mm constant->linear 13.6->3.6mm linear->linear 20.3->3.7mm (95s)
+so101 oracle R3 active seed 0: order 01234 ok types RRRRR | valid 400/400 | fwd bayes 1.68 poe 3.66 nominal 7.72 mm | reach 30/30 | none->none 1.3->1.3mm constant->constant 8.1->1.3mm linear->linear 11.2->1.6mm (175s)
+so101 oracle R3 active seed 1: order 01234 ok types RRRRR | valid 400/400 | fwd bayes 3.69 poe 3.69 nominal 12.85 mm | reach 29/30 | none->constant 3.3->2.8mm constant->constant 15.6->3.1mm linear->linear 21.9->2.9mm (151s)
+so101 oracle R3 active seed 2: order 01234 ok types RRRRR | valid 400/400 | fwd bayes 1.63 poe 3.36 nominal 10.70 mm | reach 30/30 | none->none 1.4->1.4mm constant->constant 13.5->1.1mm linear->linear 20.3->1.5mm (172s)
+so101 mono R1 random seed 0: order 01234 ok types RRRRR | valid 400/556 | fwd bayes 0.67 poe 0.66 nominal 5.50 mm | reach 30/30 | none->none 0.4->0.4mm constant->constant 5.9->0.4mm linear->linear 13.0->0.4mm (122s)
+so101 mono R1 random seed 1: order 01234 ok types RRRRR | valid 400/521 | fwd bayes 0.99 poe 0.99 nominal 9.24 mm | reach 30/30 | none->none 0.6->0.6mm constant->constant 13.2->0.4mm linear->linear 36.2->0.4mm (122s)
+so101 mono R1 random seed 2: order 01234 ok types RRRRR | valid 400/579 | fwd bayes 0.79 poe 0.79 nominal 10.38 mm | reach 30/30 | none->none 0.5->0.5mm constant->constant 11.5->0.4mm linear->linear 29.7->0.5mm (120s)
+so101 mono R1 active seed 0: order 01234 ok types RRRRR | valid 410/451 | fwd bayes 0.56 poe 0.56 nominal 5.68 mm | reach 30/30 | none->constant 0.4->0.3mm constant->constant 5.9->0.4mm linear->linear 13.0->0.4mm (163s)
+so101 mono R1 active seed 1: order 01234 ok types RRRRR | valid 419/502 | fwd bayes 1.02 poe 1.02 nominal 9.00 mm | reach 30/30 | none->none 0.6->0.6mm constant->constant 13.2->0.3mm linear->linear 34.8->0.3mm (157s)
+so101 mono R1 active seed 2: order 01234 ok types RRRRR | valid 400/420 | fwd bayes 0.79 poe 0.79 nominal 10.90 mm | reach 30/30 | none->none 0.5->0.5mm constant->constant 11.5->0.4mm linear->linear 32.7->0.4mm (157s)
+so101 mono R3 random seed 0: order 01234 ok types RRRRR | valid 400/551 | fwd bayes 2.41 poe 2.41 nominal 8.33 mm | reach 30/30 | none->none 1.2->1.2mm constant->linear 5.0->1.4mm linear->linear 14.2->1.2mm (121s)
+so101 mono R3 random seed 1: order 01234 ok types RRRRR | valid 400/507 | fwd bayes 2.97 poe 2.95 nominal 12.44 mm | reach 30/30 | none->none 0.8->0.8mm constant->linear 12.4->1.3mm linear->linear 35.4->1.3mm (117s)
+so101 mono R3 random seed 2: order 01234 ok types RRRRR | valid 400/586 | fwd bayes 2.74 poe 2.75 nominal 10.83 mm | reach 30/30 | none->none 0.8->0.8mm constant->constant 11.7->0.6mm linear->linear 33.4->0.6mm (118s)
+so101 mono R3 active seed 0: order 01234 ok types RRRRR | valid 417/448 | fwd bayes 2.46 poe 2.46 nominal 8.30 mm | reach 30/30 | none->none 1.1->1.1mm constant->constant 4.8->1.1mm linear->linear 14.0->0.9mm (178s)
+so101 mono R3 active seed 1: order 01234 ok types RRRRR | valid 415/448 | fwd bayes 3.42 poe 3.43 nominal 11.48 mm | reach 30/30 | none->none 0.7->0.7mm constant->constant 12.4->0.5mm linear->linear 35.3->0.5mm (153s)
+so101 mono R3 active seed 2: order 01234 ok types RRRRR | valid 400/420 | fwd bayes 3.01 poe 3.01 nominal 10.07 mm | reach 30/30 | none->none 0.6->0.6mm constant->constant 11.5->0.5mm linear->linear 33.1->0.6mm (171s)
+so101 stereo R1 random seed 0: order 01234 ok types RRRRR | valid 400/570 | fwd bayes 2.36 poe 2.36 nominal 5.51 mm | reach 30/30 | none->none 1.2->1.2mm constant->constant 6.2->1.0mm linear->linear 13.7->1.3mm (179s)
+so101 stereo R1 random seed 1: order 01234 ok types RRRRR | valid 400/503 | fwd bayes 2.01 poe 2.01 nominal 9.54 mm | reach 30/30 | none->none 1.9->1.9mm constant->constant 14.1->1.5mm linear->linear 36.5->1.6mm (189s)
+so101 stereo R1 random seed 2: order 01234 ok types RRRRR | valid 400/716 | fwd bayes 2.84 poe 2.82 nominal 9.99 mm | reach 30/30 | none->none 1.4->1.4mm constant->constant 10.9->2.0mm linear->linear 32.7->1.6mm (202s)
+so101 stereo R1 active seed 0: order 01234 ok types RRRRR | valid 406/459 | fwd bayes 1.40 poe 1.37 nominal 6.08 mm | reach 30/30 | none->none 1.0->1.0mm constant->constant 6.1->1.2mm linear->linear 13.4->1.2mm (236s)
+so101 stereo R1 active seed 1: order 01234 ok types RRRRR | valid 404/456 | fwd bayes 2.72 poe 2.83 nominal 8.61 mm | reach 30/30 | none->none 2.0->2.0mm constant->constant 14.2->1.6mm linear->linear 36.9->1.8mm (236s)
+so101 stereo R1 active seed 2: order 01234 ok types RRRRR | valid 414/441 | fwd bayes 2.97 poe 2.97 nominal 9.57 mm | reach 30/30 | none->none 1.4->1.4mm constant->linear 10.9->2.1mm linear->linear 33.9->1.9mm (229s)
+so101 stereo R3 random seed 0: order 01234 ok types RRRRR | valid 400/591 | fwd bayes 3.03 poe 3.17 nominal 8.61 mm | reach 30/30 | none->constant 1.4->1.5mm constant->linear 6.4->1.7mm linear->linear 14.3->1.6mm (209s)
+so101 stereo R3 random seed 1: order 01234 ok types RRRRR | valid 400/504 | fwd bayes 3.01 poe 3.02 nominal 12.12 mm | reach 30/30 | none->none 2.0->2.0mm constant->constant 14.6->2.1mm linear->linear 36.2->2.2mm (180s)
+so101 stereo R3 random seed 2: order 01234 ok types RRRRR | valid 400/671 | fwd bayes 3.35 poe 3.36 nominal 11.16 mm | reach 30/30 | none->none 1.5->1.5mm constant->constant 11.2->1.9mm linear->linear 31.3->1.8mm (197s)
+so101 stereo R3 active seed 0: order 01234 ok types RRRRR | valid 407/462 | fwd bayes 2.66 poe 2.72 nominal 8.48 mm | reach 30/30 | none->none 1.2->1.2mm constant->constant 6.4->1.1mm linear->linear 14.1->1.2mm (246s)
+so101 stereo R3 active seed 1: order 01234 ok types RRRRR | valid 406/455 | fwd bayes 3.69 poe 3.76 nominal 11.99 mm | reach 30/30 | none->none 2.0->2.0mm constant->constant 14.2->1.9mm linear->linear 35.2->1.9mm (231s)
+so101 stereo R3 active seed 2: order 01234 ok types RRRRR | valid 418/442 | fwd bayes 3.54 poe 3.54 nominal 10.28 mm | reach 30/30 | none->none 1.6->1.6mm constant->constant 10.8->2.0mm linear->linear 32.8->2.1mm (243s)
+so101 lidar R1 random seed 0: order 01234 ok types RRRRR | valid 400/401 | fwd bayes 5.57 poe 5.53 nominal 4.71 mm | reach 27/30 | none->none 3.7->3.7mm constant->linear 7.0->8.4mm linear->linear 10.5->8.5mm (119s)
+so101 lidar R1 random seed 1: order 01234 ok types RRRRR | valid 400/426 | fwd bayes 3.04 poe 3.04 nominal 9.95 mm | reach 30/30 | none->none 4.0->4.0mm constant->constant 15.5->3.7mm linear->none 21.4->21.4mm (167s)
+so101 lidar R1 random seed 2: order 01234 ok types RRRRR | valid 400/400 | fwd bayes 1.37 poe 1.35 nominal 11.74 mm | reach 30/30 | none->none 1.3->1.3mm constant->constant 14.8->1.2mm linear->linear 22.0->1.3mm (172s)
+so101 lidar R1 active seed 0: order 01234 ok types RRRRR | valid 410/420 | fwd bayes 1.49 poe 1.49 nominal 5.19 mm | reach 30/30 | none->none 2.0->2.0mm constant->constant 5.4->2.1mm linear->linear 9.0->3.7mm (194s)
+so101 lidar R1 active seed 1: order 01234 ok types RRRRR | valid 402/420 | fwd bayes 1.69 poe 1.69 nominal 9.91 mm | reach 30/30 | none->none 2.5->2.5mm constant->constant 13.3->2.8mm linear->linear 20.9->3.5mm (182s)
+so101 lidar R1 active seed 2: order 01234 ok types RRRRR | valid 418/440 | fwd bayes 1.79 poe 1.79 nominal 11.41 mm | reach 30/30 | none->none 1.4->1.4mm constant->constant 14.1->1.0mm linear->linear 22.3->1.8mm (195s)
+so101 lidar R3 random seed 0: order 01234 ok types RRRRR | valid 400/401 | fwd bayes 6.25 poe 6.41 nominal 7.83 mm | reach 26/30 | none->none 6.8->6.8mm constant->linear 11.7->7.9mm linear->linear 15.7->6.8mm (142s)
+so101 lidar R3 random seed 1: order 01324 WRONG types RRRRR | valid 400/413 | fwd bayes 94.19 poe 5.10 nominal 12.25 mm | reach 4/30 | none->none 82.9->82.9mm constant->none 114.2->114.2mm linear->none 114.6->114.6mm (174s)
+so101 lidar R3 random seed 2: order 01234 ok types RRRRR | valid 400/400 | fwd bayes 4.05 poe 3.94 nominal 10.96 mm | reach 30/30 | none->constant 3.1->2.3mm constant->linear 16.0->4.9mm linear->linear 25.2->5.1mm (177s)
+so101 lidar R3 active seed 0: order 01234 ok types RRRRR | valid 412/420 | fwd bayes 2.27 poe 3.29 nominal 8.90 mm | reach 30/30 | none->constant 2.0->2.2mm constant->constant 7.5->2.3mm linear->linear 11.3->5.9mm (193s)
+so101 lidar R3 active seed 1: order 01234 ok types RRRRR | valid 406/420 | fwd bayes 1.81 poe 2.17 nominal 12.57 mm | reach 30/30 | none->none 3.1->3.1mm constant->constant 13.8->2.5mm linear->linear 21.3->2.5mm (183s)
+so101 lidar R3 active seed 2: order 01234 ok types RRRRR | valid 407/420 | fwd bayes 3.28 poe 3.28 nominal 10.23 mm | reach 30/30 | none->constant 2.5->3.1mm constant->constant 13.5->2.8mm linear->linear 22.4->5.0mm (218s)
+{
+ "oracle_R1_random": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 0.22579350293161687,
+  "fwd_poe": 0.2243652756169044,
+  "fwd_nominal": 9.064521425930096,
+  "reach_bayes": 90,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 3,
+    "unc": 0.19450383880288585,
+    "cor": 0.19450383880288585
+   },
+   "constant": {
+    "right": 3,
+    "unc": 13.51219624579244,
+    "cor": 0.21521636968021624
+   },
+   "linear": {
+    "right": 3,
+    "unc": 19.19027895812963,
+    "cor": 0.4628021290233731
+   }
+  }
+ },
+ "oracle_R1_active": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 0.22473146605968092,
+  "fwd_poe": 0.19862263761677962,
+  "fwd_nominal": 9.274894667859112,
+  "reach_bayes": 90,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 3,
+    "unc": 0.18110815950652415,
+    "cor": 0.18110815950652415
+   },
+   "constant": {
+    "right": 3,
+    "unc": 13.421835743220498,
+    "cor": 0.15415119862340143
+   },
+   "linear": {
+    "right": 3,
+    "unc": 19.318803432842508,
+    "cor": 0.3836380962553848
+   }
+  }
+ },
+ "oracle_R3_random": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 1.480182359457841,
+  "fwd_poe": 2.20428007146826,
+  "fwd_nominal": 10.616689105925488,
+  "reach_bayes": 90,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 3,
+    "unc": 1.1577291272611308,
+    "cor": 1.1577291272611308
+   },
+   "constant": {
+    "right": 2,
+    "unc": 13.572169174903394,
+    "cor": 1.9665864775085342
+   },
+   "linear": {
+    "right": 3,
+    "unc": 20.31573046346918,
+    "cor": 2.0288870297105714
+   }
+  }
+ },
+ "oracle_R3_active": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 1.6798560999449892,
+  "fwd_poe": 3.6583668242744727,
+  "fwd_nominal": 10.70229562593558,
+  "reach_bayes": 89,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 2,
+    "unc": 1.3990933818783153,
+    "cor": 1.3990933818783153
+   },
+   "constant": {
+    "right": 3,
+    "unc": 13.535329152343024,
+    "cor": 1.2774474398128008
+   },
+   "linear": {
+    "right": 3,
+    "unc": 20.29926515336509,
+    "cor": 1.58066183955073
+   }
+  }
+ },
+ "mono_R1_random": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 0.7893421371342688,
+  "fwd_poe": 0.7893431735479006,
+  "fwd_nominal": 9.238530640087657,
+  "reach_bayes": 90,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 3,
+    "unc": 0.45038891953013094,
+    "cor": 0.45038891953013094
+   },
+   "constant": {
+    "right": 3,
+    "unc": 11.47057025141451,
+    "cor": 0.410721481865744
+   },
+   "linear": {
+    "right": 3,
+    "unc": 29.652045454374424,
+    "cor": 0.3840599677372489
+   }
+  }
+ },
+ "mono_R1_active": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 0.7877244579224647,
+  "fwd_poe": 0.787724324113332,
+  "fwd_nominal": 9.000966040697225,
+  "reach_bayes": 90,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 2,
+    "unc": 0.5386878011811845,
+    "cor": 0.5386878011811845
+   },
+   "constant": {
+    "right": 3,
+    "unc": 11.535156097263545,
+    "cor": 0.3545313187256828
+   },
+   "linear": {
+    "right": 3,
+    "unc": 32.65970782811586,
+    "cor": 0.35288528538339564
+   }
+  }
+ },
+ "mono_R3_random": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 2.741354167507243,
+  "fwd_poe": 2.745712507667312,
+  "fwd_nominal": 10.830773645779846,
+  "reach_bayes": 90,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 3,
+    "unc": 0.7915815554411672,
+    "cor": 0.7915815554411672
+   },
+   "constant": {
+    "right": 1,
+    "unc": 11.742663634152866,
+    "cor": 1.2863423345513636
+   },
+   "linear": {
+    "right": 3,
+    "unc": 33.393815173165294,
+    "cor": 1.2007319440637207
+   }
+  }
+ },
+ "mono_R3_active": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 3.00815467847279,
+  "fwd_poe": 3.0084073082891796,
+  "fwd_nominal": 10.068580703803907,
+  "reach_bayes": 90,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 3,
+    "unc": 0.7315235307825032,
+    "cor": 0.7315235307825032
+   },
+   "constant": {
+    "right": 3,
+    "unc": 11.483683114138401,
+    "cor": 0.5483562912764565
+   },
+   "linear": {
+    "right": 3,
+    "unc": 33.08289079411957,
+    "cor": 0.5870943550756914
+   }
+  }
+ },
+ "stereo_R1_random": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 2.3609539535167436,
+  "fwd_poe": 2.364850976798175,
+  "fwd_nominal": 9.543018971456245,
+  "reach_bayes": 90,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 3,
+    "unc": 1.418452126917488,
+    "cor": 1.418452126917488
+   },
+   "constant": {
+    "right": 3,
+    "unc": 10.855424332168038,
+    "cor": 1.5140723103915894
+   },
+   "linear": {
+    "right": 3,
+    "unc": 32.744567678154105,
+    "cor": 1.5764640204103595
+   }
+  }
+ },
+ "stereo_R1_active": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 2.7195680266673334,
+  "fwd_poe": 2.8271019963115345,
+  "fwd_nominal": 8.6090758270485,
+  "reach_bayes": 90,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 3,
+    "unc": 1.4436993673129006,
+    "cor": 1.4436993673129006
+   },
+   "constant": {
+    "right": 2,
+    "unc": 10.882107761470218,
+    "cor": 1.5974812449118678
+   },
+   "linear": {
+    "right": 3,
+    "unc": 33.903043653931114,
+    "cor": 1.8288999691325665
+   }
+  }
+ },
+ "stereo_R3_random": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 3.0298680872995023,
+  "fwd_poe": 3.1702230405254155,
+  "fwd_nominal": 11.155673461525959,
+  "reach_bayes": 90,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 2,
+    "unc": 1.524707875345411,
+    "cor": 1.524707875345411
+   },
+   "constant": {
+    "right": 2,
+    "unc": 11.245704968807917,
+    "cor": 1.8727411502944282
+   },
+   "linear": {
+    "right": 3,
+    "unc": 31.295939082812538,
+    "cor": 1.7937369272859434
+   }
+  }
+ },
+ "stereo_R3_active": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 3.5386448547034064,
+  "fwd_poe": 3.541133335963244,
+  "fwd_nominal": 10.282130801392487,
+  "reach_bayes": 90,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 3,
+    "unc": 1.5778329902482804,
+    "cor": 1.5778329902482804
+   },
+   "constant": {
+    "right": 3,
+    "unc": 10.806705224376019,
+    "cor": 1.8555006572984853
+   },
+   "linear": {
+    "right": 3,
+    "unc": 32.75355873728332,
+    "cor": 1.8637772930490992
+   }
+  }
+ },
+ "lidar_R1_random": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 3.040923068974858,
+  "fwd_poe": 3.0409228345468544,
+  "fwd_nominal": 9.949924037851709,
+  "reach_bayes": 87,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 3,
+    "unc": 3.7116135507879893,
+    "cor": 3.7116135507879893
+   },
+   "constant": {
+    "right": 2,
+    "unc": 14.816720380347732,
+    "cor": 3.655674798458648
+   },
+   "linear": {
+    "right": 2,
+    "unc": 21.43451137529526,
+    "cor": 8.525223301592794
+   }
+  }
+ },
+ "lidar_R1_active": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 1.6899347660643775,
+  "fwd_poe": 1.6899347139384373,
+  "fwd_nominal": 9.905451900532633,
+  "reach_bayes": 90,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 3,
+    "unc": 1.975740427572028,
+    "cor": 1.975740427572028
+   },
+   "constant": {
+    "right": 3,
+    "unc": 13.262984483935973,
+    "cor": 2.073553846607177
+   },
+   "linear": {
+    "right": 3,
+    "unc": 20.90219766833322,
+    "cor": 3.486519162731411
+   }
+  }
+ },
+ "lidar_R3_random": {
+  "cells": 3,
+  "order_correct": 2,
+  "types_correct": 3,
+  "fwd_bayes": 6.249845171499954,
+  "fwd_poe": 5.095831850715206,
+  "fwd_nominal": 10.962244124470114,
+  "reach_bayes": 60,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 2,
+    "unc": 6.820170681516779,
+    "cor": 6.820170681516779
+   },
+   "constant": {
+    "right": 0,
+    "unc": 15.96177168184541,
+    "cor": 7.90915394978279
+   },
+   "linear": {
+    "right": 2,
+    "unc": 25.19610377165442,
+    "cor": 6.779925682854698
+   }
+  }
+ },
+ "lidar_R3_active": {
+  "cells": 3,
+  "order_correct": 3,
+  "types_correct": 3,
+  "fwd_bayes": 2.2692872826004096,
+  "fwd_poe": 3.2786701442546686,
+  "fwd_nominal": 10.229992412680584,
+  "reach_bayes": 90,
+  "reach_n": 90,
+  "deploy": {
+   "none": {
+    "right": 1,
+    "unc": 2.4883799527121275,
+    "cor": 3.1059400478138848
+   },
+   "constant": {
+    "right": 3,
+    "unc": 13.497783809099417,
+    "cor": 2.5312844952638445
+   },
+   "linear": {
+    "right": 3,
+    "unc": 21.31882998819463,
+    "cor": 5.037442946427698
+   }
+  }
+ }
+}
+so101 exit 0

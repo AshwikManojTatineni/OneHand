@@ -1,0 +1,97 @@
+franka oracle R3 random seed 2: order 0123456 ok types RRRRRRR | valid 400/400 | fwd bayes 0.74 poe 0.74 nominal 11.08 mm | reach 30/30 | none->none 0.7->0.7mm constant->constant 27.8->0.7mm linear->linear 46.5->1.2mm (582s)
+franka oracle R1 random seed 0: order 0123456 ok types RRRRRRR | valid 400/400 | fwd bayes 0.27 poe 0.27 nominal 13.29 mm | reach 30/30 | none->none 0.3->0.3mm constant->constant 39.3->0.3mm linear->linear 65.2->0.6mm (677s)
+franka oracle R1 active seed 1: order 0123465 WRONG types RRRRRRR | valid 400/400 | fwd bayes 14.73 poe 0.34 nominal 10.30 mm | reach 2/30 | none->none 14.5->14.5mm constant->constant 68.8->16.7mm linear->none 97.4->97.4mm (916s)
+franka oracle R1 random seed 1: order 0123456 ok types RRRRRRR | valid 400/400 | fwd bayes 0.21 poe 0.20 nominal 9.54 mm | reach 30/30 | none->none 0.3->0.3mm constant->constant 65.6->0.4mm linear->linear 94.5->0.6mm (648s)
+franka oracle R3 active seed 0: order 0123456 ok types RRRRRRR | valid 400/400 | fwd bayes 0.62 poe 0.62 nominal 13.42 mm | reach 30/30 | none->none 0.8->0.8mm constant->constant 39.3->0.8mm linear->linear 64.5->0.9mm (872s)
+franka oracle R1 active seed 2: order 0123456 ok types RRRRRRR | valid 400/400 | fwd bayes 0.22 poe 0.23 nominal 11.86 mm | reach 30/30 | none->none 0.3->0.3mm constant->constant 28.1->0.3mm linear->linear 46.2->0.6mm (682s)
+franka oracle R1 random seed 2: order 0123456 ok types RRRRRRR | valid 400/400 | fwd bayes 0.32 poe 0.31 nominal 10.75 mm | reach 30/30 | none->none 0.3->0.3mm constant->constant 28.4->0.4mm linear->linear 46.4->0.5mm (566s)
+franka oracle R3 active seed 1: order 0123465 WRONG types RRRRRRR | valid 400/400 | fwd bayes 19.30 poe 0.72 nominal 10.80 mm | reach 1/30 | none->none 13.8->13.8mm constant->constant 67.2->38.0mm linear->none 94.6->94.6mm (851s)
+franka oracle R3 random seed 0: order 0123456 ok types RRRRRRR | valid 400/400 | fwd bayes 0.80 poe 0.81 nominal 13.09 mm | reach 30/30 | none->none 0.8->0.8mm constant->constant 38.9->0.8mm linear->linear 64.6->0.9mm (740s)
+franka oracle R1 active seed 0: order 0123456 ok types RRRRRRR | valid 400/400 | fwd bayes 0.25 poe 0.25 nominal 13.41 mm | reach 30/30 | none->none 0.3->0.3mm constant->constant 39.3->0.2mm linear->linear 64.7->0.7mm (842s)
+franka oracle R3 random seed 1: order 0123456 ok types RRRRRRR | valid 400/400 | fwd bayes 0.82 poe 0.80 nominal 10.03 mm | reach 30/30 | none->none 0.7->0.7mm constant->constant 65.3->0.7mm linear->linear 95.4->0.9mm (675s)
+franka oracle R3 active seed 2: order 0123456 ok types RRRRRRR | valid 400/400 | fwd bayes 0.88 poe 0.88 nominal 12.05 mm | reach 30/30 | none->none 0.9->0.9mm constant->constant 28.0->0.8mm linear->linear 46.2->1.2mm (708s)
+franka mono R1 random seed 0: order 0123456 ok types RRRRRRR | valid 400/521 | fwd bayes 1.59 poe 1.59 nominal 14.95 mm | reach 30/30 | none->none 1.4->1.4mm constant->constant 9.9->1.4mm linear->linear 25.1->1.6mm (637s)
+franka stereo R1 random seed 0: order 0123456 ok types RRRRRRR | valid 400/521 | fwd bayes 11.19 poe 11.16 nominal 14.95 mm | reach 29/30 | none->none 6.1->6.1mm constant->linear 11.6->7.3mm linear->linear 27.9->5.8mm (703s)
+franka mono R1 active seed 1: order 0123456 ok types RRRRRRR | valid 401/601 | fwd bayes 1.94 poe 1.90 nominal 9.57 mm | reach 30/30 | none->none 1.5->1.5mm constant->linear 62.8->4.9mm linear->linear 144.5->4.0mm (1000s)
+franka mono R1 random seed 1: order 0123456 ok types RRRRRRR | valid 400/579 | fwd bayes 7.39 poe 7.39 nominal 9.99 mm | reach 26/30 | none->none 9.4->9.4mm constant->linear 64.8->17.5mm linear->linear 149.4->16.9mm (668s)
+franka stereo R1 random seed 1: order 0123456 ok types RRRRRRR | valid 400/600 | fwd bayes 16.76 poe 16.54 nominal 9.65 mm | reach 8/30 | none->none 9.7->9.7mm constant->linear 67.2->19.1mm linear->linear 156.9->16.8mm (763s)
+franka mono R1 random seed 2: order 0123456 ok types RRRRRRR | valid 400/509 | fwd bayes 2.54 poe 2.39 nominal 12.15 mm | reach 30/30 | none->none 1.4->1.4mm constant->constant 21.2->1.3mm linear->linear 53.3->1.9mm (857s)
+franka mono R1 active seed 2: order 0123456 ok types RRRRRRR | valid 410/592 | fwd bayes 1.02 poe 1.02 nominal 11.21 mm | reach 30/30 | none->none 1.0->1.0mm constant->constant 21.3->0.4mm linear->linear 52.6->0.8mm (1111s)
+franka stereo R1 random seed 2: order 0123456 ok types RRRRRRR | valid 400/530 | fwd bayes 10.41 poe 10.30 nominal 11.03 mm | reach 0/30 | none->constant 4.0->4.5mm constant->constant 26.9->8.5mm linear->linear 55.1->6.0mm (853s)
+franka mono R3 random seed 0: order 0123456 ok types RRRRRRR | valid 400/507 | fwd bayes 1.74 poe 1.74 nominal 14.29 mm | reach 30/30 | none->none 3.5->3.5mm constant->constant 8.2->2.8mm linear->linear 23.5->2.8mm (508s)
+franka mono R1 active seed 0: order 0123456 ok types RRRRRRR | valid 400/586 | fwd bayes 1.44 poe 1.45 nominal 13.35 mm | reach 30/30 | none->none 0.8->0.8mm constant->constant 9.2->1.1mm linear->linear 24.6->0.7mm (1053s)
+franka stereo R1 active seed 0: order 3450126 WRONG types RRRRRRR | valid 404/607 | fwd bayes 634.91 poe 13.30 nominal 13.89 mm | reach 0/30 | none->none 152.4->152.4mm constant->none 146.1->146.1mm linear->none 150.6->150.6mm (804s)
+franka mono R3 random seed 1: order 0123456 ok types RRRRRRR | valid 400/552 | fwd bayes 4.62 poe 4.62 nominal 10.53 mm | reach 30/30 | none->none 3.9->3.9mm constant->linear 62.1->12.1mm linear->linear 142.0->12.3mm (659s)
+franka lidar R1 random seed 0: order 0123456 ok types RRRRRRR | valid 400/400 | fwd bayes 0.93 poe 0.93 nominal 13.00 mm | reach 30/30 | none->constant 1.0->1.3mm constant->constant 37.2->1.1mm linear->linear 57.3->1.5mm (435s)
+franka stereo R1 active seed 1: order 5432106 WRONG types RRRRRRR | valid 400/647 | fwd bayes 753.77 poe 9.39 nominal 9.82 mm | reach 1/30 | none->none 152.5->152.5mm constant->none 160.3->160.3mm linear->none 200.1->200.1mm (864s)
+franka stereo R3 random seed 2: order 0123456 ok types RRRRRRR | valid 400/537 | fwd bayes 12.23 poe 12.12 nominal 11.66 mm | reach 1/30 | none->constant 4.1->6.2mm constant->constant 27.1->7.7mm linear->linear 53.1->6.0mm (762s)
+franka lidar R1 random seed 1: order 0123456 ok types RRRRRRR | valid 400/400 | fwd bayes 1.07 poe 1.08 nominal 9.49 mm | reach 30/30 | none->none 1.2->1.2mm constant->constant 59.6->1.0mm linear->linear 84.5->1.2mm (620s)
+franka stereo R3 active seed 0: order 0123456 ok types RRRRRRR | valid 403/605 | fwd bayes 12.29 poe 12.27 nominal 13.96 mm | reach 25/30 | none->none 6.0->6.0mm constant->linear 13.0->6.8mm linear->linear 32.6->7.2mm (876s)
+franka stereo R1 active seed 2: order 0123456 ok types RRRRRRR | valid 402/595 | fwd bayes 10.63 poe 10.63 nominal 10.63 mm | reach 4/30 | none->constant 6.7->6.7mm constant->constant 26.7->8.0mm linear->linear 58.5->7.2mm (1080s)
+franka lidar R1 random seed 2: order 0123456 ok types RRRRRRR | valid 400/400 | fwd bayes 0.59 poe 0.59 nominal 10.52 mm | reach 30/30 | none->none 0.8->0.8mm constant->constant 26.7->0.7mm linear->linear 42.1->0.7mm (589s)
+franka stereo R3 random seed 0: order 0123456 ok types RRRRRRR | valid 400/513 | fwd bayes 11.95 poe 11.97 nominal 14.20 mm | reach 25/30 | none->none 10.0->10.0mm constant->linear 12.4->9.0mm linear->linear 24.1->11.2mm (567s)
+franka stereo R3 active seed 1: order 0123456 ok types RRRRRRR | valid 407/731 | fwd bayes 10.35 poe 10.35 nominal 10.19 mm | reach 11/30 | none->none 5.2->5.2mm constant->constant 62.5->6.4mm linear->linear 148.9->12.0mm (932s)
+franka lidar R1 active seed 0: order 0123456 ok types RRRRRRR | valid 411/440 | fwd bayes 0.45 poe 0.45 nominal 14.51 mm | reach 30/30 | none->none 0.4->0.4mm constant->constant 37.2->0.5mm linear->linear 57.0->0.6mm (857s)
+franka stereo R3 random seed 1: order 0123456 ok types RRRRRRR | valid 400/614 | fwd bayes 18.74 poe 18.74 nominal 9.88 mm | reach 8/30 | none->none 10.1->10.1mm constant->linear 65.9->44.9mm linear->linear 175.0->45.6mm (562s)
+franka lidar R3 random seed 2: order 0123456 ok types RRRRRRR | valid 400/400 | fwd bayes 0.99 poe 0.99 nominal 10.98 mm | reach 30/30 | none->none 1.2->1.2mm constant->constant 26.1->1.0mm linear->linear 41.3->1.3mm (512s)
+franka stereo R3 active seed 2: order 0123456 ok types RRRRRRR | valid 410/538 | fwd bayes 10.61 poe 10.61 nominal 11.63 mm | reach 3/30 | none->linear 7.1->8.1mm constant->constant 24.0->8.5mm linear->linear 54.8->7.7mm (924s)
+franka lidar R1 active seed 1: order 0123456 ok types RRRRRRR | valid 410/420 | fwd bayes 0.60 poe 0.60 nominal 9.63 mm | reach 30/30 | none->none 0.7->0.7mm constant->constant 59.3->0.8mm linear->linear 84.3->0.9mm (872s)
+franka lidar R3 active seed 0: order 0123456 ok types RRRRRRR | valid 412/460 | fwd bayes 0.82 poe 0.82 nominal 13.48 mm | reach 30/30 | none->none 0.8->0.8mm constant->constant 36.8->0.9mm linear->linear 55.9->2.1mm (672s)
+franka lidar R1 active seed 2: order 0123456 ok types RRRRRRR | valid 414/440 | fwd bayes 0.58 poe 0.58 nominal 10.77 mm | reach 30/30 | none->none 0.6->0.6mm constant->constant 28.2->0.6mm linear->linear 41.1->1.3mm (879s)
+franka lidar R3 random seed 0: order 0123456 ok types RRRRRRR | valid 400/400 | fwd bayes 1.54 poe 1.55 nominal 13.26 mm | reach 30/30 | none->none 2.9->2.9mm constant->constant 36.4->2.5mm linear->linear 55.1->2.1mm (386s)
+franka lidar R3 active seed 1: order 0123456 ok types RRRRRRR | valid 409/420 | fwd bayes 0.83 poe 0.83 nominal 10.51 mm | reach 30/30 | none->none 0.7->0.7mm constant->constant 59.3->0.9mm linear->linear 83.9->0.9mm (761s)
+franka lidar R3 random seed 1: order 0123456 ok types RRRRRRR | valid 400/400 | fwd bayes 1.41 poe 1.41 nominal 9.99 mm | reach 30/30 | none->none 1.3->1.3mm constant->linear 59.6->1.6mm linear->linear 84.3->1.6mm (490s)
+franka lidar R3 active seed 2: order 0123456 ok types RRRRRRR | valid 405/440 | fwd bayes 0.90 poe 0.90 nominal 10.95 mm | reach 30/30 | none->none 1.0->1.0mm constant->constant 27.9->0.9mm linear->linear 41.0->1.2mm (741s)
+multiprocessing.pool.RemoteTraceback: 
+"""
+Traceback (most recent call last):
+  File "C:\Users\tatin\AppData\Roaming\uv\python\cpython-3.11-windows-x86_64-none\Lib\multiprocessing\pool.py", line 125, in worker
+    result = (True, func(*args, **kwds))
+                    ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\tatin\AppData\Roaming\uv\python\cpython-3.11-windows-x86_64-none\Lib\multiprocessing\pool.py", line 48, in mapstar
+    return list(map(*args))
+           ^^^^^^^^^^^^^^^^
+  File "D:\OneHand\scripts\selfmodel_ego.py", line 311, in _job
+    r = run_cell(sensor, level, babbling, seed, cfg)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\OneHand\scripts\selfmodel_ego.py", line 227, in run_cell
+    best, ranked, (Q, T, valid, inliers) = learn(A, Y, jumps)
+                                           ^^^^^^^^^^^^^^^^^^
+  File "D:\OneHand\scripts\selfmodel_ego.py", line 180, in learn
+    best, ranked, inliers = E.structure_search(Q, T, valid, log=log)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\OneHand\xbody\egoscheme.py", line 224, in structure_search
+    best = score(seed_order(init))
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\OneHand\xbody\egoscheme.py", line 211, in score
+    ch = pack_init(order, tuple(types[j] for j in order), init, Q, T)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\OneHand\xbody\egoscheme.py", line 155, in pack_init
+    M = sd.pose(np.mean(A[:, :3, 3], 0), sd.project_rot(np.mean(A[:, :3, :3], 0)))
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\OneHand\xbody\selfmodel_diff.py", line 113, in project_rot
+    U, _, Vt = np.linalg.svd(R)
+               ^^^^^^^^^^^^^^^^
+  File "D:\OneHand\.venv\Lib\site-packages\numpy\linalg\_linalg.py", line 1841, in svd
+    u, s, vh = gufunc(a, signature=signature)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\OneHand\.venv\Lib\site-packages\numpy\linalg\_linalg.py", line 153, in _raise_linalgerror_svd_nonconvergence
+    raise LinAlgError("SVD did not converge")
+numpy.linalg.LinAlgError: SVD did not converge
+"""
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\OneHand\scripts\selfmodel_ego.py", line 371, in <module>
+    main()
+  File "D:\OneHand\scripts\selfmodel_ego.py", line 337, in main
+    cells = pool.map(_job, jobs)
+            ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\tatin\AppData\Roaming\uv\python\cpython-3.11-windows-x86_64-none\Lib\multiprocessing\pool.py", line 367, in map
+    return self._map_async(func, iterable, mapstar, chunksize).get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\tatin\AppData\Roaming\uv\python\cpython-3.11-windows-x86_64-none\Lib\multiprocessing\pool.py", line 774, in get
+    raise self._value
+numpy.linalg.LinAlgError: SVD did not converge
+franka exit 1

@@ -1,0 +1,1618 @@
+<title>OneHand Codebase Audit</title><style>
+:root{--bg:#f6f5f1;--card:#fffefb;--fg:#23242a;--muted:#6b6d76;--line:#dcdad3;--soft:#ecebe5;--accent:#2f5bd3;
+--franka:#2f5bd3;--so101:#c2571a;--good:#2e7d4f;--warn:#a46a00;--bad:#b3261e;
+--mono:"JetBrains Mono",ui-monospace,Consolas,monospace;--sans:"IBM Plex Sans",system-ui,"Segoe UI",sans-serif}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#121317;--card:#191a1f;--fg:#e4e4e7;--muted:#9a9ca6;
+--line:#2c2e35;--soft:#22242a;--accent:#8aa8ff;--franka:#7f9dff;--so101:#f08c4f;--good:#5cc489;--warn:#e0a63c;--bad:#f2766c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121317;--card:#191a1f;--fg:#e4e4e7;--muted:#9a9ca6;--line:#2c2e35;--soft:#22242a;--accent:#8aa8ff;
+--franka:#7f9dff;--so101:#f08c4f;--good:#5cc489;--warn:#e0a63c;--bad:#f2766c;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:15px/1.6 var(--sans)}
+.wrap{max-width:1080px;margin:0 auto;padding-block:40px 96px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font-size:30px;line-height:1.2;margin:0 0 8px;text-wrap:balance;letter-spacing:-.015em}
+h2{font-size:22px;margin:64px 0 6px;text-wrap:balance;letter-spacing:-.01em}
+h3{font-size:16px;margin:28px 0 4px;font-family:var(--mono);font-weight:600}
+p{max-width:74ch;margin:6px 0 12px}
+.eyebrow{font:600 11.5px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.lead{font-size:17px;max-width:70ch}
+.verdict{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:22px 0 8px}
+.v{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0}
+.v b{display:block;font-size:13px;margin-bottom:4px}
+.v .pill{display:inline-block;font:600 11px/1 var(--mono);padding:4px 7px;border-radius:99px;margin-bottom:8px;letter-spacing:.04em}
+.ok{color:var(--good);background:color-mix(in srgb,var(--good) 14%,transparent)}
+.mid{color:var(--warn);background:color-mix(in srgb,var(--warn) 14%,transparent)}
+.no{color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,transparent)}
+.v p{font-size:13.5px;margin:0;color:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;margin:10px 0 4px}
+th{text-align:left;font:600 11px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);padding:6px 10px 6px 0}
+td{border-bottom:1px solid var(--soft);padding:7px 10px 7px 0;vertical-align:top}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:12.5px}
+code,.mono{font-family:var(--mono);font-size:12.5px}
+.scroll{overflow-x:auto}
+.robots{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin:12px 0}
+.robot{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:0}
+.rb-svg{width:100%;height:auto;display:block}
+.rb-ground{stroke:var(--muted);stroke-width:1.2}.rb-tick{stroke:var(--muted);stroke-width:.8}
+.rb-geom{fill:color-mix(in srgb,var(--fg) 7%,transparent);stroke:color-mix(in srgb,var(--fg) 22%,transparent);stroke-width:.6}
+.rb-link{fill:none;stroke:var(--fg);stroke-width:2.4;stroke-linejoin:round}
+.rb-joint{fill:var(--card);stroke:var(--fg);stroke-width:1.6}.rb-tcp{fill:var(--accent)}
+.rb-base{fill:var(--muted)}.rb-num{font:10px var(--mono);fill:var(--muted)}.rb-cap{font:10.5px var(--mono);fill:var(--muted)}
+.bars{width:100%;max-width:760px;height:auto}
+.bar-grid{stroke:var(--soft)}.bar-sep{stroke:var(--line)}.bar-ax,.bar-v,.bar-na{font:9.5px var(--mono);fill:var(--muted)}
+.bar-head{font:600 10.5px var(--mono);fill:var(--fg)}.bar-lab{font:10.5px var(--mono);fill:var(--fg)}.bar-g{fill:var(--muted)}
+.b-franka{fill:var(--franka)}.b-so101{fill:var(--so101)}
+.key{display:inline-flex;align-items:center;gap:6px;margin-right:16px;font-size:13px;color:var(--muted)}
+.sw{width:12px;height:12px;border-radius:2px;display:inline-block}
+.heat td.h{text-align:center;font-family:var(--mono);font-size:12px}
+.file{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 16px 14px;margin:14px 0;min-width:0}
+.file .meta{color:var(--muted);font:12px var(--mono);margin-left:8px;font-weight:400}
+.file pre.mermaid{background:transparent;margin:8px 0 0;overflow-x:auto}
+.layerhead{border-top:1px solid var(--line);margin-top:48px;padding-top:6px}
+ul.find{padding-left:20px;max-width:78ch}ul.find li{margin:8px 0}
+.stage{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;white-space:nowrap}
+.stage i{font-style:normal;display:inline-block;width:12px;text-align:center}
+.diff{color:var(--bad);font-weight:700}
+nav.toc{display:flex;flex-wrap:wrap;gap:6px 14px;margin:18px 0 0;font-size:13.5px}
+nav.toc a{color:var(--accent);text-decoration:none}
+nav.toc a:hover{text-decoration:underline}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<div class="wrap">
+<div class="eyebrow">OneHand · xbody-bench · audit of 2026-11-07</div>
+<h1>Is OneHand real, and how does it fit together?</h1>
+<p class="lead">This page checks the project instead of describing it. It loads both robot models, re-runs part of the stored results on this machine and compares them episode by episode, cross-checks every headline number against the raw result files, and then draws each program file as a diagram of its code blocks and the calls between them.</p>
+<div class="verdict">
+<div class="v"><span class="pill ok">REPRODUCED</span><b>Self-model teleop cells</b><p>16 of 16 model × seed results re-ran to the same FK error (within 0.01 mm) and the same reach count, on a different machine with MuJoCo 4.0.</p></div>
+<div class="v"><span class="pill ok">RE-RUN</span><b>Classical pick-and-place cells</b><p>6 cells, 120 episodes: 116 episodes ended on the same stage as stored; success 0→0, 19→19, 6→7, 0→0, 18→19, 0→0.</p></div>
+<div class="v"><span class="pill ok">CONSISTENT</span><b>RESULTS.md against raw files</b><p>Every headline number checked (classical splits, self-model task 55→81 and 56→85, ILC −13%) matches the JSON it came from.</p></div>
+<div class="v"><span class="pill mid">NOT CHECKABLE HERE</span><b>Route B, OMPL cells, GPU routes</b><p>Route B needs ManiSkill and the Newt checkpoints (neither is in the repo); the default RRT-Connect planner needs OMPL, which has no Windows build; the GPU routes were never run.</p></div>
+</div>
+<nav class="toc"><a href="#robots">The robots</a><a href="#repro">Reproduction</a><a href="#graph">Repository graph</a><a href="#bodies">Franka vs SO-101 in the code</a><a href="#same">Same job, different files</a><a href="#concerns">Concerns</a><a href="#files">File by file</a></nav>
+<h2 id="robots">The robots: MJCF, not URDF</h2>
+<p>There is no <code>.urdf</code> because this project never uses URDF for the two arms. It loads MuJoCo's own format, MJCF (<code>.xml</code>), from Google DeepMind's MuJoCo Menagerie: <code>franka_emika_panda/panda.xml</code> and <code>robotstudio_so101/so101.xml</code> (<code>xbody/bodies.py</code>, <code>SPECS[...]['xml']</code>). The README tells you to clone them into <code>assets/mujoco_menagerie/</code>, and <code>.gitignore</code> excludes that folder, so they were never in the repository. That is why you could not find them. I cloned them for this audit; the drawings and tables below are read from those files, not typed in.</p>
+<p>Route B is different: it uses ManiSkill's built-in Panda, SO100 and xArm6, which ManiSkill loads from its own URDF assets at run time. Those are not in this repository either, and the SO100 is an older sibling of the SO-101, not the same arm.</p>
+<div class="robots">
+<div class="robot"><svg viewBox="0 0 330 300" class="rb-svg" role="img" aria-label="Franka Emika Panda side view at its home pose, to scale"><line x1="10" y1="262" x2="320" y2="262" class="rb-ground"/><line x1="10.0" y1="262" x2="10.0" y2="270" class="rb-tick"/><line x1="39.3" y1="262" x2="39.3" y2="266" class="rb-tick"/><line x1="68.6" y1="262" x2="68.6" y2="266" class="rb-tick"/><line x1="97.9" y1="262" x2="97.9" y2="266" class="rb-tick"/><line x1="127.2" y1="262" x2="127.2" y2="266" class="rb-tick"/><line x1="156.5" y1="262" x2="156.5" y2="270" class="rb-tick"/><line x1="185.8" y1="262" x2="185.8" y2="266" class="rb-tick"/><line x1="215.1" y1="262" x2="215.1" y2="266" class="rb-tick"/><line x1="244.3" y1="262" x2="244.3" y2="266" class="rb-tick"/><line x1="273.6" y1="262" x2="273.6" y2="266" class="rb-tick"/><line x1="302.9" y1="262" x2="302.9" y2="270" class="rb-tick"/><circle cx="87.5" cy="245.4" r="22.0" class="rb-geom"/><circle cx="96.1" cy="184.8" r="22.0" class="rb-geom"/><circle cx="88.0" cy="145.5" r="22.0" class="rb-geom"/><circle cx="76.3" cy="84.4" r="22.0" class="rb-geom"/><circle cx="97.5" cy="64.3" r="22.0" class="rb-geom"/><circle cx="138.8" cy="69.4" r="22.0" class="rb-geom"/><circle cx="162.4" cy="79.8" r="22.0" class="rb-geom"/><circle cx="193.4" cy="94.1" r="22.0" class="rb-geom"/><circle cx="209.5" cy="92.6" r="22.0" class="rb-geom"/><circle cx="220.4" cy="117.8" r="22.0" class="rb-geom"/><circle cx="220.4" cy="133.0" r="22.0" class="rb-geom"/><circle cx="220.4" cy="148.0" r="12.1" class="rb-geom"/><circle cx="220.4" cy="156.1" r="3.7" class="rb-geom"/><circle cx="222.0" cy="157.7" r="1.4" class="rb-geom"/><circle cx="218.8" cy="157.7" r="1.4" class="rb-geom"/><circle cx="222.0" cy="154.6" r="1.5" class="rb-geom"/><circle cx="218.8" cy="154.6" r="1.5" class="rb-geom"/><circle cx="220.4" cy="148.0" r="12.1" class="rb-geom"/><circle cx="220.4" cy="156.1" r="3.7" class="rb-geom"/><circle cx="218.8" cy="157.7" r="1.4" class="rb-geom"/><circle cx="222.0" cy="157.7" r="1.4" class="rb-geom"/><circle cx="218.8" cy="154.6" r="1.5" class="rb-geom"/><circle cx="222.0" cy="154.6" r="1.5" class="rb-geom"/><polyline points="96.0,262.0 96.0,164.5 96.0,164.5 60.0,79.2 82.3,69.8 194.6,94.6 194.6,94.6 220.4,94.6 220.4,156.3" class="rb-link"/><circle cx="96.0" cy="164.5" r="4" class="rb-joint"/><text x="103.0" y="158.5" class="rb-num">1</text><circle cx="96.0" cy="164.5" r="4" class="rb-joint"/><text x="103.0" y="158.5" class="rb-num">2</text><circle cx="60.0" cy="79.2" r="4" class="rb-joint"/><text x="67.0" y="73.2" class="rb-num">3</text><circle cx="82.3" cy="69.8" r="4" class="rb-joint"/><text x="89.3" y="63.8" class="rb-num">4</text><circle cx="194.6" cy="94.6" r="4" class="rb-joint"/><text x="201.6" y="88.6" class="rb-num">5</text><circle cx="194.6" cy="94.6" r="4" class="rb-joint"/><text x="201.6" y="88.6" class="rb-num">6</text><circle cx="220.4" cy="94.6" r="4" class="rb-joint"/><text x="227.4" y="88.6" class="rb-num">7</text><circle cx="220.4" cy="156.3" r="3.2" class="rb-tcp"/><text x="227.4" y="160.3" class="rb-num">TCP</text><rect x="80.0" y="256.0" width="32" height="6" class="rb-base"/><text x="12" y="292" class="rb-cap">Franka Emika Panda · home pose · ticks 10 cm</text></svg></div>
+<div class="robot"><svg viewBox="0 0 330 300" class="rb-svg" role="img" aria-label="SO-101 side view at its home pose, to scale"><line x1="10" y1="262" x2="320" y2="262" class="rb-ground"/><line x1="10.0" y1="262" x2="10.0" y2="270" class="rb-tick"/><line x1="39.3" y1="262" x2="39.3" y2="266" class="rb-tick"/><line x1="68.6" y1="262" x2="68.6" y2="266" class="rb-tick"/><line x1="97.9" y1="262" x2="97.9" y2="266" class="rb-tick"/><line x1="127.2" y1="262" x2="127.2" y2="266" class="rb-tick"/><line x1="156.5" y1="262" x2="156.5" y2="270" class="rb-tick"/><line x1="185.8" y1="262" x2="185.8" y2="266" class="rb-tick"/><line x1="215.1" y1="262" x2="215.1" y2="266" class="rb-tick"/><line x1="244.3" y1="262" x2="244.3" y2="266" class="rb-tick"/><line x1="273.6" y1="262" x2="273.6" y2="266" class="rb-tick"/><line x1="302.9" y1="262" x2="302.9" y2="270" class="rb-tick"/><circle cx="68.9" cy="232.4" r="8.6" class="rb-geom"/><circle cx="67.3" cy="243.7" r="14.6" class="rb-geom"/><circle cx="60.5" cy="212.4" r="22.0" class="rb-geom"/><circle cx="55.7" cy="195.0" r="7.9" class="rb-geom"/><circle cx="74.3" cy="199.3" r="22.0" class="rb-geom"/><circle cx="95.7" cy="204.4" r="9.4" class="rb-geom"/><circle cx="104.1" cy="216.3" r="10.9" class="rb-geom"/><circle cx="101.2" cy="210.4" r="12.2" class="rb-geom"/><circle cx="106.5" cy="220.9" r="6.7" class="rb-geom"/><circle cx="108.9" cy="227.2" r="11.4" class="rb-geom"/><circle cx="105.7" cy="234.8" r="5.5" class="rb-geom"/><circle cx="108.7" cy="239.3" r="15.1" class="rb-geom"/><circle cx="117.3" cy="248.0" r="1.7" class="rb-geom"/><circle cx="115.8" cy="246.2" r="2.3" class="rb-geom"/><circle cx="113.0" cy="241.8" r="3.5" class="rb-geom"/><circle cx="109.9" cy="236.9" r="3.8" class="rb-geom"/><circle cx="110.3" cy="229.1" r="6.3" class="rb-geom"/><circle cx="112.4" cy="231.3" r="8.7" class="rb-geom"/><circle cx="119.9" cy="235.1" r="8.0" class="rb-geom"/><circle cx="122.9" cy="243.4" r="4.8" class="rb-geom"/><circle cx="116.7" cy="228.0" r="6.0" class="rb-geom"/><circle cx="122.1" cy="245.9" r="1.7" class="rb-geom"/><circle cx="121.5" cy="243.3" r="2.3" class="rb-geom"/><polyline points="60.0,262.0 60.0,243.7 68.9,227.8 60.3,195.0 98.5,205.2 106.6,221.1 122.8,245.2" class="rb-link"/><circle cx="60.0" cy="243.7" r="4" class="rb-joint"/><text x="67.0" y="237.7" class="rb-num">1</text><circle cx="68.9" cy="227.8" r="4" class="rb-joint"/><text x="75.9" y="221.8" class="rb-num">2</text><circle cx="60.3" cy="195.0" r="4" class="rb-joint"/><text x="67.3" y="189.0" class="rb-num">3</text><circle cx="98.5" cy="205.2" r="4" class="rb-joint"/><text x="105.5" y="199.2" class="rb-num">4</text><circle cx="106.6" cy="221.1" r="4" class="rb-joint"/><text x="113.6" y="215.1" class="rb-num">5</text><circle cx="122.8" cy="245.2" r="3.2" class="rb-tcp"/><text x="129.8" y="249.2" class="rb-num">TCP</text><rect x="44.0" y="256.0" width="32" height="6" class="rb-base"/><text x="12" y="292" class="rb-cap">SO-101 · home pose · ticks 10 cm</text></svg></div>
+</div>
+<div class="scroll"><table><tr><th>From the model file</th><th class="num">Franka Panda</th><th class="num">SO-101</th></tr>
+<tr><td>Arm joints</td><td class="num">7</td><td class="num">5</td></tr>
+<tr><td>Actuators (incl. gripper)</td><td class="num">8</td><td class="num">6</td></tr>
+<tr><td>Bodies / geoms / meshes</td><td class="num">12 / 81 / 67</td><td class="num">9 / 50 / 18</td></tr>
+<tr><td>Total mass</td><td class="num">17.45 kg</td><td class="num">0.65 kg</td></tr>
+<tr><td>Largest joint torque</td><td class="num">87 N·m</td><td class="num">2.9 N·m</td></tr>
+<tr><td>Physics timestep</td><td class="num">2 ms</td><td class="num">5 ms</td></tr>
+<tr><td>Reach from shoulder at home pose</td><td class="num">49 cm</td><td class="num">21 cm</td></tr>
+</table></div>
+<div class="scroll"><table><tr><th>Joint ranges (deg)</th><th class="num">1</th><th class="num">2</th><th class="num">3</th><th class="num">4</th><th class="num">5</th><th class="num">6</th><th class="num">7</th></tr>
+<tr><td>Franka Emika Panda</td><td class="num">-166…166</td><td class="num">-101…101</td><td class="num">-166…166</td><td class="num">-176…-4</td><td class="num">-166…166</td><td class="num">-1…215</td><td class="num">-166…166</td></tr>
+<tr><td>SO-101</td><td class="num">-110…110</td><td class="num">-100…100</td><td class="num">-97…97</td><td class="num">-95…95</td><td class="num">-157…163</td><td></td><td></td></tr>
+</table></div>
+<p>The SO-101 is 27 times lighter and its strongest joint is 30 times weaker. That is why the code branches on the body in a dozen places (next sections), and why some methods split so sharply between the two arms.</p>
+<h2 id="repro">Reproduction on this machine</h2>
+<p>Environment: Python 3.11, MuJoCo 4.0.0, Menagerie at its current head, Windows. The stored results were produced on Linux with an older MuJoCo, so exact agreement is not guaranteed even for honest results; agreement this close is very hard to fake.</p>
+<h3>Self-model from teleoperation · <span class='mono'>scripts/selfmodel_teleop.py</span>, Cartesian teleop, 400 poses, mid noise</h3>
+<div class="scroll"><table><tr><th>Arm</th><th>Seed</th><th>Model</th><th class="num">Stored FK error</th><th class="num">Re-run</th><th class="num">Stored reach</th><th class="num">Re-run</th></tr>
+<tr><td>franka</td><td class="num">0</td><td>nominal</td><td class="num">11.41 mm</td><td class="num">11.41 mm</td><td class="num">24/40</td><td class="num">24/40</td></tr>
+<tr><td>franka</td><td class="num">0</td><td>diff_only</td><td class="num">34.27 mm</td><td class="num">34.27 mm</td><td class="num">3/40</td><td class="num">3/40</td></tr>
+<tr><td>franka</td><td class="num">0</td><td>diff_abs</td><td class="num">2.10 mm</td><td class="num">2.10 mm</td><td class="num">40/40</td><td class="num">40/40</td></tr>
+<tr><td>franka</td><td class="num">0</td><td>calib</td><td class="num">2.10 mm</td><td class="num">2.10 mm</td><td class="num">40/40</td><td class="num">40/40</td></tr>
+<tr><td>franka</td><td class="num">1</td><td>nominal</td><td class="num">6.90 mm</td><td class="num">6.90 mm</td><td class="num">2/40</td><td class="num">2/40</td></tr>
+<tr><td>franka</td><td class="num">1</td><td>diff_only</td><td class="num">61.12 mm</td><td class="num">61.11 mm</td><td class="num">1/40</td><td class="num">1/40</td></tr>
+<tr><td>franka</td><td class="num">1</td><td>diff_abs</td><td class="num">3.37 mm</td><td class="num">3.37 mm</td><td class="num">40/40</td><td class="num">40/40</td></tr>
+<tr><td>franka</td><td class="num">1</td><td>calib</td><td class="num">3.37 mm</td><td class="num">3.37 mm</td><td class="num">40/40</td><td class="num">40/40</td></tr>
+<tr><td>so101</td><td class="num">0</td><td>nominal</td><td class="num">13.74 mm</td><td class="num">13.74 mm</td><td class="num">0/40</td><td class="num">0/40</td></tr>
+<tr><td>so101</td><td class="num">0</td><td>diff_only</td><td class="num">3.97 mm</td><td class="num">3.97 mm</td><td class="num">40/40</td><td class="num">40/40</td></tr>
+<tr><td>so101</td><td class="num">0</td><td>diff_abs</td><td class="num">0.95 mm</td><td class="num">0.95 mm</td><td class="num">40/40</td><td class="num">40/40</td></tr>
+<tr><td>so101</td><td class="num">0</td><td>calib</td><td class="num">0.95 mm</td><td class="num">0.95 mm</td><td class="num">40/40</td><td class="num">40/40</td></tr>
+<tr><td>so101</td><td class="num">1</td><td>nominal</td><td class="num">10.74 mm</td><td class="num">10.74 mm</td><td class="num">0/40</td><td class="num">0/40</td></tr>
+<tr><td>so101</td><td class="num">1</td><td>diff_only</td><td class="num">12.35 mm</td><td class="num">12.35 mm</td><td class="num">25/40</td><td class="num">25/40</td></tr>
+<tr><td>so101</td><td class="num">1</td><td>diff_abs</td><td class="num">0.56 mm</td><td class="num">0.56 mm</td><td class="num">40/40</td><td class="num">40/40</td></tr>
+<tr><td>so101</td><td class="num">1</td><td>calib</td><td class="num">0.56 mm</td><td class="num">0.56 mm</td><td class="num">40/40</td><td class="num">40/40</td></tr>
+</table></div>
+<h3>Classical pick-and-place · <span class='mono'>scripts/eval_classical.py</span>, 20 seeded layouts per cell</h3>
+<p>Only planners written in this repository can run here (OMPL has no Windows build), so these are the LazyPRM, A* and potential-field cells. Each strip is the stage reached per episode (5 = placed); a stage that differs from the stored run is marked.</p>
+<div class="scroll"><table><tr><th>Cell</th><th class="num">Stored</th><th class="num">Re-run</th><th class="num">Same stage</th><th>Re-run stage per episode</th></tr>
+<tr><td class="mono">franka__planner-astar</td><td class="num">0/20</td><td class="num">0/20</td><td class="num">20/20</td><td class="stage"><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i></td></tr>
+<tr><td class="mono">franka__planner-lazyprm</td><td class="num">19/20</td><td class="num">19/20</td><td class="num">20/20</td><td class="stage"><i>5</i><i>5</i><i>5</i><i>5</i><i>5</i><i>5</i><i>5</i><i>5</i><i>5</i><i>3</i><i>5</i><i>5</i><i>5</i><i>5</i><i>5</i><i>5</i><i>5</i><i>5</i><i>5</i><i>5</i></td></tr>
+<tr><td class="mono">franka__planner-potential</td><td class="num">6/20</td><td class="num">7/20</td><td class="num">17/20</td><td class="stage"><i>3</i><i>3</i><i>3</i><i>3</i><i>5</i><i class="diff">3</i><i>3</i><i class="diff">5</i><i>3</i><i>5</i><i class="diff">5</i><i>3</i><i>3</i><i>3</i><i>3</i><i>5</i><i>5</i><i>3</i><i>5</i><i>3</i></td></tr>
+<tr><td class="mono">so101__planner-astar</td><td class="num">0/20</td><td class="num">0/20</td><td class="num">20/20</td><td class="stage"><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i></td></tr>
+<tr><td class="mono">so101__planner-lazyprm</td><td class="num">18/20</td><td class="num">19/20</td><td class="num">19/20</td><td class="stage"><i>5</i><i>0</i><i>5</i><i>5</i><i>5</i><i>5</i><i>5</i><i>5</i><i>5</i><i>5</i><i>5</i><i>5</i><i>5</i><i>5</i><i>5</i><i>5</i><i>5</i><i class="diff">5</i><i>5</i><i>5</i></td></tr>
+<tr><td class="mono">so101__planner-potential</td><td class="num">0/20</td><td class="num">0/20</td><td class="num">20/20</td><td class="stage"><i>3</i><i>0</i><i>3</i><i>0</i><i>3</i><i>3</i><i>3</i><i>3</i><i>3</i><i>3</i><i>3</i><i>3</i><i>3</i><i>3</i><i>3</i><i>0</i><i>0</i><i>0</i><i>0</i><i>0</i></td></tr>
+</table></div>
+<h2 id="graph">The repository graph</h2>
+<p>55 program and config files, 102 import and trigger edges, parsed from the code. No import cycles. Every library module is imported by something. The layers form a stack: scripts depend on the library, and the library depends on nothing above it except one edge, <code>calibration.py</code> importing the pose maths in <code>selfmodel_diff.py</code>.</p>
+<pre class="mermaid">flowchart TB
+  nCore_Benchmark_Library[&quot;&lt;b&gt;Core&lt;/b&gt;&lt;br/&gt;&lt;small&gt;7 files&lt;/small&gt;&quot;]
+  nClassical_Robotics_Stack[&quot;&lt;b&gt;Classical&lt;/b&gt;&lt;br/&gt;&lt;small&gt;8 files&lt;/small&gt;&quot;]
+  nSelf_Modeling_Experiments[&quot;&lt;b&gt;Self-model&lt;/b&gt;&lt;br/&gt;&lt;small&gt;9 files&lt;/small&gt;&quot;]
+  nEvaluation_and_Analysis_Scripts[&quot;&lt;b&gt;Evaluation&lt;/b&gt;&lt;br/&gt;&lt;small&gt;14 files&lt;/small&gt;&quot;]
+  nExperiment_Grid_Orchestration[&quot;&lt;b&gt;Grid&lt;/b&gt;&lt;br/&gt;&lt;small&gt;7 files&lt;/small&gt;&quot;]
+  nGPU_Training_Routes[&quot;&lt;b&gt;GPU&lt;/b&gt;&lt;br/&gt;&lt;small&gt;7 files&lt;/small&gt;&quot;]
+  nProtocol_and_Checkpoint_Registry[&quot;&lt;b&gt;Protocol&lt;/b&gt;&lt;br/&gt;&lt;small&gt;3 files&lt;/small&gt;&quot;]
+  nEvaluation_and_Analysis_Scripts -- 32 --&gt; nCore_Benchmark_Library
+  nSelf_Modeling_Experiments -- 15 --&gt; nCore_Benchmark_Library
+  nEvaluation_and_Analysis_Scripts -- 8 --&gt; nClassical_Robotics_Stack
+  nExperiment_Grid_Orchestration -- 8 --&gt; nEvaluation_and_Analysis_Scripts
+  nClassical_Robotics_Stack -- 7 --&gt; nCore_Benchmark_Library
+  nGPU_Training_Routes -- 2 --&gt; nCore_Benchmark_Library
+  nEvaluation_and_Analysis_Scripts -- 1 --&gt; nProtocol_and_Checkpoint_Registry
+  nEvaluation_and_Analysis_Scripts -- 1 --&gt; nGPU_Training_Routes
+  nSelf_Modeling_Experiments -- 1 --&gt; nClassical_Robotics_Stack
+  nCore_Benchmark_Library -- 1 --&gt; nSelf_Modeling_Experiments</pre>
+<h3>Edges between layers</h3>
+<div class="scroll"><table class="heat"><tr><th>from \ to</th><th class="num">Core</th><th class="num">Classical</th><th class="num">Self-model</th><th class="num">Evaluation</th><th class="num">Grid</th><th class="num">GPU</th><th class="num">Protocol</th></tr>
+<tr><td>Core</td>
+<td class="h" style="background:color-mix(in srgb,var(--accent) 11%,transparent)">2</td>
+<td class="h" style=""></td>
+<td class="h" style="background:color-mix(in srgb,var(--accent) 9%,transparent)">1</td>
+<td class="h" style=""></td>
+<td class="h" style=""></td>
+<td class="h" style=""></td>
+<td class="h" style=""></td>
+</tr>
+<tr><td>Classical</td>
+<td class="h" style="background:color-mix(in srgb,var(--accent) 21%,transparent)">7</td>
+<td class="h" style="background:color-mix(in srgb,var(--accent) 21%,transparent)">7</td>
+<td class="h" style=""></td>
+<td class="h" style=""></td>
+<td class="h" style=""></td>
+<td class="h" style=""></td>
+<td class="h" style=""></td>
+</tr>
+<tr><td>Self-model</td>
+<td class="h" style="background:color-mix(in srgb,var(--accent) 36%,transparent)">15</td>
+<td class="h" style="background:color-mix(in srgb,var(--accent) 9%,transparent)">1</td>
+<td class="h" style="background:color-mix(in srgb,var(--accent) 24%,transparent)">9</td>
+<td class="h" style=""></td>
+<td class="h" style=""></td>
+<td class="h" style=""></td>
+<td class="h" style=""></td>
+</tr>
+<tr><td>Evaluation</td>
+<td class="h" style="background:color-mix(in srgb,var(--accent) 68%,transparent)">32</td>
+<td class="h" style="background:color-mix(in srgb,var(--accent) 23%,transparent)">8</td>
+<td class="h" style=""></td>
+<td class="h" style="background:color-mix(in srgb,var(--accent) 9%,transparent)">1</td>
+<td class="h" style=""></td>
+<td class="h" style="background:color-mix(in srgb,var(--accent) 9%,transparent)">1</td>
+<td class="h" style="background:color-mix(in srgb,var(--accent) 9%,transparent)">1</td>
+</tr>
+<tr><td>Grid</td>
+<td class="h" style=""></td>
+<td class="h" style=""></td>
+<td class="h" style=""></td>
+<td class="h" style="background:color-mix(in srgb,var(--accent) 23%,transparent)">8</td>
+<td class="h" style=""></td>
+<td class="h" style=""></td>
+<td class="h" style=""></td>
+</tr>
+<tr><td>GPU</td>
+<td class="h" style="background:color-mix(in srgb,var(--accent) 11%,transparent)">2</td>
+<td class="h" style=""></td>
+<td class="h" style=""></td>
+<td class="h" style=""></td>
+<td class="h" style=""></td>
+<td class="h" style="background:color-mix(in srgb,var(--accent) 19%,transparent)">6</td>
+<td class="h" style=""></td>
+</tr>
+<tr><td>Protocol</td>
+<td class="h" style=""></td>
+<td class="h" style=""></td>
+<td class="h" style=""></td>
+<td class="h" style=""></td>
+<td class="h" style=""></td>
+<td class="h" style=""></td>
+<td class="h" style="background:color-mix(in srgb,var(--accent) 9%,transparent)">1</td>
+</tr>
+</table></div>
+<h3>Hubs</h3>
+<div class="scroll"><table><tr><th>File</th><th>Layer</th><th class="num">Imported by</th><th class="num">Imports</th><th class="num">Lines</th></tr>
+<tr><td class="mono">xbody/stats.py</td><td>Core</td><td class="num">14</td><td class="num">0</td><td class="num">53</td></tr>
+<tr><td class="mono">xbody/bodies.py</td><td>Core</td><td class="num">13</td><td class="num">0</td><td class="num">64</td></tr>
+<tr><td class="mono">xbody/kinematics.py</td><td>Core</td><td class="num">11</td><td class="num">0</td><td class="num">141</td></tr>
+<tr><td class="mono">xbody/scene.py</td><td>Core</td><td class="num">10</td><td class="num">1</td><td class="num">91</td></tr>
+<tr><td class="mono">xbody/selfmodel_diff.py</td><td>Self-model</td><td class="num">5</td><td class="num">0</td><td class="num">283</td></tr>
+<tr><td class="mono">xbody/newt_agent.py</td><td>Core</td><td class="num">4</td><td class="num">0</td><td class="num">78</td></tr>
+<tr><td class="mono">scripts/eval_route_b_transfer.py</td><td>Evaluation</td><td class="num">3</td><td class="num">3</td><td class="num">217</td></tr>
+<tr><td class="mono">xbody/calibration.py</td><td>Core</td><td class="num">3</td><td class="num">2</td><td class="num">114</td></tr>
+<tr><td class="mono">xbody/classical/pipeline.py</td><td>Classical</td><td class="num">3</td><td class="num">12</td><td class="num">444</td></tr>
+<tr><td class="mono">xbody/classical/worldmodel.py</td><td>Classical</td><td class="num">3</td><td class="num">0</td><td class="num">210</td></tr>
+</table></div>
+<h3>Every file and its imports</h3>
+<pre class="mermaid">flowchart LR
+  subgraph nL_Core_Benchmark_Library[&quot;Core&quot;]
+    nxbody_bodies_py[&quot;bodies.py&quot;]
+    nxbody_calibration_py[&quot;calibration.py&quot;]
+    nxbody_kinematics_py[&quot;kinematics.py&quot;]
+    nxbody_newt_agent_py[&quot;newt_agent.py&quot;]
+    nxbody_scene_py[&quot;scene.py&quot;]
+    nxbody_stages_py[&quot;stages.py&quot;]
+    nxbody_stats_py[&quot;stats.py&quot;]
+  end
+  subgraph nL_Classical_Robotics_Stack[&quot;Classical&quot;]
+    nxbody_classical___init___py[&quot;__init__.py&quot;]
+    nxbody_classical_control_py[&quot;control.py&quot;]
+    nxbody_classical_ik_py[&quot;ik.py&quot;]
+    nxbody_classical_perception_py[&quot;perception.py&quot;]
+    nxbody_classical_pipeline_py[&quot;pipeline.py&quot;]
+    nxbody_classical_planning_py[&quot;planning.py&quot;]
+    nxbody_classical_timing_py[&quot;timing.py&quot;]
+    nxbody_classical_worldmodel_py[&quot;worldmodel.py&quot;]
+  end
+  subgraph nL_Self_Modeling_Experiments[&quot;Self-model&quot;]
+    nscripts_eval_selfmodel_task_py[&quot;eval_selfmodel_task.py&quot;]
+    nscripts_selfmodel_readout_route_b_py[&quot;selfmodel_readout_route_b.py&quot;]
+    nscripts_selfmodel_sensors_py[&quot;selfmodel_sensors.py&quot;]
+    nscripts_selfmodel_teleop_py[&quot;selfmodel_teleop.py&quot;]
+    nscripts_summarize_selfmodel_sensors_py[&quot;summarize_selfmodel_sensors.py&quot;]
+    nscripts_summarize_selfmodel_teleop_py[&quot;summarize_selfmodel_teleop.py&quot;]
+    nxbody_selfmodel_diff_py[&quot;selfmodel_diff.py&quot;]
+    nxbody_selfmodel_lab_py[&quot;selfmodel_lab.py&quot;]
+    nxbody_selfmodel_sensing_py[&quot;selfmodel_sensing.py&quot;]
+  end
+  subgraph nL_Evaluation_and_Analysis_Scripts[&quot;Evaluation&quot;]
+    nscripts_check_registry_py[&quot;check_registry.py&quot;]
+    nscripts_eval_classical_py[&quot;eval_classical.py&quot;]
+    nscripts_eval_ilc_py[&quot;eval_ilc.py&quot;]
+    nscripts_eval_learned_mjx_py[&quot;eval_learned_mjx.py&quot;]
+    nscripts_eval_route_b_home_py[&quot;eval_route_b_home.py&quot;]
+    nscripts_eval_route_b_r3_py[&quot;eval_route_b_r3.py&quot;]
+    nscripts_eval_route_b_transfer_py[&quot;eval_route_b_transfer.py&quot;]
+    nscripts_eval_s1_py[&quot;eval_s1.py&quot;]
+    nscripts_export_layouts_py[&quot;export_layouts.py&quot;]
+    nscripts_summarize_classical_py[&quot;summarize_classical.py&quot;]
+    nscripts_summarize_phase0_py[&quot;summarize_phase0.py&quot;]
+    nscripts_test_k_interface_py[&quot;test_k_interface.py&quot;]
+    nscripts_test_planners_py[&quot;test_planners.py&quot;]
+    nscripts_test_world_models_py[&quot;test_world_models.py&quot;]
+  end
+  subgraph nL_Experiment_Grid_Orchestration[&quot;Grid&quot;]
+    nscripts_run_classical_grid_sh[&quot;run_classical_grid.sh&quot;]
+    nscripts_run_route_b_grid_sh[&quot;run_route_b_grid.sh&quot;]
+    nscripts_run_route_b_mpc_cells_sh[&quot;run_route_b_mpc_cells.sh&quot;]
+    nscripts_run_route_b_r3_grid_sh[&quot;run_route_b_r3_grid.sh&quot;]
+    nscripts_run_route_b_r3_mpc_sh[&quot;run_route_b_r3_mpc.sh&quot;]
+    nscripts_run_s1_grid_sh[&quot;run_s1_grid.sh&quot;]
+    nscripts_smoke_classical_sh[&quot;smoke_classical.sh&quot;]
+  end
+  subgraph nL_GPU_Training_Routes[&quot;GPU&quot;]
+    nisaac_onehand_isaac___init___py[&quot;__init__.py&quot;]
+    nisaac_onehand_isaac_agents___init___py[&quot;__init__.py&quot;]
+    nisaac_onehand_isaac_agents_rsl_rl_ppo_cfg_py[&quot;rsl_rl_ppo_cfg.py&quot;]
+    nisaac_onehand_isaac_pick_place_post_env_py[&quot;pick_place_post_env.py&quot;]
+    nisaac_scripts_run_py[&quot;run.py&quot;]
+    nscripts_train_mjx_ppo_py[&quot;train_mjx_ppo.py&quot;]
+    nxbody_learned_mjx_pick_py[&quot;mjx_pick.py&quot;]
+  end
+  subgraph nL_Protocol_and_Checkpoint_Registry[&quot;Protocol&quot;]
+    nprotocol_yaml[&quot;protocol.yaml&quot;]
+    nregistry_checkpoints_yaml[&quot;checkpoints.yaml&quot;]
+    nregistry_checkpoints_status_yaml[&quot;checkpoints_status.yaml&quot;]
+  end
+  nisaac_onehand_isaac___init___py --&gt; nisaac_onehand_isaac_agents_rsl_rl_ppo_cfg_py
+  nisaac_onehand_isaac___init___py --&gt; nisaac_onehand_isaac_pick_place_post_env_py
+  nisaac_scripts_run_py --&gt; nisaac_onehand_isaac___init___py
+  nisaac_scripts_run_py --&gt; nisaac_onehand_isaac_agents_rsl_rl_ppo_cfg_py
+  nisaac_scripts_run_py --&gt; nisaac_onehand_isaac_pick_place_post_env_py
+  nregistry_checkpoints_status_yaml --&gt; nregistry_checkpoints_yaml
+  nscripts_check_registry_py --&gt; nregistry_checkpoints_yaml
+  nscripts_eval_classical_py --&gt; nxbody_classical_pipeline_py
+  nscripts_eval_classical_py --&gt; nxbody_scene_py
+  nscripts_eval_classical_py --&gt; nxbody_stats_py
+  nscripts_eval_ilc_py --&gt; nxbody_classical_control_py
+  nscripts_eval_ilc_py --&gt; nxbody_classical_pipeline_py
+  nscripts_eval_ilc_py --&gt; nxbody_scene_py
+  nscripts_eval_ilc_py --&gt; nxbody_stats_py
+  nscripts_eval_learned_mjx_py --&gt; nxbody_bodies_py
+  nscripts_eval_learned_mjx_py --&gt; nxbody_learned_mjx_pick_py
+  nscripts_eval_learned_mjx_py --&gt; nxbody_scene_py
+  nscripts_eval_learned_mjx_py --&gt; nxbody_stages_py
+  nscripts_eval_learned_mjx_py --&gt; nxbody_stats_py
+  nscripts_eval_route_b_home_py --&gt; nxbody_newt_agent_py
+  nscripts_eval_route_b_home_py --&gt; nxbody_stats_py
+  nscripts_eval_route_b_r3_py --&gt; nscripts_eval_route_b_transfer_py
+  nscripts_eval_route_b_r3_py --&gt; nxbody_kinematics_py
+  nscripts_eval_route_b_r3_py --&gt; nxbody_newt_agent_py
+  nscripts_eval_route_b_r3_py --&gt; nxbody_stats_py
+  nscripts_eval_route_b_transfer_py --&gt; nxbody_kinematics_py
+  nscripts_eval_route_b_transfer_py --&gt; nxbody_newt_agent_py
+  nscripts_eval_route_b_transfer_py --&gt; nxbody_stats_py
+  nscripts_eval_s1_py --&gt; nxbody_bodies_py
+  nscripts_eval_s1_py --&gt; nxbody_kinematics_py
+  nscripts_eval_s1_py --&gt; nxbody_scene_py
+  nscripts_eval_s1_py --&gt; nxbody_stages_py
+  nscripts_eval_s1_py --&gt; nxbody_stats_py
+  nscripts_eval_selfmodel_task_py --&gt; nscripts_selfmodel_teleop_py
+  nscripts_eval_selfmodel_task_py --&gt; nxbody_bodies_py
+  nscripts_eval_selfmodel_task_py --&gt; nxbody_calibration_py
+  nscripts_eval_selfmodel_task_py --&gt; nxbody_classical_pipeline_py
+  nscripts_eval_selfmodel_task_py --&gt; nxbody_scene_py
+  nscripts_eval_selfmodel_task_py --&gt; nxbody_selfmodel_diff_py
+  nscripts_eval_selfmodel_task_py --&gt; nxbody_stats_py
+  nscripts_export_layouts_py --&gt; nxbody_bodies_py
+  nscripts_export_layouts_py --&gt; nxbody_scene_py
+  nscripts_run_classical_grid_sh --&gt; nscripts_eval_classical_py
+  nscripts_run_route_b_grid_sh --&gt; nscripts_eval_route_b_transfer_py
+  nscripts_run_route_b_mpc_cells_sh --&gt; nscripts_eval_route_b_transfer_py
+  nscripts_run_route_b_r3_grid_sh --&gt; nscripts_eval_route_b_home_py
+  nscripts_run_route_b_r3_grid_sh --&gt; nscripts_eval_route_b_r3_py
+  nscripts_run_route_b_r3_mpc_sh --&gt; nscripts_eval_route_b_r3_py
+  nscripts_run_s1_grid_sh --&gt; nscripts_eval_s1_py
+  nscripts_selfmodel_readout_route_b_py --&gt; nxbody_newt_agent_py
+  nscripts_selfmodel_sensors_py --&gt; nscripts_selfmodel_teleop_py
+  nscripts_selfmodel_sensors_py --&gt; nxbody_bodies_py
+  nscripts_selfmodel_sensors_py --&gt; nxbody_kinematics_py
+  nscripts_selfmodel_sensors_py --&gt; nxbody_selfmodel_diff_py
+  nscripts_selfmodel_sensors_py --&gt; nxbody_selfmodel_lab_py
+  nscripts_selfmodel_sensors_py --&gt; nxbody_selfmodel_sensing_py
+  nscripts_selfmodel_sensors_py --&gt; nxbody_stats_py
+  nscripts_selfmodel_teleop_py --&gt; nxbody_bodies_py
+  nscripts_selfmodel_teleop_py --&gt; nxbody_kinematics_py
+  nscripts_selfmodel_teleop_py --&gt; nxbody_selfmodel_diff_py
+  nscripts_selfmodel_teleop_py --&gt; nxbody_stats_py
+  nscripts_smoke_classical_sh --&gt; nscripts_eval_classical_py
+  nscripts_summarize_classical_py --&gt; nxbody_stats_py
+  nscripts_summarize_phase0_py --&gt; nxbody_stats_py
+  nscripts_summarize_selfmodel_sensors_py --&gt; nxbody_stats_py
+  nscripts_summarize_selfmodel_teleop_py --&gt; nxbody_stats_py
+  nscripts_test_k_interface_py --&gt; nxbody_kinematics_py
+  nscripts_test_planners_py --&gt; nxbody_bodies_py
+  nscripts_test_planners_py --&gt; nxbody_classical_ik_py
+  nscripts_test_planners_py --&gt; nxbody_classical_planning_py
+  nscripts_test_planners_py --&gt; nxbody_classical_worldmodel_py
+  nscripts_test_planners_py --&gt; nxbody_kinematics_py
+  nscripts_test_planners_py --&gt; nxbody_scene_py
+  nscripts_test_world_models_py --&gt; nxbody_bodies_py
+  nscripts_test_world_models_py --&gt; nxbody_classical_perception_py
+  nscripts_test_world_models_py --&gt; nxbody_classical_worldmodel_py
+  nscripts_test_world_models_py --&gt; nxbody_kinematics_py
+  nscripts_test_world_models_py --&gt; nxbody_scene_py
+  nscripts_train_mjx_ppo_py --&gt; nxbody_learned_mjx_pick_py
+  nxbody_calibration_py --&gt; nxbody_bodies_py
+  nxbody_calibration_py --&gt; nxbody_selfmodel_diff_py
+  nxbody_classical_control_py --&gt; nxbody_kinematics_py
+  nxbody_classical_ik_py --&gt; nxbody_kinematics_py
+  nxbody_classical_pipeline_py --&gt; nxbody_bodies_py
+  nxbody_classical_pipeline_py --&gt; nxbody_calibration_py
+  nxbody_classical_pipeline_py --&gt; nxbody_classical___init___py
+  nxbody_classical_pipeline_py --&gt; nxbody_classical_control_py
+  nxbody_classical_pipeline_py --&gt; nxbody_classical_ik_py
+  nxbody_classical_pipeline_py --&gt; nxbody_classical_perception_py
+  nxbody_classical_pipeline_py --&gt; nxbody_classical_planning_py
+  nxbody_classical_pipeline_py --&gt; nxbody_classical_timing_py
+  nxbody_classical_pipeline_py --&gt; nxbody_classical_worldmodel_py
+  nxbody_classical_pipeline_py --&gt; nxbody_kinematics_py
+  nxbody_classical_pipeline_py --&gt; nxbody_scene_py
+  nxbody_classical_pipeline_py --&gt; nxbody_stages_py
+  nxbody_learned_mjx_pick_py --&gt; nxbody_bodies_py
+  nxbody_learned_mjx_pick_py --&gt; nxbody_scene_py
+  nxbody_scene_py --&gt; nxbody_bodies_py
+  nxbody_selfmodel_lab_py --&gt; nxbody_bodies_py
+  nxbody_selfmodel_lab_py --&gt; nxbody_calibration_py
+  nxbody_selfmodel_sensing_py --&gt; nxbody_selfmodel_diff_py
+  nxbody_selfmodel_sensing_py --&gt; nxbody_selfmodel_lab_py</pre>
+<h3>Which script writes which result</h3>
+<div class="scroll"><table><tr><th>Script</th><th>Writes</th><th>Study</th></tr>
+<tr><td class="mono">scripts/eval_classical.py</td><td class="mono">results/classical/&lt;body&gt;__&lt;variant&gt;.json</td><td>146 classical cells</td></tr>
+<tr><td class="mono">scripts/eval_ilc.py</td><td class="mono">results/classical/&lt;body&gt;__control-ilc.json</td><td>ILC cells</td></tr>
+<tr><td class="mono">scripts/summarize_classical.py</td><td class="mono">results/classical/SUMMARY.md, summary.csv</td><td>classical summary</td></tr>
+<tr><td class="mono">scripts/eval_s1.py</td><td class="mono">results/phase0/s1_*.json</td><td>early S1 variants</td></tr>
+<tr><td class="mono">scripts/eval_route_b_home.py</td><td class="mono">results/phase0/route_b_home_*.json</td><td>route B at home</td></tr>
+<tr><td class="mono">scripts/eval_route_b_transfer.py</td><td class="mono">results/phase0/route_b_transfer_*.json</td><td>route B on the SO100</td></tr>
+<tr><td class="mono">scripts/eval_route_b_r3.py</td><td class="mono">results/phase0/route_b_r3_*.json</td><td>route B on the xArm6</td></tr>
+<tr><td class="mono">scripts/selfmodel_readout_route_b.py</td><td class="mono">results/phase0/selfmodel_readout_route_b.json</td><td>latent readout</td></tr>
+<tr><td class="mono">scripts/summarize_phase0.py</td><td class="mono">results/phase0/SUMMARY.md, summary.json</td><td>Phase 0 summary</td></tr>
+<tr><td class="mono">scripts/selfmodel_teleop.py</td><td class="mono">results/selfmodel_teleop*/cells.json</td><td>teleop self-model</td></tr>
+<tr><td class="mono">scripts/selfmodel_sensors.py</td><td class="mono">results/selfmodel_sensors*/cells.json</td><td>sensor swap</td></tr>
+<tr><td class="mono">scripts/eval_selfmodel_task.py</td><td class="mono">results/selfmodel_task/&lt;body&gt;.json</td><td>self-model and task</td></tr>
+</table></div>
+<h2 id="bodies">Franka vs SO-101 through the code</h2>
+<p>Both arms run through the same functions. These are the places where the code takes a different branch, or reads a different number, depending on which arm it drives.</p>
+<pre class="mermaid">flowchart LR
+  subgraph F[&quot;Franka Panda&quot;]
+    F1[&quot;SPECS: 7 joints, TCP = hand + 10.34 cm&quot;] --&gt; F2[&quot;scene: task shifted +30 cm in x; wrist camera added&quot;]
+    F2 --&gt; F3[&quot;interface: torque motors&quot;] --&gt; F4[&quot;default law: PD + gravity&quot;]
+    F4 --&gt; F5[&quot;task space 6-D: Jacobian 6x7, redundant&quot;]
+    F5 --&gt; F6[&quot;IK: no closed form (analytic = n/a)&quot;]
+    F6 --&gt; F7[&quot;errors: 2 mm links, 0.2° axes, 0.5° encoders&quot;]
+  end
+  subgraph S[&quot;SO-101&quot;]
+    S1[&quot;SPECS: 5 joints, TCP = gripperframe site turned 90° about y&quot;] --&gt; S2[&quot;scene: no shift; wrist camera from the model&quot;]
+    S2 --&gt; S3[&quot;interface: embedded position servo (cascade)&quot;] --&gt; S4[&quot;default law: servo PD&quot;]
+    S4 --&gt; S5[&quot;task space 5-D: position + approach axis, Jacobian 5x5&quot;]
+    S5 --&gt; S6[&quot;IK: closed form AnalyticSO101 available&quot;]
+    S6 --&gt; S7[&quot;errors: 1 mm links, 0.5° axes, 1.5° encoders&quot;]
+  end</pre>
+<div class="scroll"><table><tr><th>Where</th><th>Franka</th><th>SO-101</th><th>Why it matters</th></tr>
+<tr><td class="mono">bodies.SPECS</td><td>joint1–7, home [0, −0.4, 0, −2.4, 0, 2.0, 0.785]</td><td>5 joints, home [0, −0.5, 0.8, 0.8, 0]</td><td>Every solver reads the arm from here.</td></tr>
+<tr><td class="mono">bodies.tcp_frame</td><td>hand body + 0.1034 m</td><td>gripperframe site, +90° about y</td><td>Puts both TCPs in one convention (z = approach).</td></tr>
+<tr><td class="mono">bodies.SPECS limits</td><td>v 1.0, a 2.0, j 20</td><td>v 1.0, a 3.0, j 30</td><td>Timing layer limits (rad/s, /s², /s³).</td></tr>
+<tr><td class="mono">scene.build_task</td><td>layout offset +0.30 m; adds wrist_cam</td><td>no offset; model's wrist_cam</td><td>The Franka cannot reach the shared region.</td></tr>
+<tr><td class="mono">pipeline.real_interface</td><td>torque</td><td>cascade</td><td>Joint laws beyond p/pd/pid need torque: on the SO-101 they switch it to torque mode.</td></tr>
+<tr><td class="mono">control.Converter</td><td>n_task = 6, jinv not applicable</td><td>n_task = 5, J square</td><td>A 5-joint arm cannot hold a full 6-D pose.</td></tr>
+<tr><td class="mono">ik.EndpointSolver</td><td>analytic → not applicable</td><td>AnalyticSO101 closed form</td><td>Only the planar SO-101 chain has a closed form.</td></tr>
+<tr><td class="mono">kinematics.solve_ik</td><td>orient='full'</td><td>orient='axis'</td><td>The 5-DoF projection: only the approach axis is held.</td></tr>
+<tr><td class="mono">calibration.ERRORS</td><td>2 mm, 0.2°, 0.5°</td><td>1 mm, 0.5°, 1.5°</td><td>Size of the synthetic 'real arm' errors.</td></tr>
+<tr><td class="mono">selfmodel_lab._CFG</td><td>board 40 mm squares, 6 cm stereo baseline, stiff joints</td><td>20 mm squares, 4 cm baseline, soft servos</td><td>Sensor-swap lab per arm.</td></tr>
+<tr><td class="mono">Model file</td><td>17.5 kg, 87 N·m</td><td>0.65 kg, 2.9 N·m</td><td>Explains P-only control: 5/20 Franka (sags), 18/20 SO-101.</td></tr>
+</table></div>
+<h3>Stored classical results, side by side</h3>
+<p><span class="key"><span class="sw" style="background:var(--franka)"></span>Franka</span><span class="key"><span class="sw" style="background:var(--so101)"></span>SO-101</span> success out of 20 seeded layouts (10 for MPC, NMPC and LQG), one row per method that changes one layer of the default pipeline.</p>
+<div class="scroll"><svg viewBox="0 0 640 1170" class="bars" role="img" aria-label="Classical success out of 20 per method, Franka and SO-101"><line x1="230.0" y1="34" x2="230.0" y2="1152" class="bar-grid"/><text x="230.0" y="1166" class="bar-ax">0</text><line x1="440.0" y1="34" x2="440.0" y2="1152" class="bar-grid"/><text x="440.0" y="1166" class="bar-ax">0</text><line x1="277.5" y1="34" x2="277.5" y2="1152" class="bar-grid"/><text x="277.5" y="1166" class="bar-ax">5</text><line x1="487.5" y1="34" x2="487.5" y2="1152" class="bar-grid"/><text x="487.5" y="1166" class="bar-ax">5</text><line x1="325.0" y1="34" x2="325.0" y2="1152" class="bar-grid"/><text x="325.0" y="1166" class="bar-ax">10</text><line x1="535.0" y1="34" x2="535.0" y2="1152" class="bar-grid"/><text x="535.0" y="1166" class="bar-ax">10</text><line x1="372.5" y1="34" x2="372.5" y2="1152" class="bar-grid"/><text x="372.5" y="1166" class="bar-ax">15</text><line x1="582.5" y1="34" x2="582.5" y2="1152" class="bar-grid"/><text x="582.5" y="1166" class="bar-ax">15</text><line x1="420.0" y1="34" x2="420.0" y2="1152" class="bar-grid"/><text x="420.0" y="1166" class="bar-ax">20</text><line x1="630.0" y1="34" x2="630.0" y2="1152" class="bar-grid"/><text x="630.0" y="1166" class="bar-ax">20</text><text x="230" y="20" class="bar-head">Franka (success of 20)</text><text x="440" y="20" class="bar-head">SO-101</text><line x1="0" y1="37" x2="640" y2="37" class="bar-sep"/><text x="222" y="49" class="bar-lab" text-anchor="end"><tspan class="bar-g">default</tspan> default</text><rect x="230" y="40" width="142.5" height="11" class="bar b-franka"/><text x="376.5" y="49" class="bar-v">15</text><rect x="440" y="40" width="161.5" height="11" class="bar b-so101"/><text x="605.5" y="49" class="bar-v">17</text><line x1="0" y1="52" x2="640" y2="52" class="bar-sep"/><text x="222" y="64" class="bar-lab" text-anchor="end"><tspan class="bar-g">input</tspan> camera</text><rect x="230" y="55" width="9.5" height="11" class="bar b-franka"/><text x="243.5" y="64" class="bar-v">1</text><rect x="440" y="55" width="0.8" height="11" class="bar b-so101"/><text x="444.0" y="64" class="bar-v">0</text><text x="222" y="79" class="bar-lab" text-anchor="end"><tspan class="bar-g">input</tspan> known</text><rect x="230" y="70" width="171.0" height="11" class="bar b-franka"/><text x="405.0" y="79" class="bar-v">18</text><rect x="440" y="70" width="171.0" height="11" class="bar b-so101"/><text x="615.0" y="79" class="bar-v">18</text><line x1="0" y1="82" x2="640" y2="82" class="bar-sep"/><text x="222" y="94" class="bar-lab" text-anchor="end"><tspan class="bar-g">world</tspan> esdf</text><rect x="230" y="85" width="161.5" height="11" class="bar b-franka"/><text x="395.5" y="94" class="bar-v">17</text><rect x="440" y="85" width="171.0" height="11" class="bar b-so101"/><text x="615.0" y="94" class="bar-v">18</text><text x="222" y="109" class="bar-lab" text-anchor="end"><tspan class="bar-g">world</tspan> mesh</text><rect x="230" y="100" width="161.5" height="11" class="bar b-franka"/><text x="395.5" y="109" class="bar-v">17</text><rect x="440" y="100" width="180.5" height="11" class="bar b-so101"/><text x="624.5" y="109" class="bar-v">19</text><text x="222" y="124" class="bar-lab" text-anchor="end"><tspan class="bar-g">world</tspan> octomap</text><rect x="230" y="115" width="38.0" height="11" class="bar b-franka"/><text x="272.0" y="124" class="bar-v">4</text><rect x="440" y="115" width="19.0" height="11" class="bar b-so101"/><text x="463.0" y="124" class="bar-v">2</text><text x="222" y="139" class="bar-lab" text-anchor="end"><tspan class="bar-g">world</tspan> pose</text><rect x="230" y="130" width="142.5" height="11" class="bar b-franka"/><text x="376.5" y="139" class="bar-v">15</text><rect x="440" y="130" width="190.0" height="11" class="bar b-so101"/><text x="634.0" y="139" class="bar-v">20</text><text x="222" y="154" class="bar-lab" text-anchor="end"><tspan class="bar-g">world</tspan> tsdf</text><rect x="230" y="145" width="38.0" height="11" class="bar b-franka"/><text x="272.0" y="154" class="bar-v">4</text><rect x="440" y="145" width="19.0" height="11" class="bar b-so101"/><text x="463.0" y="154" class="bar-v">2</text><text x="222" y="169" class="bar-lab" text-anchor="end"><tspan class="bar-g">world</tspan> voxel</text><rect x="230" y="160" width="38.0" height="11" class="bar b-franka"/><text x="272.0" y="169" class="bar-v">4</text><rect x="440" y="160" width="152.0" height="11" class="bar b-so101"/><text x="596.0" y="169" class="bar-v">16</text><line x1="0" y1="172" x2="640" y2="172" class="bar-sep"/><text x="222" y="184" class="bar-lab" text-anchor="end"><tspan class="bar-g">endpoint</tspan> analytic</text><text x="232" y="184" class="bar-na">not applicable</text><rect x="440" y="175" width="133.0" height="11" class="bar b-so101"/><text x="577.0" y="184" class="bar-v">14</text><text x="222" y="199" class="bar-lab" text-anchor="end"><tspan class="bar-g">endpoint</tspan> ccd</text><rect x="230" y="190" width="0.8" height="11" class="bar b-franka"/><text x="234.0" y="199" class="bar-v">0</text><rect x="440" y="190" width="95.0" height="11" class="bar b-so101"/><text x="539.0" y="199" class="bar-v">10</text><text x="222" y="214" class="bar-lab" text-anchor="end"><tspan class="bar-g">endpoint</tspan> lm</text><rect x="230" y="205" width="171.0" height="11" class="bar b-franka"/><text x="405.0" y="214" class="bar-v">18</text><rect x="440" y="205" width="104.5" height="11" class="bar b-so101"/><text x="548.5" y="214" class="bar-v">11</text><text x="222" y="229" class="bar-lab" text-anchor="end"><tspan class="bar-g">endpoint</tspan> newton</text><rect x="230" y="220" width="161.5" height="11" class="bar b-franka"/><text x="395.5" y="229" class="bar-v">17</text><rect x="440" y="220" width="0.8" height="11" class="bar b-so101"/><text x="444.0" y="229" class="bar-v">0</text><text x="222" y="244" class="bar-lab" text-anchor="end"><tspan class="bar-g">endpoint</tspan> taught</text><rect x="230" y="235" width="38.0" height="11" class="bar b-franka"/><text x="272.0" y="244" class="bar-v">4</text><rect x="440" y="235" width="19.0" height="11" class="bar b-so101"/><text x="463.0" y="244" class="bar-v">2</text><line x1="0" y1="247" x2="640" y2="247" class="bar-sep"/><text x="222" y="259" class="bar-lab" text-anchor="end"><tspan class="bar-g">planner</tspan> astar</text><rect x="230" y="250" width="0.8" height="11" class="bar b-franka"/><text x="234.0" y="259" class="bar-v">0</text><rect x="440" y="250" width="0.8" height="11" class="bar b-so101"/><text x="444.0" y="259" class="bar-v">0</text><text x="222" y="274" class="bar-lab" text-anchor="end"><tspan class="bar-g">planner</tspan> chomp</text><rect x="230" y="265" width="142.5" height="11" class="bar b-franka"/><text x="376.5" y="274" class="bar-v">15</text><rect x="440" y="265" width="171.0" height="11" class="bar b-so101"/><text x="615.0" y="274" class="bar-v">18</text><text x="222" y="289" class="bar-lab" text-anchor="end"><tspan class="bar-g">planner</tspan> dampers</text><rect x="230" y="280" width="0.8" height="11" class="bar b-franka"/><text x="234.0" y="289" class="bar-v">0</text><rect x="440" y="280" width="0.8" height="11" class="bar b-so101"/><text x="444.0" y="289" class="bar-v">0</text><text x="222" y="304" class="bar-lab" text-anchor="end"><tspan class="bar-g">planner</tspan> dijkstra</text><rect x="230" y="295" width="0.8" height="11" class="bar b-franka"/><text x="234.0" y="304" class="bar-v">0</text><rect x="440" y="295" width="0.8" height="11" class="bar b-so101"/><text x="444.0" y="304" class="bar-v">0</text><text x="222" y="319" class="bar-lab" text-anchor="end"><tspan class="bar-g">planner</tspan> est</text><rect x="230" y="310" width="152.0" height="11" class="bar b-franka"/><text x="386.0" y="319" class="bar-v">16</text><rect x="440" y="310" width="66.5" height="11" class="bar b-so101"/><text x="510.5" y="319" class="bar-v">7</text><text x="222" y="334" class="bar-lab" text-anchor="end"><tspan class="bar-g">planner</tspan> informedrrtstar</text><rect x="230" y="325" width="0.8" height="11" class="bar b-franka"/><text x="234.0" y="334" class="bar-v">0</text><rect x="440" y="325" width="114.0" height="11" class="bar b-so101"/><text x="558.0" y="334" class="bar-v">12</text><text x="222" y="349" class="bar-lab" text-anchor="end"><tspan class="bar-g">planner</tspan> kinorrt</text><rect x="230" y="340" width="104.5" height="11" class="bar b-franka"/><text x="338.5" y="349" class="bar-v">11</text><rect x="440" y="340" width="76.0" height="11" class="bar b-so101"/><text x="520.0" y="349" class="bar-v">8</text><text x="222" y="364" class="bar-lab" text-anchor="end"><tspan class="bar-g">planner</tspan> kpiece</text><rect x="230" y="355" width="142.5" height="11" class="bar b-franka"/><text x="376.5" y="364" class="bar-v">15</text><rect x="440" y="355" width="123.5" height="11" class="bar b-so101"/><text x="567.5" y="364" class="bar-v">13</text><text x="222" y="379" class="bar-lab" text-anchor="end"><tspan class="bar-g">planner</tspan> lattice</text><rect x="230" y="370" width="95.0" height="11" class="bar b-franka"/><text x="329.0" y="379" class="bar-v">10</text><rect x="440" y="370" width="0.8" height="11" class="bar b-so101"/><text x="444.0" y="379" class="bar-v">0</text><text x="222" y="394" class="bar-lab" text-anchor="end"><tspan class="bar-g">planner</tspan> lazyprm</text><rect x="230" y="385" width="180.5" height="11" class="bar b-franka"/><text x="414.5" y="394" class="bar-v">19</text><rect x="440" y="385" width="171.0" height="11" class="bar b-so101"/><text x="615.0" y="394" class="bar-v">18</text><text x="222" y="409" class="bar-lab" text-anchor="end"><tspan class="bar-g">planner</tspan> potential</text><rect x="230" y="400" width="57.0" height="11" class="bar b-franka"/><text x="291.0" y="409" class="bar-v">6</text><rect x="440" y="400" width="0.8" height="11" class="bar b-so101"/><text x="444.0" y="409" class="bar-v">0</text><text x="222" y="424" class="bar-lab" text-anchor="end"><tspan class="bar-g">planner</tspan> prm</text><rect x="230" y="415" width="123.5" height="11" class="bar b-franka"/><text x="357.5" y="424" class="bar-v">13</text><rect x="440" y="415" width="142.5" height="11" class="bar b-so101"/><text x="586.5" y="424" class="bar-v">15</text><text x="222" y="439" class="bar-lab" text-anchor="end"><tspan class="bar-g">planner</tspan> prmstar</text><rect x="230" y="430" width="171.0" height="11" class="bar b-franka"/><text x="405.0" y="439" class="bar-v">18</text><rect x="440" y="430" width="161.5" height="11" class="bar b-so101"/><text x="605.5" y="439" class="bar-v">17</text><text x="222" y="454" class="bar-lab" text-anchor="end"><tspan class="bar-g">planner</tspan> rrt</text><rect x="230" y="445" width="0.8" height="11" class="bar b-franka"/><text x="234.0" y="454" class="bar-v">0</text><rect x="440" y="445" width="161.5" height="11" class="bar b-so101"/><text x="605.5" y="454" class="bar-v">17</text><text x="222" y="469" class="bar-lab" text-anchor="end"><tspan class="bar-g">planner</tspan> rrtstar</text><rect x="230" y="460" width="0.8" height="11" class="bar b-franka"/><text x="234.0" y="469" class="bar-v">0</text><rect x="440" y="460" width="133.0" height="11" class="bar b-so101"/><text x="577.0" y="469" class="bar-v">14</text><text x="222" y="484" class="bar-lab" text-anchor="end"><tspan class="bar-g">planner</tspan> sst</text><rect x="230" y="475" width="142.5" height="11" class="bar b-franka"/><text x="376.5" y="484" class="bar-v">15</text><rect x="440" y="475" width="57.0" height="11" class="bar b-so101"/><text x="501.0" y="484" class="bar-v">6</text><text x="222" y="499" class="bar-lab" text-anchor="end"><tspan class="bar-g">planner</tspan> stomp</text><rect x="230" y="490" width="161.5" height="11" class="bar b-franka"/><text x="395.5" y="499" class="bar-v">17</text><rect x="440" y="490" width="171.0" height="11" class="bar b-so101"/><text x="615.0" y="499" class="bar-v">18</text><text x="222" y="514" class="bar-lab" text-anchor="end"><tspan class="bar-g">planner</tspan> straight</text><rect x="230" y="505" width="0.8" height="11" class="bar b-franka"/><text x="234.0" y="514" class="bar-v">0</text><rect x="440" y="505" width="0.8" height="11" class="bar b-so101"/><text x="444.0" y="514" class="bar-v">0</text><text x="222" y="529" class="bar-lab" text-anchor="end"><tspan class="bar-g">planner</tspan> trajopt</text><rect x="230" y="520" width="161.5" height="11" class="bar b-franka"/><text x="395.5" y="529" class="bar-v">17</text><rect x="440" y="520" width="133.0" height="11" class="bar b-so101"/><text x="577.0" y="529" class="bar-v">14</text><line x1="0" y1="532" x2="640" y2="532" class="bar-sep"/><text x="222" y="544" class="bar-lab" text-anchor="end"><tspan class="bar-g">timing</tspan> iptp</text><rect x="230" y="535" width="142.5" height="11" class="bar b-franka"/><text x="376.5" y="544" class="bar-v">15</text><rect x="440" y="535" width="161.5" height="11" class="bar b-so101"/><text x="605.5" y="544" class="bar-v">17</text><text x="222" y="559" class="bar-lab" text-anchor="end"><tspan class="bar-g">timing</tspan> ruckig</text><rect x="230" y="550" width="152.0" height="11" class="bar b-franka"/><text x="386.0" y="559" class="bar-v">16</text><rect x="440" y="550" width="85.5" height="11" class="bar b-so101"/><text x="529.5" y="559" class="bar-v">9</text><text x="222" y="574" class="bar-lab" text-anchor="end"><tspan class="bar-g">timing</tspan> scurve</text><rect x="230" y="565" width="152.0" height="11" class="bar b-franka"/><text x="386.0" y="574" class="bar-v">16</text><rect x="440" y="565" width="161.5" height="11" class="bar b-so101"/><text x="605.5" y="574" class="bar-v">17</text><text x="222" y="589" class="bar-lab" text-anchor="end"><tspan class="bar-g">timing</tspan> topp</text><rect x="230" y="580" width="152.0" height="11" class="bar b-franka"/><text x="386.0" y="589" class="bar-v">16</text><rect x="440" y="580" width="161.5" height="11" class="bar b-so101"/><text x="605.5" y="589" class="bar-v">17</text><text x="222" y="604" class="bar-lab" text-anchor="end"><tspan class="bar-g">timing</tspan> totg</text><rect x="230" y="595" width="161.5" height="11" class="bar b-franka"/><text x="395.5" y="604" class="bar-v">17</text><rect x="440" y="595" width="161.5" height="11" class="bar b-so101"/><text x="605.5" y="604" class="bar-v">17</text><text x="222" y="619" class="bar-lab" text-anchor="end"><tspan class="bar-g">timing</tspan> trapezoid</text><rect x="230" y="610" width="152.0" height="11" class="bar b-franka"/><text x="386.0" y="619" class="bar-v">16</text><rect x="440" y="610" width="142.5" height="11" class="bar b-so101"/><text x="586.5" y="619" class="bar-v">15</text><line x1="0" y1="622" x2="640" y2="622" class="bar-sep"/><text x="222" y="634" class="bar-lab" text-anchor="end"><tspan class="bar-g">tracking</tspan> admittance</text><rect x="230" y="625" width="133.0" height="11" class="bar b-franka"/><text x="367.0" y="634" class="bar-v">14</text><rect x="440" y="625" width="76.0" height="11" class="bar b-so101"/><text x="520.0" y="634" class="bar-v">8</text><text x="222" y="649" class="bar-lab" text-anchor="end"><tspan class="bar-g">tracking</tspan> cart</text><rect x="230" y="640" width="133.0" height="11" class="bar b-franka"/><text x="367.0" y="649" class="bar-v">14</text><rect x="440" y="640" width="85.5" height="11" class="bar b-so101"/><text x="529.5" y="649" class="bar-v">9</text><text x="222" y="664" class="bar-lab" text-anchor="end"><tspan class="bar-g">tracking</tspan> cart_conversion-cbf</text><rect x="230" y="655" width="142.5" height="11" class="bar b-franka"/><text x="376.5" y="664" class="bar-v">15</text><rect x="440" y="655" width="95.0" height="11" class="bar b-so101"/><text x="539.0" y="664" class="bar-v">10</text><text x="222" y="679" class="bar-lab" text-anchor="end"><tspan class="bar-g">tracking</tspan> cart_conversion-dls</text><rect x="230" y="670" width="142.5" height="11" class="bar b-franka"/><text x="376.5" y="679" class="bar-v">15</text><rect x="440" y="670" width="85.5" height="11" class="bar b-so101"/><text x="529.5" y="679" class="bar-v">9</text><text x="222" y="694" class="bar-lab" text-anchor="end"><tspan class="bar-g">tracking</tspan> cart_conversion-jinv</text><text x="232" y="694" class="bar-na">not applicable</text><rect x="440" y="685" width="9.5" height="11" class="bar b-so101"/><text x="453.5" y="694" class="bar-v">1</text><text x="222" y="709" class="bar-lab" text-anchor="end"><tspan class="bar-g">tracking</tspan> cart_conversion-jtrans</text><rect x="230" y="700" width="133.0" height="11" class="bar b-franka"/><text x="367.0" y="709" class="bar-v">14</text><rect x="440" y="700" width="0.8" height="11" class="bar b-so101"/><text x="444.0" y="709" class="bar-v">0</text><text x="222" y="724" class="bar-lab" text-anchor="end"><tspan class="bar-g">tracking</tspan> cart_conversion-pinv</text><rect x="230" y="715" width="142.5" height="11" class="bar b-franka"/><text x="376.5" y="724" class="bar-v">15</text><rect x="440" y="715" width="0.8" height="11" class="bar b-so101"/><text x="444.0" y="724" class="bar-v">0</text><text x="222" y="739" class="bar-lab" text-anchor="end"><tspan class="bar-g">tracking</tspan> cart_conversion-qp</text><rect x="230" y="730" width="142.5" height="11" class="bar b-franka"/><text x="376.5" y="739" class="bar-v">15</text><rect x="440" y="730" width="66.5" height="11" class="bar b-so101"/><text x="510.5" y="739" class="bar-v">7</text><text x="222" y="754" class="bar-lab" text-anchor="end"><tspan class="bar-g">tracking</tspan> carttorque</text><rect x="230" y="745" width="152.0" height="11" class="bar b-franka"/><text x="386.0" y="754" class="bar-v">16</text><rect x="440" y="745" width="85.5" height="11" class="bar b-so101"/><text x="529.5" y="754" class="bar-v">9</text><text x="222" y="769" class="bar-lab" text-anchor="end"><tspan class="bar-g">tracking</tspan> carttorque_control-cimp</text><rect x="230" y="760" width="152.0" height="11" class="bar b-franka"/><text x="386.0" y="769" class="bar-v">16</text><rect x="440" y="760" width="66.5" height="11" class="bar b-so101"/><text x="510.5" y="769" class="bar-v">7</text><text x="222" y="784" class="bar-lab" text-anchor="end"><tspan class="bar-g">tracking</tspan> carttorque_control-force</text><rect x="230" y="775" width="152.0" height="11" class="bar b-franka"/><text x="386.0" y="784" class="bar-v">16</text><rect x="440" y="775" width="76.0" height="11" class="bar b-so101"/><text x="520.0" y="784" class="bar-v">8</text><text x="222" y="799" class="bar-lab" text-anchor="end"><tspan class="bar-g">tracking</tspan> carttorque_control-hybrid</text><rect x="230" y="790" width="152.0" height="11" class="bar b-franka"/><text x="386.0" y="799" class="bar-v">16</text><rect x="440" y="790" width="76.0" height="11" class="bar b-so101"/><text x="520.0" y="799" class="bar-v">8</text><text x="222" y="814" class="bar-lab" text-anchor="end"><tspan class="bar-g">tracking</tspan> carttorque_control-ptask</text><rect x="230" y="805" width="152.0" height="11" class="bar b-franka"/><text x="386.0" y="814" class="bar-v">16</text><rect x="440" y="805" width="85.5" height="11" class="bar b-so101"/><text x="529.5" y="814" class="bar-v">9</text><text x="222" y="829" class="bar-lab" text-anchor="end"><tspan class="bar-g">tracking</tspan> ibvs</text><rect x="230" y="820" width="161.5" height="11" class="bar b-franka"/><text x="395.5" y="829" class="bar-v">17</text><rect x="440" y="820" width="19.0" height="11" class="bar b-so101"/><text x="463.0" y="829" class="bar-v">2</text><text x="222" y="844" class="bar-lab" text-anchor="end"><tspan class="bar-g">tracking</tspan> pbvs</text><rect x="230" y="835" width="133.0" height="11" class="bar b-franka"/><text x="367.0" y="844" class="bar-v">14</text><rect x="440" y="835" width="66.5" height="11" class="bar b-so101"/><text x="510.5" y="844" class="bar-v">7</text><text x="222" y="859" class="bar-lab" text-anchor="end"><tspan class="bar-g">tracking</tspan> vs25</text><rect x="230" y="850" width="161.5" height="11" class="bar b-franka"/><text x="395.5" y="859" class="bar-v">17</text><rect x="440" y="850" width="9.5" height="11" class="bar b-so101"/><text x="453.5" y="859" class="bar-v">1</text><line x1="0" y1="862" x2="640" y2="862" class="bar-sep"/><text x="222" y="874" class="bar-lab" text-anchor="end"><tspan class="bar-g">control</tspan> backstep</text><rect x="230" y="865" width="142.5" height="11" class="bar b-franka"/><text x="376.5" y="874" class="bar-v">15</text><rect x="440" y="865" width="171.0" height="11" class="bar b-so101"/><text x="615.0" y="874" class="bar-v">18</text><text x="222" y="889" class="bar-lab" text-anchor="end"><tspan class="bar-g">control</tspan> ct</text><rect x="230" y="880" width="142.5" height="11" class="bar b-franka"/><text x="376.5" y="889" class="bar-v">15</text><rect x="440" y="880" width="171.0" height="11" class="bar b-so101"/><text x="615.0" y="889" class="bar-v">18</text><text x="222" y="904" class="bar-lab" text-anchor="end"><tspan class="bar-g">control</tspan> hinf</text><rect x="230" y="895" width="142.5" height="11" class="bar b-franka"/><text x="376.5" y="904" class="bar-v">15</text><rect x="440" y="895" width="171.0" height="11" class="bar b-so101"/><text x="615.0" y="904" class="bar-v">18</text><text x="222" y="919" class="bar-lab" text-anchor="end"><tspan class="bar-g">control</tspan> ilc</text><rect x="230" y="910" width="142.5" height="11" class="bar b-franka"/><text x="376.5" y="919" class="bar-v">15</text><rect x="440" y="910" width="152.0" height="11" class="bar b-so101"/><text x="596.0" y="919" class="bar-v">16</text><text x="222" y="934" class="bar-lab" text-anchor="end"><tspan class="bar-g">control</tspan> jimp</text><rect x="230" y="925" width="142.5" height="11" class="bar b-franka"/><text x="376.5" y="934" class="bar-v">15</text><rect x="440" y="925" width="171.0" height="11" class="bar b-so101"/><text x="615.0" y="934" class="bar-v">18</text><text x="222" y="949" class="bar-lab" text-anchor="end"><tspan class="bar-g">control</tspan> lqg</text><rect x="230" y="940" width="133.0" height="11" class="bar b-franka"/><text x="367.0" y="949" class="bar-v">7</text><rect x="440" y="940" width="171.0" height="11" class="bar b-so101"/><text x="615.0" y="949" class="bar-v">9</text><text x="222" y="964" class="bar-lab" text-anchor="end"><tspan class="bar-g">control</tspan> lqr</text><rect x="230" y="955" width="142.5" height="11" class="bar b-franka"/><text x="376.5" y="964" class="bar-v">15</text><rect x="440" y="955" width="171.0" height="11" class="bar b-so101"/><text x="615.0" y="964" class="bar-v">18</text><text x="222" y="979" class="bar-lab" text-anchor="end"><tspan class="bar-g">control</tspan> mpc</text><rect x="230" y="970" width="133.0" height="11" class="bar b-franka"/><text x="367.0" y="979" class="bar-v">7</text><rect x="440" y="970" width="171.0" height="11" class="bar b-so101"/><text x="615.0" y="979" class="bar-v">9</text><text x="222" y="994" class="bar-lab" text-anchor="end"><tspan class="bar-g">control</tspan> mrac</text><rect x="230" y="985" width="152.0" height="11" class="bar b-franka"/><text x="386.0" y="994" class="bar-v">16</text><rect x="440" y="985" width="171.0" height="11" class="bar b-so101"/><text x="615.0" y="994" class="bar-v">18</text><text x="222" y="1009" class="bar-lab" text-anchor="end"><tspan class="bar-g">control</tspan> nmpc</text><rect x="230" y="1000" width="95.0" height="11" class="bar b-franka"/><text x="329.0" y="1009" class="bar-v">5</text><rect x="440" y="1000" width="152.0" height="11" class="bar b-so101"/><text x="596.0" y="1009" class="bar-v">8</text><text x="222" y="1024" class="bar-lab" text-anchor="end"><tspan class="bar-g">control</tspan> p</text><rect x="230" y="1015" width="47.5" height="11" class="bar b-franka"/><text x="281.5" y="1024" class="bar-v">5</text><rect x="440" y="1015" width="171.0" height="11" class="bar b-so101"/><text x="615.0" y="1024" class="bar-v">18</text><text x="222" y="1039" class="bar-lab" text-anchor="end"><tspan class="bar-g">control</tspan> passivity</text><rect x="230" y="1030" width="142.5" height="11" class="bar b-franka"/><text x="376.5" y="1039" class="bar-v">15</text><rect x="440" y="1030" width="171.0" height="11" class="bar b-so101"/><text x="615.0" y="1039" class="bar-v">18</text><text x="222" y="1054" class="bar-lab" text-anchor="end"><tspan class="bar-g">control</tspan> pd</text><rect x="230" y="1045" width="123.5" height="11" class="bar b-franka"/><text x="357.5" y="1054" class="bar-v">13</text><rect x="440" y="1045" width="161.5" height="11" class="bar b-so101"/><text x="605.5" y="1054" class="bar-v">17</text><text x="222" y="1069" class="bar-lab" text-anchor="end"><tspan class="bar-g">control</tspan> pdg</text><rect x="230" y="1060" width="142.5" height="11" class="bar b-franka"/><text x="376.5" y="1069" class="bar-v">15</text><rect x="440" y="1060" width="171.0" height="11" class="bar b-so101"/><text x="615.0" y="1069" class="bar-v">18</text><text x="222" y="1084" class="bar-lab" text-anchor="end"><tspan class="bar-g">control</tspan> pid</text><rect x="230" y="1075" width="142.5" height="11" class="bar b-franka"/><text x="376.5" y="1084" class="bar-v">15</text><rect x="440" y="1075" width="152.0" height="11" class="bar b-so101"/><text x="596.0" y="1084" class="bar-v">16</text><text x="222" y="1099" class="bar-lab" text-anchor="end"><tspan class="bar-g">control</tspan> slotine</text><rect x="230" y="1090" width="161.5" height="11" class="bar b-franka"/><text x="395.5" y="1099" class="bar-v">17</text><rect x="440" y="1090" width="171.0" height="11" class="bar b-so101"/><text x="615.0" y="1099" class="bar-v">18</text><text x="222" y="1114" class="bar-lab" text-anchor="end"><tspan class="bar-g">control</tspan> smc</text><rect x="230" y="1105" width="142.5" height="11" class="bar b-franka"/><text x="376.5" y="1114" class="bar-v">15</text><rect x="440" y="1105" width="161.5" height="11" class="bar b-so101"/><text x="605.5" y="1114" class="bar-v">17</text><line x1="0" y1="1117" x2="640" y2="1117" class="bar-sep"/><text x="222" y="1129" class="bar-lab" text-anchor="end"><tspan class="bar-g">actuator</tspan> cascade</text><rect x="230" y="1120" width="171.0" height="11" class="bar b-franka"/><text x="405.0" y="1129" class="bar-v">18</text><rect x="440" y="1120" width="161.5" height="11" class="bar b-so101"/><text x="605.5" y="1129" class="bar-v">17</text><text x="222" y="1144" class="bar-lab" text-anchor="end"><tspan class="bar-g">actuator</tspan> torque</text><rect x="230" y="1135" width="142.5" height="11" class="bar b-franka"/><text x="376.5" y="1144" class="bar-v">15</text><rect x="440" y="1135" width="171.0" height="11" class="bar b-so101"/><text x="615.0" y="1144" class="bar-v">18</text></svg></div>
+<h2 id="same">Same job, different files</h2>
+<p>Several jobs are implemented more than once. Comparing them side by side shows where the project is consistent and where it is not.</p>
+<div class="scroll"><table><tr><th>Job</th><th>Implementation</th><th>How</th><th>Used by</th></tr>
+<tr><td>Inverse kinematics</td><td class="mono">kinematics.solve_ik</td><td>MuJoCo Jacobian; DLS, prioritized (HQP) or Newton</td><td>classical stack, route B twin, teleop</td></tr>
+<tr><td></td><td class="mono">classical/ik.py</td><td>LM, CCD, SLSQP, closed-form SO-101, taught</td><td>endpoint layer</td></tr>
+<tr><td></td><td class="mono">eval_route_b_transfer.SO100Kinematics.solve</td><td>Pinocchio FK, finite-difference Jacobian, DLS</td><td>route B on the SO100</td></tr>
+<tr><td></td><td class="mono">selfmodel_diff.ik</td><td>SciPy bounded least squares on any fk(q)</td><td>reach tests on fitted models</td></tr>
+<tr><td>Success scoring</td><td class="mono">stages.StageScorer</td><td>protocol thresholds, stages 0–5</td><td>classical, self-model task, MJX/Isaac evaluation</td></tr>
+<tr><td></td><td class="mono">eval_route_b_*.main (inline)</td><td>own rules, stages 0–4: reach &lt; 3 cm, grasp 2 steps, at goal, env success</td><td>route B only</td></tr>
+<tr><td></td><td class="mono">mjx_pick._reward, Isaac _get_rewards</td><td>training shaping only; scored back with StageScorer</td><td>GPU routes</td></tr>
+<tr><td>Making the 'real' arm</td><td class="mono">calibration.perturb</td><td>chain + base offsets and tilts; encoder offset as a joint-body rotation</td><td>self-model task</td></tr>
+<tr><td></td><td class="mono">selfmodel_teleop.real_robot</td><td>chain offsets and tilts + TCP offset; encoder offset subtracted from q; no base error</td><td>teleop pilot</td></tr>
+<tr><td></td><td class="mono">selfmodel_lab.build</td><td>chain + base + sensor-mount errors; encoder offsets</td><td>sensor-swap lab</td></tr>
+<tr><td>Forward kinematics</td><td class="mono">kinematics.Body.fk</td><td>MuJoCo mj_kinematics + TCP offset</td><td>everywhere</td></tr>
+<tr><td></td><td class="mono">calibration.ModelFK</td><td>same, returns a 4×4</td><td>calibration</td></tr>
+<tr><td></td><td class="mono">selfmodel_diff.PoEModel.fk</td><td>product of exponentials, no model file</td><td>fitted self-model</td></tr>
+<tr><td></td><td class="mono">SO100Kinematics.tcp_world</td><td>Pinocchio, midpoint of jaw tips</td><td>route B</td></tr>
+</table></div>
+<p>Two of these matter for reading the results. Route B scores with its own 0–4 stage rules, not the protocol's 0–5 scorer, so a route B 'mean stage' and a classical 'mean stage' are on different scales and should not be compared. And the three ways of making a 'real' arm use different error models, so the teleop pilot, the sensor study and the task study each test a slightly different arm.</p>
+<h2 id="concerns">What the results do and do not show</h2>
+<ul class="find">
+<li><b>Everything is simulation.</b> No physical robot, no recorded hardware data. The 'real arm' in every self-model study is the same CAD model with random offsets added in code (<code>perturb</code>, <code>real_robot</code>, <code>build</code>). The results say how methods behave against those synthetic errors, not on a real SO-101.</li>
+<li><b>The results are genuine simulation output.</b> The ones I could re-run reproduce, the summary matches the raw files, and the git history shows long runs committed by an automated agent with periodic auto-saves (2026-11-01 to 11-02). I found nothing fabricated.</li>
+<li><b>Route B's SO-101 is really an SO100</b>, ManiSkill's model, and it scores with its own stage rules.</li>
+<li><b>Sample sizes are below the protocol.</b> <code>protocol.yaml</code> asks for 50 screening and 200 final episodes per cell; the classical grid ran 20 (10 for MPC, NMPC, LQG). The protocol is still marked <code>frozen: false</code>.</li>
+<li><b>The teleop pilot's sensor is an oracle</b> (true pose plus Gaussian noise). The sensor-swap study replaces it with real perception pipelines on rendered images; that is the more credible of the two.</li>
+<li><b>A ground-truth leak existed</b> in the mesh world model (fixed in 0e6d802). No stored cell combined mesh with a perturbed arm, so no published number was affected, but it shows the belief/real split needs care.</li>
+<li><b>Not run at all:</b> routes A and C, every GPU training route, and Instant Policy. The README says so.</li>
+</ul>
+<h2 id="files">File by file: code blocks and how they connect</h2>
+<p>One diagram per program file, drawn from its syntax tree. Boxes are the file's blocks (module setup, each function, each class with its methods) with their line range and what they do. Solid arrows are calls inside the file; dashed arrows go to the blocks this file uses from other files (hexagons).</p>
+<div class="layerhead"><span class="eyebrow">Core Benchmark Library</span></div>
+<div class="file"><h3>xbody/bodies.py<span class="meta">64 lines · 3 blocks · imported by 13</span></h3>
+<p>Shared body definitions (SPECS) for the Franka and SO-101 arms across MuJoCo stacks, including joints, TCP convention, gripper actuators and motion limits, plus helpers to resolve the canonical TCP frame and robot body ids.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;29 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  ntcp_frame[&quot;&lt;b&gt;tcp_frame&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L39–48 · 10 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Returns the TCP body name, position offset and quaternion offset, rotating the SO-101…&lt;/small&gt;&quot;]
+  nrobot_body_ids[&quot;&lt;b&gt;robot_body_ids&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L51–64 · 14 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Collects all body ids belonging to the robot subtree rooted above the first arm joint.&lt;/small&gt;&quot;]
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>xbody/calibration.py<span class="meta">114 lines · 9 blocks · imported by 3</span></h3>
+<p>Applies calibration errors (link offsets, axis tilts, encoder zeros, base placement) to a robot inside a MuJoCo scene and identifies them back into an ordinary MjModel via nonlinear least squares.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;10 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nchain_bodies[&quot;&lt;b&gt;chain_bodies&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L25–33 · 9 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Returns the deduplicated base-to-tip chain of robot bodies: root, each arm joint body…&lt;/small&gt;&quot;]
+  n_mulq[&quot;&lt;b&gt;_mulq&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L36–39 · 4 lines&lt;/small&gt;&quot;]
+  n_quat_rv[&quot;&lt;b&gt;_quat_rv&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L42–46 · 5 lines&lt;/small&gt;&quot;]
+  nperturb[&quot;&lt;b&gt;perturb&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L49–64 · 16 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Turns a nominal model into a real arm by perturbing body positions and rotations and…&lt;/small&gt;&quot;]
+  ncalibrate[&quot;&lt;b&gt;calibrate&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L85–114 · 30 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Fits per-body position and rotation corrections by scipy least squares on logged…&lt;/small&gt;&quot;]
+  subgraph nModelFK[&quot;class ModelFK · L67–82&quot;]
+    nModelFK___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L68–76 · 9 lines&lt;/small&gt;&quot;]
+    nModelFK___call__[&quot;&lt;b&gt;__call__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L78–82 · 5 lines&lt;/small&gt;&quot;]
+  end
+  ncalibrate --&gt; nModelFK
+  ncalibrate --&gt; n_mulq
+  ncalibrate --&gt; n_quat_rv
+  ncalibrate --&gt; nchain_bodies
+  nperturb --&gt; n_mulq
+  nperturb --&gt; n_quat_rv
+  nperturb --&gt; nchain_bodies
+  next_xbody_bodies_py{{&quot;&lt;small&gt;xbody/bodies.py&lt;/small&gt;&lt;br/&gt;tcp_frame&quot;}}
+  nModelFK___init__ -.-&gt; next_xbody_bodies_py
+  nchain_bodies -.-&gt; next_xbody_bodies_py
+  class next_xbody_bodies_py ext
+  next_xbody_selfmodel_diff_py{{&quot;&lt;small&gt;xbody/selfmodel_diff.py&lt;/small&gt;&lt;br/&gt;pose, so3_log&quot;}}
+  nModelFK___call__ -.-&gt; next_xbody_selfmodel_diff_py
+  ncalibrate -.-&gt; next_xbody_selfmodel_diff_py
+  class next_xbody_selfmodel_diff_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>xbody/kinematics.py<span class="meta">141 lines · 10 blocks · imported by 11</span></h3>
+<p>Interface K core: body-agnostic MuJoCo kinematics (Body with FK/Jacobian) and damped-least-squares or prioritized null-space IK, plus gripper width-to-control mappings for Franka and SO-101.</p>
+<pre class="mermaid">flowchart TD
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;3 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nrot_err[&quot;&lt;b&gt;rot_err&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L57–64 · 8 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Computes the rotation-vector orientation error between two rotation matrices.&lt;/small&gt;&quot;]
+  nsolve_ik[&quot;&lt;b&gt;solve_ik&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L67–131 · 65 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Iterative IK solver supporting damped least squares on the full task or prioritized…&lt;/small&gt;&quot;]
+  nfranka_width_to_ctrl[&quot;&lt;b&gt;franka_width_to_ctrl&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L135–136 · 2 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Maps a desired Franka gripper width to its actuator control value.&lt;/small&gt;&quot;]
+  nso101_width_to_ctrl[&quot;&lt;b&gt;so101_width_to_ctrl&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L139–141 · 3 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Maps a desired SO-101 jaw width to its actuator control value.&lt;/small&gt;&quot;]
+  subgraph nBody[&quot;class Body · L15–54&quot;]
+    nBody___post_init__[&quot;&lt;b&gt;__post_init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L22–35 · 14 lines&lt;/small&gt;&quot;]
+    nBody_n[&quot;&lt;b&gt;n&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L38–39 · 2 lines&lt;/small&gt;&quot;]
+    nBody_fk[&quot;&lt;b&gt;fk&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L41–46 · 6 lines&lt;/small&gt;&quot;]
+    nBody_jacobian[&quot;&lt;b&gt;jacobian&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L48–54 · 7 lines&lt;/small&gt;&quot;]
+  end
+  nBody_jacobian --&gt; nBody_fk
+  nsolve_ik --&gt; nrot_err
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>xbody/newt_agent.py<span class="meta">78 lines · 6 blocks · imported by 4</span></h3>
+<p>Loads a frozen Newt/TD-MPC2 single-task checkpoint on CPU for inference only, padding observations and actions to fixed maximum dimensions.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;9 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  n_import_cpu_tdmpc2[&quot;&lt;b&gt;_import_cpu_tdmpc2&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L19–23 · 5 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Inserts the CPU-patched Newt tdmpc2 path into sys.path and imports the TDMPC2 class.&lt;/small&gt;&quot;]
+  nbuild_cfg[&quot;&lt;b&gt;build_cfg&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L26–43 · 18 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Builds the OmegaConf configuration for a single-task Newt TD-MPC2 agent matching the…&lt;/small&gt;&quot;]
+  subgraph nFrozenNewtAgent[&quot;class FrozenNewtAgent · L46–78&quot;]
+    nFrozenNewtAgent___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L47–70 · 24 lines&lt;/small&gt;&quot;]
+    nFrozenNewtAgent_act[&quot;&lt;b&gt;act&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L73–78 · 6 lines&lt;/small&gt;&quot;]
+  end
+  nFrozenNewtAgent___init__ --&gt; n_import_cpu_tdmpc2
+  nFrozenNewtAgent___init__ --&gt; nbuild_cfg
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>xbody/scene.py<span class="meta">91 lines · 4 blocks · imported by 10</span></h3>
+<p>MuJoCo scene builders for the benchmark task: compiles a Menagerie robot with floor, cube, plate and optional obstacle post in the robot base frame, plus seeded layout sampling.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;4 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nbuild[&quot;&lt;b&gt;build&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L12–30 · 19 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Compiles a basic task scene (robot, floor, free cube, plate site) with optional…&lt;/small&gt;&quot;]
+  nbuild_task[&quot;&lt;b&gt;build_task&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L36–86 · 51 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Compiles the full classical scene with an obstacle post, scene and wrist cameras, and…&lt;/small&gt;&quot;]
+  nsample_layout[&quot;&lt;b&gt;sample_layout&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L89–91 · 3 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Samples a cube XY position in the shared evaluation region shifted by the body&#x27;s…&lt;/small&gt;&quot;]
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>xbody/stages.py<span class="meta">64 lines · 6 blocks · imported by 3</span></h3>
+<p>Body-agnostic staged success scorer (reach, grasp, lift, transport, place) driven by per-step state records and protocol.yaml thresholds, shared by every stack and route.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;3 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  subgraph nStepState[&quot;class StepState · L14–23&quot;]
+    nStepState_body[&quot;&lt;small&gt;Dataclass carrying one control step&#x27;s body-free state: time, TCP and object positions,…&lt;/small&gt;&quot;]
+  end
+  subgraph nStageScorer[&quot;class StageScorer · L27–64&quot;]
+    nStageScorer_update[&quot;&lt;b&gt;update&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L35–56 · 22 lines&lt;/small&gt;&quot;]
+    nStageScorer__advance[&quot;&lt;b&gt;_advance&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L58–60 · 3 lines&lt;/small&gt;&quot;]
+    nStageScorer_success[&quot;&lt;b&gt;success&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L63–64 · 2 lines&lt;/small&gt;&quot;]
+  end
+  nStageScorer_update --&gt; nStageScorer__advance
+  nStageScorer_update --&gt; nStepState
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>xbody/stats.py<span class="meta">53 lines · 7 blocks · imported by 14</span></h3>
+<p>Protocol-fixed statistics helpers: Wilson score intervals, exact paired McNemar and Wilcoxon stage tests, Holm correction and success/stage retention ratios used across evaluation and summary scripts.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;3 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nwilson[&quot;&lt;b&gt;wilson&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L8–15 · 8 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Wilson score confidence interval for a binomial success rate.&lt;/small&gt;&quot;]
+  nmcnemar_exact[&quot;&lt;b&gt;mcnemar_exact&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L18–26 · 9 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Exact two-sided McNemar test on paired binary outcomes from the same seeds.&lt;/small&gt;&quot;]
+  nwilcoxon_stage[&quot;&lt;b&gt;wilcoxon_stage&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L29–33 · 5 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Wilcoxon signed-rank test on paired stage-reached values.&lt;/small&gt;&quot;]
+  nholm[&quot;&lt;b&gt;holm&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L36–44 · 9 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Holm-Bonferroni step-down correction for multiple p-values.&lt;/small&gt;&quot;]
+  nretention[&quot;&lt;b&gt;retention&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L47–48 · 2 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Ratio of target-body to source-body success rate.&lt;/small&gt;&quot;]
+  nstage_retention[&quot;&lt;b&gt;stage_retention&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L51–53 · 3 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Ratio of mean stage reached on target vs source body.&lt;/small&gt;&quot;]
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="layerhead"><span class="eyebrow">Classical Robotics Stack</span></div>
+<div class="file"><h3>xbody/classical/control.py<span class="meta">463 lines · 30 blocks · imported by 2</span></h3>
+<p>Classical control library covering decision-tree layers 7-9: twist-to-joint-velocity reference converters (DLS, pinv, QP, HQP, CBF), a broad set of joint-space and task-space torque laws (PD, computed torque, LQR, MPC, SMC, H-infinity, adaptive, impedance, OSC, ILC), and actuator interfaces.</p>
+<pre class="mermaid">flowchart TD
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;10 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  ntask_jacobian[&quot;&lt;b&gt;task_jacobian&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L55–61 · 7 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Computes the task Jacobian, full 6-D or reduced 5-D for the SO-101.&lt;/small&gt;&quot;]
+  ntask_error[&quot;&lt;b&gt;task_error&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L64–72 · 9 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Computes position and rotation task-space error relative to a reference pose.&lt;/small&gt;&quot;]
+  n_qp[&quot;&lt;b&gt;_qp&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L120–133 · 14 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Solves a small constrained least-squares QP with OSQP for joint velocity references.&lt;/small&gt;&quot;]
+  n_hinf_gain[&quot;&lt;b&gt;_hinf_gain&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L393–400 · 8 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Computes an H-infinity state-feedback gain for the joint-space law.&lt;/small&gt;&quot;]
+  subgraph nDyn[&quot;class Dyn · L25–51&quot;]
+    nDyn___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L26–29 · 4 lines&lt;/small&gt;&quot;]
+    nDyn_sync[&quot;&lt;b&gt;sync&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L31–33 · 3 lines&lt;/small&gt;&quot;]
+    nDyn_M[&quot;&lt;b&gt;M&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L35–38 · 4 lines&lt;/small&gt;&quot;]
+    nDyn_h[&quot;&lt;b&gt;h&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L40–41 · 2 lines&lt;/small&gt;&quot;]
+    nDyn_g[&quot;&lt;b&gt;g&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L43–48 · 6 lines&lt;/small&gt;&quot;]
+    nDyn_passive[&quot;&lt;b&gt;passive&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L50–51 · 2 lines&lt;/small&gt;&quot;]
+  end
+  subgraph nConverter[&quot;class Converter · L75–117&quot;]
+    nConverter___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L76–79 · 4 lines&lt;/small&gt;&quot;]
+    nConverter___call__[&quot;&lt;b&gt;__call__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L81–117 · 37 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;v: desired task velocity (n_task). Returns joint velocity, or None when the method…&lt;/small&gt;&quot;]
+  end
+  subgraph nILCMemory[&quot;class ILCMemory · L137–169&quot;]
+    nILCMemory___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L144–149 · 6 lines&lt;/small&gt;&quot;]
+    nILCMemory_step[&quot;&lt;b&gt;step&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L151–155 · 5 lines&lt;/small&gt;&quot;]
+    nILCMemory_end_trial[&quot;&lt;b&gt;end_trial&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L157–169 · 13 lines&lt;/small&gt;&quot;]
+  end
+  subgraph nJointLaw[&quot;class JointLaw · L172–390&quot;]
+    nJointLaw___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L173–186 · 14 lines&lt;/small&gt;&quot;]
+    nJointLaw_gains[&quot;&lt;b&gt;gains&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L188–190 · 3 lines&lt;/small&gt;&quot;]
+    nJointLaw___call__[&quot;&lt;b&gt;__call__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L192–278 · 87 lines&lt;/small&gt;&quot;]
+    nJointLaw__linearize[&quot;&lt;b&gt;_linearize&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L281–291 · 11 lines&lt;/small&gt;&quot;]
+    nJointLaw__linear[&quot;&lt;b&gt;_linear&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L293–339 · 47 lines&lt;/small&gt;&quot;]
+    nJointLaw__mpc_solve[&quot;&lt;b&gt;_mpc_solve&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L341–361 · 21 lines&lt;/small&gt;&quot;]
+    nJointLaw__nmpc[&quot;&lt;b&gt;_nmpc&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L363–390 · 28 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Sampling-based nonlinear MPC (MPPI) with MuJoCo rollouts of the full model.&lt;/small&gt;&quot;]
+  end
+  subgraph nTaskLaw[&quot;class TaskLaw · L404–457&quot;]
+    nTaskLaw___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L405–409 · 5 lines&lt;/small&gt;&quot;]
+    nTaskLaw___call__[&quot;&lt;b&gt;__call__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L411–457 · 47 lines&lt;/small&gt;&quot;]
+  end
+  nConverter___call__ --&gt; n_qp
+  nConverter___call__ --&gt; ntask_jacobian
+  nJointLaw___call__ --&gt; nJointLaw__linear
+  nJointLaw___call__ --&gt; nJointLaw__nmpc
+  nJointLaw___call__ --&gt; nJointLaw_gains
+  nJointLaw___call__ --&gt; n_hinf_gain
+  nJointLaw__linear --&gt; nJointLaw__linearize
+  nJointLaw__linear --&gt; nJointLaw__mpc_solve
+  nJointLaw__nmpc --&gt; nJointLaw_gains
+  nTaskLaw___call__ --&gt; ntask_error
+  nTaskLaw___call__ --&gt; ntask_jacobian
+  ntask_error --&gt; ntask_jacobian
+  next_xbody_kinematics_py{{&quot;&lt;small&gt;xbody/kinematics.py&lt;/small&gt;&lt;br/&gt;rot_err&quot;}}
+  ntask_error -.-&gt; next_xbody_kinematics_py
+  class next_xbody_kinematics_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>xbody/classical/ik.py<span class="meta">238 lines · 15 blocks · imported by 2</span></h3>
+<p>Decision-tree layer 3 (endpoint selection): turns TCP targets into joint goals via analytic SO-101 IK, Newton, Levenberg-Marquardt, CCD, constrained SLSQP, or taught joint goals.</p>
+<pre class="mermaid">flowchart TD
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;4 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  n_pose_err[&quot;&lt;b&gt;_pose_err&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L19–21 · 3 lines&lt;/small&gt;&quot;]
+  nnewton[&quot;&lt;b&gt;newton&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L24–26 · 3 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Undamped Newton-Raphson full-pose IK delegating to the shared kinematics solver.&lt;/small&gt;&quot;]
+  nlm[&quot;&lt;b&gt;lm&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L29–45 · 17 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Levenberg-Marquardt pose IK with adaptive damping.&lt;/small&gt;&quot;]
+  nccd[&quot;&lt;b&gt;ccd&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L48–71 · 24 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Cyclic coordinate descent IK that adjusts one joint at a time toward the target pose.&lt;/small&gt;&quot;]
+  nconstrained[&quot;&lt;b&gt;constrained&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L74–88 · 15 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Pose IK as SLSQP constrained optimization: position equality, joint-limit bounds,…&lt;/small&gt;&quot;]
+  n_info[&quot;&lt;b&gt;_info&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L205–208 · 4 lines&lt;/small&gt;&quot;]
+  subgraph nAnalyticSO101[&quot;class AnalyticSO101 · L91–202&quot;]
+    nAnalyticSO101___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L94–116 · 23 lines&lt;/small&gt;&quot;]
+    nAnalyticSO101__rot[&quot;&lt;b&gt;_rot&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L119–121 · 3 lines&lt;/small&gt;&quot;]
+    nAnalyticSO101__solve_once[&quot;&lt;b&gt;_solve_once&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L123–174 · 52 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Pan from the target&#x27;s bearing (minus the arm plane&#x27;s lateral offset), then a two-link…&lt;/small&gt;&quot;]
+    nAnalyticSO101_solve[&quot;&lt;b&gt;solve&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L176–202 · 27 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;The SO-101 TCP sits off the wrist-roll axis (one fixed jaw, one moving jaw), so…&lt;/small&gt;&quot;]
+  end
+  subgraph nEndpointSolver[&quot;class EndpointSolver · L211–238&quot;]
+    nEndpointSolver___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L212–215 · 4 lines&lt;/small&gt;&quot;]
+    nEndpointSolver___call__[&quot;&lt;b&gt;__call__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L217–238 · 22 lines&lt;/small&gt;&quot;]
+  end
+  nAnalyticSO101__solve_once --&gt; nAnalyticSO101__rot
+  nAnalyticSO101__solve_once --&gt; n_info
+  nAnalyticSO101_solve --&gt; nAnalyticSO101__solve_once
+  nAnalyticSO101_solve --&gt; n_info
+  nEndpointSolver___call__ --&gt; n_info
+  nEndpointSolver___call__ --&gt; nccd
+  nEndpointSolver___call__ --&gt; nconstrained
+  nEndpointSolver___call__ --&gt; nlm
+  nEndpointSolver___call__ --&gt; nnewton
+  nEndpointSolver___init__ --&gt; nAnalyticSO101
+  nccd --&gt; n_info
+  nconstrained --&gt; n_info
+  nlm --&gt; n_info
+  nlm --&gt; n_pose_err
+  nnewton --&gt; n_info
+  next_xbody_kinematics_py{{&quot;&lt;small&gt;xbody/kinematics.py&lt;/small&gt;&lt;br/&gt;rot_err, solve_ik&quot;}}
+  n_info -.-&gt; next_xbody_kinematics_py
+  n_pose_err -.-&gt; next_xbody_kinematics_py
+  nconstrained -.-&gt; next_xbody_kinematics_py
+  nnewton -.-&gt; next_xbody_kinematics_py
+  class next_xbody_kinematics_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>xbody/classical/perception.py<span class="meta">140 lines · 13 blocks · imported by 2</span></h3>
+<p>Decision-tree layer 1 (input source): classical MuJoCo depth back-projection, robot self-filtering, red-cube colour thresholding and top-face pose fitting, plus obstacle point extraction.</p>
+<pre class="mermaid">flowchart TD
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;3 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nred_mask[&quot;&lt;b&gt;red_mask&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L12–15 · 4 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Hue test identifying red-cube pixels robust to shadowed faces.&lt;/small&gt;&quot;]
+  nclusters[&quot;&lt;b&gt;clusters&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L80–91 · 12 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Groups point cloud points into spatial clusters.&lt;/small&gt;&quot;]
+  nestimate_cube_pose[&quot;&lt;b&gt;estimate_cube_pose&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L94–125 · 32 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Fits the red cube&#x27;s position and yaw from its segmented top-face points.&lt;/small&gt;&quot;]
+  nobstacle_points[&quot;&lt;b&gt;obstacle_points&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L128–140 · 13 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Extracts non-table, non-cube obstacle points from the point cloud for world modelling.&lt;/small&gt;&quot;]
+  subgraph nPerceiver[&quot;class Perceiver · L18–77&quot;]
+    nPerceiver___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L19–23 · 5 lines&lt;/small&gt;&quot;]
+    nPerceiver_close[&quot;&lt;b&gt;close&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L25–26 · 2 lines&lt;/small&gt;&quot;]
+    nPerceiver__render[&quot;&lt;b&gt;_render&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L28–36 · 9 lines&lt;/small&gt;&quot;]
+    nPerceiver__backproject[&quot;&lt;b&gt;_backproject&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L38–47 · 10 lines&lt;/small&gt;&quot;]
+    nPerceiver_frames[&quot;&lt;b&gt;frames&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L49–55 · 7 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;[(cam, rgb, depth, seg, world points)] for each camera.&lt;/small&gt;&quot;]
+    nPerceiver_point_cloud[&quot;&lt;b&gt;point_cloud&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L57–66 · 10 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Scene points with the robot removed (self-filter from the robot&#x27;s own geometry), plus…&lt;/small&gt;&quot;]
+    nPerceiver_image_features[&quot;&lt;b&gt;image_features&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L68–77 · 10 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Cube centroid (pixels), area (pixels) and depth at the centroid, from the wrist camera…&lt;/small&gt;&quot;]
+  end
+  nPerceiver_frames --&gt; nPerceiver__backproject
+  nPerceiver_frames --&gt; nPerceiver__render
+  nPerceiver_image_features --&gt; nPerceiver__render
+  nPerceiver_image_features --&gt; nred_mask
+  nPerceiver_point_cloud --&gt; nPerceiver_frames
+  nPerceiver_point_cloud --&gt; nred_mask
+  nestimate_cube_pose --&gt; nclusters
+  nobstacle_points --&gt; nclusters
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>xbody/classical/pipeline.py<span class="meta">444 lines · 20 blocks · imported by 3</span></h3>
+<p>Runs one episode of the full classical stack (S1) where every decision-tree layer (input, world, endpoint, planner, timing, tracking, conversion, control, actuator) is a swappable component, including a visual-servo branch and calibration-error belief models.</p>
+<pre class="mermaid">flowchart TD
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;19 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nreal_interface[&quot;&lt;b&gt;real_interface&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L34–35 · 2 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Returns the body&#x27;s real actuator interface: torque if torque-capable, otherwise…&lt;/small&gt;&quot;]
+  subgraph nEpisode[&quot;class Episode · L38–444&quot;]
+    nEpisode___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L39–86 · 48 lines&lt;/small&gt;&quot;]
+    nEpisode_reset[&quot;&lt;b&gt;reset&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L89–112 · 24 lines&lt;/small&gt;&quot;]
+    nEpisode_perceive[&quot;&lt;b&gt;perceive&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L115–152 · 38 lines&lt;/small&gt;&quot;]
+    nEpisode_clearance[&quot;&lt;b&gt;clearance&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L154–160 · 7 lines&lt;/small&gt;&quot;]
+    nEpisode_endpoints[&quot;&lt;b&gt;endpoints&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L163–192 · 30 lines&lt;/small&gt;&quot;]
+    nEpisode_plan[&quot;&lt;b&gt;plan&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L195–214 · 20 lines&lt;/small&gt;&quot;]
+    nEpisode_timed[&quot;&lt;b&gt;timed&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L216–217 · 2 lines&lt;/small&gt;&quot;]
+    nEpisode__wrench_z[&quot;&lt;b&gt;_wrench_z&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L220–227 · 8 lines&lt;/small&gt;&quot;]
+    nEpisode__step[&quot;&lt;b&gt;_step&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L229–243 · 15 lines&lt;/small&gt;&quot;]
+    nEpisode_state[&quot;&lt;b&gt;state&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L245–258 · 14 lines&lt;/small&gt;&quot;]
+    nEpisode_hold[&quot;&lt;b&gt;hold&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L260–265 · 6 lines&lt;/small&gt;&quot;]
+    nEpisode_track[&quot;&lt;b&gt;track&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L267–313 · 47 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Follow a timed joint reference with the configured tracking mode. Returns False if a…&lt;/small&gt;&quot;]
+    nEpisode__clear_grad[&quot;&lt;b&gt;_clear_grad&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L315–321 · 7 lines&lt;/small&gt;&quot;]
+    nEpisode_servo[&quot;&lt;b&gt;servo&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L324–371 · 48 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Drive the TCP down onto the target seen by the wrist camera (cube) using image features.&lt;/small&gt;&quot;]
+    nEpisode_run[&quot;&lt;b&gt;run&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L374–411 · 38 lines&lt;/small&gt;&quot;]
+    nEpisode_run_vs_branch[&quot;&lt;b&gt;run_vs_branch&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L413–434 · 22 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Input #quot;camera#quot;: image features only. No map, no planner: servo onto the cube with the…&lt;/small&gt;&quot;]
+    nEpisode_result[&quot;&lt;b&gt;result&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L436–444 · 9 lines&lt;/small&gt;&quot;]
+  end
+  nEpisode___init__ --&gt; nreal_interface
+  nEpisode__clear_grad --&gt; nEpisode_clearance
+  nEpisode__step --&gt; nEpisode_state
+  nEpisode_endpoints --&gt; nEpisode_clearance
+  nEpisode_hold --&gt; nEpisode_track
+  nEpisode_plan --&gt; nEpisode_clearance
+  nEpisode_run --&gt; nEpisode_endpoints
+  nEpisode_run --&gt; nEpisode_hold
+  nEpisode_run --&gt; nEpisode_perceive
+  nEpisode_run --&gt; nEpisode_plan
+  nEpisode_run --&gt; nEpisode_reset
+  nEpisode_run --&gt; nEpisode_result
+  nEpisode_run --&gt; nEpisode_run_vs_branch
+  nEpisode_run --&gt; nEpisode_servo
+  nEpisode_run --&gt; nEpisode_timed
+  nEpisode_run --&gt; nEpisode_track
+  nEpisode_run_vs_branch --&gt; nEpisode_hold
+  nEpisode_run_vs_branch --&gt; nEpisode_result
+  nEpisode_run_vs_branch --&gt; nEpisode_servo
+  nEpisode_run_vs_branch --&gt; nEpisode_track
+  nEpisode_servo --&gt; nEpisode__step
+  nEpisode_track --&gt; nEpisode__step
+  nEpisode_track --&gt; nEpisode__wrench_z
+  next_xbody_bodies_py{{&quot;&lt;small&gt;xbody/bodies.py&lt;/small&gt;&lt;br/&gt;robot_body_ids, tcp_frame&quot;}}
+  nEpisode___init__ -.-&gt; next_xbody_bodies_py
+  class next_xbody_bodies_py ext
+  next_xbody_calibration_py{{&quot;&lt;small&gt;xbody/calibration.py&lt;/small&gt;&lt;br/&gt;perturb&quot;}}
+  nEpisode___init__ -.-&gt; next_xbody_calibration_py
+  class next_xbody_calibration_py ext
+  next_xbody_classical_control_py{{&quot;&lt;small&gt;xbody/classical/control.py&lt;/small&gt;&lt;br/&gt;Converter, Dyn, JointLaw, TaskLaw, task_error&quot;}}
+  nEpisode___init__ -.-&gt; next_xbody_classical_control_py
+  nEpisode_reset -.-&gt; next_xbody_classical_control_py
+  nEpisode_servo -.-&gt; next_xbody_classical_control_py
+  nEpisode_track -.-&gt; next_xbody_classical_control_py
+  class next_xbody_classical_control_py ext
+  next_xbody_classical_ik_py{{&quot;&lt;small&gt;xbody/classical/ik.py&lt;/small&gt;&lt;br/&gt;EndpointSolver&quot;}}
+  nEpisode_endpoints -.-&gt; next_xbody_classical_ik_py
+  nEpisode_run_vs_branch -.-&gt; next_xbody_classical_ik_py
+  class next_xbody_classical_ik_py ext
+  next_xbody_classical_perception_py{{&quot;&lt;small&gt;xbody/classical/perception.py&lt;/small&gt;&lt;br/&gt;Perceiver, estimate_cube_pose, obstacle_points&quot;}}
+  nEpisode_perceive -.-&gt; next_xbody_classical_perception_py
+  nEpisode_servo -.-&gt; next_xbody_classical_perception_py
+  class next_xbody_classical_perception_py ext
+  next_xbody_classical_planning_py{{&quot;&lt;small&gt;xbody/classical/planning.py&lt;/small&gt;&lt;br/&gt;Space, path_length, shortcut&quot;}}
+  nEpisode_plan -.-&gt; next_xbody_classical_planning_py
+  class next_xbody_classical_planning_py ext
+  next_xbody_classical_timing_py{{&quot;&lt;small&gt;xbody/classical/timing.py&lt;/small&gt;&lt;br/&gt;Traj&quot;}}
+  nEpisode_hold -.-&gt; next_xbody_classical_timing_py
+  class next_xbody_classical_timing_py ext
+  next_xbody_classical_worldmodel_py{{&quot;&lt;small&gt;xbody/classical/worldmodel.py&lt;/small&gt;&lt;br/&gt;RobotPoints, WorldModel&quot;}}
+  nEpisode_perceive -.-&gt; next_xbody_classical_worldmodel_py
+  class next_xbody_classical_worldmodel_py ext
+  next_xbody_kinematics_py{{&quot;&lt;small&gt;xbody/kinematics.py&lt;/small&gt;&lt;br/&gt;Body&quot;}}
+  nEpisode___init__ -.-&gt; next_xbody_kinematics_py
+  class next_xbody_kinematics_py ext
+  next_xbody_scene_py{{&quot;&lt;small&gt;xbody/scene.py&lt;/small&gt;&lt;br/&gt;build_task&quot;}}
+  nEpisode___init__ -.-&gt; next_xbody_scene_py
+  class next_xbody_scene_py ext
+  next_xbody_stages_py{{&quot;&lt;small&gt;xbody/stages.py&lt;/small&gt;&lt;br/&gt;StageScorer, StepState&quot;}}
+  nEpisode___init__ -.-&gt; next_xbody_stages_py
+  nEpisode_state -.-&gt; next_xbody_stages_py
+  class next_xbody_stages_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>xbody/classical/planning.py<span class="meta">408 lines · 23 blocks · imported by 2</span></h3>
+<p>Decision-tree layer 4 (motion planning): joint-space collision-free paths via OMPL planners plus in-house LazyPRM, EST, kinodynamic RRT, lattice/A* search, CHOMP, STOMP, TrajOpt, potential fields and velocity dampers.</p>
+<pre class="mermaid">flowchart TD
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;17 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nshortcut[&quot;&lt;b&gt;shortcut&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L39–62 · 24 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Random shortcutting post-processor that shortens a collision-free path.&lt;/small&gt;&quot;]
+  npath_length[&quot;&lt;b&gt;path_length&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L65–66 · 2 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Computes total joint-space length of a path.&lt;/small&gt;&quot;]
+  nompl_plan[&quot;&lt;b&gt;ompl_plan&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L70–98 · 29 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Wraps OMPL geometric planners (PRM, RRT variants, KPIECE) over the Space validity checker.&lt;/small&gt;&quot;]
+  nlazyprm[&quot;&lt;b&gt;lazyprm&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L102–139 · 38 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Lazy PRM: builds a roadmap and validates edges only along candidate shortest paths.&lt;/small&gt;&quot;]
+  nest[&quot;&lt;b&gt;est&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L142–161 · 20 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Expansive Space Trees planner growing from sparse regions.&lt;/small&gt;&quot;]
+  n_trace[&quot;&lt;b&gt;_trace&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L164–168 · 5 lines&lt;/small&gt;&quot;]
+  nkinorrt[&quot;&lt;b&gt;kinorrt&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L171–217 · 47 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Kinodynamic RRT planner propagating bounded controls in joint space.&lt;/small&gt;&quot;]
+  nlattice_search[&quot;&lt;b&gt;lattice_search&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L221–258 · 38 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Grid/lattice graph search (A*, Dijkstra, lattice) in joint space.&lt;/small&gt;&quot;]
+  n_init_traj[&quot;&lt;b&gt;_init_traj&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L262–263 · 2 lines&lt;/small&gt;&quot;]
+  n_clear_grad[&quot;&lt;b&gt;_clear_grad&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L266–272 · 7 lines&lt;/small&gt;&quot;]
+  n_finite_diff_A[&quot;&lt;b&gt;_finite_diff_A&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L275–279 · 5 lines&lt;/small&gt;&quot;]
+  nchomp[&quot;&lt;b&gt;chomp&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L282–301 · 20 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;CHOMP trajectory optimization using clearance gradients and smoothness cost.&lt;/small&gt;&quot;]
+  nstomp[&quot;&lt;b&gt;stomp&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L304–325 · 22 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;STOMP stochastic trajectory optimization with noisy rollouts.&lt;/small&gt;&quot;]
+  ntrajopt[&quot;&lt;b&gt;trajopt&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L328–352 · 25 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;TrajOpt-style constrained optimization of a waypoint trajectory with clearance…&lt;/small&gt;&quot;]
+  npotential[&quot;&lt;b&gt;potential&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L356–372 · 17 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Artificial potential-field planner descending attractive and repulsive terms.&lt;/small&gt;&quot;]
+  ndampers[&quot;&lt;b&gt;dampers&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L375–391 · 17 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Velocity-damper reactive planner slowing motion near obstacles.&lt;/small&gt;&quot;]
+  nstraight[&quot;&lt;b&gt;straight&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L394–395 · 2 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;No-planner baseline returning a straight joint-space path.&lt;/small&gt;&quot;]
+  subgraph nSpace[&quot;class Space · L19–36&quot;]
+    nSpace___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L20–25 · 6 lines&lt;/small&gt;&quot;]
+    nSpace_valid[&quot;&lt;b&gt;valid&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L27–29 · 3 lines&lt;/small&gt;&quot;]
+    nSpace_motion_ok[&quot;&lt;b&gt;motion_ok&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L31–33 · 3 lines&lt;/small&gt;&quot;]
+    nSpace_sample[&quot;&lt;b&gt;sample&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L35–36 · 2 lines&lt;/small&gt;&quot;]
+  end
+  nSpace_motion_ok --&gt; nSpace_valid
+  nchomp --&gt; n_clear_grad
+  nchomp --&gt; n_finite_diff_A
+  nchomp --&gt; n_init_traj
+  ndampers --&gt; n_clear_grad
+  nest --&gt; n_trace
+  nkinorrt --&gt; n_trace
+  nmodule_setup --&gt; nchomp
+  nmodule_setup --&gt; ndampers
+  nmodule_setup --&gt; nest
+  nmodule_setup --&gt; nkinorrt
+  nmodule_setup --&gt; nlattice_search
+  nmodule_setup --&gt; nlazyprm
+  nmodule_setup --&gt; nompl_plan
+  nmodule_setup --&gt; npotential
+  nmodule_setup --&gt; nstomp
+  nmodule_setup --&gt; nstraight
+  nmodule_setup --&gt; ntrajopt
+  npotential --&gt; n_clear_grad
+  nstomp --&gt; n_finite_diff_A
+  nstomp --&gt; n_init_traj
+  nstomp --&gt; npath_length
+  ntrajopt --&gt; n_clear_grad
+  ntrajopt --&gt; n_init_traj
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>xbody/classical/timing.py<span class="meta">278 lines · 20 blocks · imported by 1</span></h3>
+<p>Decision-tree layer 5 (timing): converts joint waypoints into timed q/qd/qdd references within velocity, acceleration and jerk limits using TOPP-RA, TOPP, TOTG, IPTP, trapezoid, S-curve and Ruckig.</p>
+<pre class="mermaid">flowchart TD
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;5 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  n_dedupe[&quot;&lt;b&gt;_dedupe&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L36–43 · 8 lines&lt;/small&gt;&quot;]
+  n_arc_param[&quot;&lt;b&gt;_arc_param&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L46–48 · 3 lines&lt;/small&gt;&quot;]
+  nphase_plane[&quot;&lt;b&gt;phase_plane&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L52–86 · 35 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Time-optimal path parameterization by phase-plane integration of max-acceleration and…&lt;/small&gt;&quot;]
+  n_resample[&quot;&lt;b&gt;_resample&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L89–92 · 4 lines&lt;/small&gt;&quot;]
+  n_spline_profile[&quot;&lt;b&gt;_spline_profile&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L95–99 · 5 lines&lt;/small&gt;&quot;]
+  ntopp[&quot;&lt;b&gt;topp&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L102–105 · 4 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Classic TOPP on a cubic spline through the waypoints.&lt;/small&gt;&quot;]
+  ntoppra_[&quot;&lt;b&gt;toppra_&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L108–125 · 18 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;TOPP-RA reachability-analysis parameterization via the toppra library.&lt;/small&gt;&quot;]
+  ntotg[&quot;&lt;b&gt;totg&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L128–151 · 24 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Kunz-Stilman style time-optimal trajectory with bounded-deviation corner blends.&lt;/small&gt;&quot;]
+  n_iptp_times[&quot;&lt;b&gt;_iptp_times&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L154–175 · 22 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Iteratively scales segment durations until accelerations fit limits for IPTP.&lt;/small&gt;&quot;]
+  niptp[&quot;&lt;b&gt;iptp&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L178–185 · 8 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;MoveIt-style iterative parabolic time parameterization.&lt;/small&gt;&quot;]
+  n_segment_profile[&quot;&lt;b&gt;_segment_profile&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L188–230 · 43 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Normalized progress profile for a segment under velocity, acceleration and optional…&lt;/small&gt;&quot;]
+  n_stop_and_go[&quot;&lt;b&gt;_stop_and_go&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L233–242 · 10 lines&lt;/small&gt;&quot;]
+  ntrapezoid[&quot;&lt;b&gt;trapezoid&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L245–246 · 2 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Stop-and-go synchronized trapezoidal velocity profile per segment.&lt;/small&gt;&quot;]
+  nscurve[&quot;&lt;b&gt;scurve&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L249–250 · 2 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Stop-and-go synchronized jerk-limited S-curve profile per segment.&lt;/small&gt;&quot;]
+  nruckig_[&quot;&lt;b&gt;ruckig_&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L253–274 · 22 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Ruckig jerk-limited online trajectory generation through waypoints with IPTP velocities.&lt;/small&gt;&quot;]
+  subgraph nTraj[&quot;class Traj · L20–33&quot;]
+    nTraj___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L21–24 · 4 lines&lt;/small&gt;&quot;]
+    nTraj_duration[&quot;&lt;b&gt;duration&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L27–28 · 2 lines&lt;/small&gt;&quot;]
+    nTraj_at[&quot;&lt;b&gt;at&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L30–33 · 4 lines&lt;/small&gt;&quot;]
+  end
+  n_resample --&gt; nTraj
+  n_spline_profile --&gt; n_arc_param
+  n_spline_profile --&gt; nphase_plane
+  n_stop_and_go --&gt; n_dedupe
+  n_stop_and_go --&gt; n_resample
+  n_stop_and_go --&gt; n_segment_profile
+  niptp --&gt; nTraj
+  niptp --&gt; n_dedupe
+  niptp --&gt; n_iptp_times
+  nmodule_setup --&gt; niptp
+  nmodule_setup --&gt; nruckig_
+  nmodule_setup --&gt; nscurve
+  nmodule_setup --&gt; ntopp
+  nmodule_setup --&gt; ntoppra_
+  nmodule_setup --&gt; ntotg
+  nmodule_setup --&gt; ntrapezoid
+  nruckig_ --&gt; n_dedupe
+  nruckig_ --&gt; n_iptp_times
+  nruckig_ --&gt; n_resample
+  nscurve --&gt; n_stop_and_go
+  ntopp --&gt; n_dedupe
+  ntopp --&gt; n_resample
+  ntopp --&gt; n_spline_profile
+  ntoppra_ --&gt; nTraj
+  ntoppra_ --&gt; n_arc_param
+  ntoppra_ --&gt; n_dedupe
+  ntoppra_ --&gt; ntopp
+  ntotg --&gt; n_arc_param
+  ntotg --&gt; n_dedupe
+  ntotg --&gt; n_resample
+  ntotg --&gt; nphase_plane
+  ntotg --&gt; ntopp
+  ntrapezoid --&gt; n_stop_and_go
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>xbody/classical/worldmodel.py<span class="meta">210 lines · 16 blocks · imported by 3</span></h3>
+<p>Decision-tree layer 2 (world representation): computes robot-to-obstacle clearance at a configuration using octomap, voxel, ESDF, TSDF, exact mesh, primitive or pose models, with robot surface points from its kinematic self-model.</p>
+<pre class="mermaid">flowchart TD
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;5 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  subgraph nRobotPoints[&quot;class RobotPoints · L23–64&quot;]
+    nRobotPoints___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L26–54 · 29 lines&lt;/small&gt;&quot;]
+    nRobotPoints_world[&quot;&lt;b&gt;world&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L56–64 · 9 lines&lt;/small&gt;&quot;]
+  end
+  subgraph nGrid[&quot;class Grid · L67–75&quot;]
+    nGrid___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L68–70 · 3 lines&lt;/small&gt;&quot;]
+    nGrid_idx[&quot;&lt;b&gt;idx&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L72–75 · 4 lines&lt;/small&gt;&quot;]
+  end
+  subgraph nWorldModel[&quot;class WorldModel · L78–210&quot;]
+    nWorldModel___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L81–110 · 30 lines&lt;/small&gt;&quot;]
+    nWorldModel__occupancy[&quot;&lt;b&gt;_occupancy&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L113–117 · 5 lines&lt;/small&gt;&quot;]
+    nWorldModel__octomap[&quot;&lt;b&gt;_octomap&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L119–134 · 16 lines&lt;/small&gt;&quot;]
+    nWorldModel__tsdf[&quot;&lt;b&gt;_tsdf&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L136–158 · 23 lines&lt;/small&gt;&quot;]
+    nWorldModel_clearance[&quot;&lt;b&gt;clearance&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L161–179 · 19 lines&lt;/small&gt;&quot;]
+    nWorldModel_prepare[&quot;&lt;b&gt;prepare&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L181–186 · 6 lines&lt;/small&gt;&quot;]
+    nWorldModel_clearance_q[&quot;&lt;b&gt;clearance_q&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L188–201 · 14 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Minimum robot-obstacle distance at a full qpos.&lt;/small&gt;&quot;]
+    nWorldModel_gradient[&quot;&lt;b&gt;gradient&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L203–210 · 8 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Distance-field gradient at points (ESDF/TSDF only), for CHOMP.&lt;/small&gt;&quot;]
+  end
+  nWorldModel___init__ --&gt; nGrid
+  nWorldModel___init__ --&gt; nWorldModel__occupancy
+  nWorldModel___init__ --&gt; nWorldModel__octomap
+  nWorldModel___init__ --&gt; nWorldModel__tsdf
+  nWorldModel___init__ --&gt; nWorldModel_prepare
+  nWorldModel_clearance_q --&gt; nWorldModel_clearance
+  nWorldModel_prepare --&gt; nWorldModel_gradient
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="layerhead"><span class="eyebrow">Self-Modeling Experiments</span></div>
+<div class="file"><h3>scripts/eval_selfmodel_task.py<span class="meta">122 lines · 8 blocks · imported by 0</span></h3>
+<p>Evaluation script testing whether self-modeling changes classical pick-and-place success on mis-calibrated arms: teleoperates perturbed arms, calibrates the model file from logs, and compares ideal, nominal and self-model cells with Wilson CIs and McNemar tests.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;25 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nlayouts[&quot;&lt;b&gt;layouts&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L43–44 · 2 lines&lt;/small&gt;&quot;]
+  nrun_episodes[&quot;&lt;b&gt;run_episodes&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L47–52 · 6 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Runs the classical pipeline Episode over a set of layouts with a given model config…&lt;/small&gt;&quot;]
+  nfk_error[&quot;&lt;b&gt;fk_error&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L55–60 · 6 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Computes forward-kinematics position and orientation error between two model FKs over…&lt;/small&gt;&quot;]
+  narm_job[&quot;&lt;b&gt;arm_job&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L63–87 · 25 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Per-arm worker: perturbs a real arm, teleoperates it for 400 Cartesian poses,…&lt;/small&gt;&quot;]
+  n_jids[&quot;&lt;b&gt;_jids&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L90–92 · 3 lines&lt;/small&gt;&quot;]
+  nideal_job[&quot;&lt;b&gt;ideal_job&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L95–96 · 2 lines&lt;/small&gt;&quot;]
+  nmain[&quot;&lt;b&gt;main&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L99–118 · 20 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Parses CLI args, runs ideal and per-arm jobs in a multiprocessing pool, aggregates…&lt;/small&gt;&quot;]
+  narm_job --&gt; n_jids
+  narm_job --&gt; nfk_error
+  narm_job --&gt; nrun_episodes
+  nideal_job --&gt; nrun_episodes
+  nmain --&gt; narm_job
+  nmain --&gt; nideal_job
+  nmodule_setup --&gt; nmain
+  nrun_episodes --&gt; nlayouts
+  next_scripts_selfmodel_teleop_py{{&quot;&lt;small&gt;scripts/selfmodel_teleop.py&lt;/small&gt;&lt;br/&gt;measure, nominal_body, teleop_commands&quot;}}
+  narm_job -.-&gt; next_scripts_selfmodel_teleop_py
+  class next_scripts_selfmodel_teleop_py ext
+  next_xbody_calibration_py{{&quot;&lt;small&gt;xbody/calibration.py&lt;/small&gt;&lt;br/&gt;ModelFK, calibrate, perturb&quot;}}
+  narm_job -.-&gt; next_xbody_calibration_py
+  class next_xbody_calibration_py ext
+  next_xbody_classical_pipeline_py{{&quot;&lt;small&gt;xbody/classical/pipeline.py&lt;/small&gt;&lt;br/&gt;Episode, real_interface&quot;}}
+  nmodule_setup -.-&gt; next_xbody_classical_pipeline_py
+  nrun_episodes -.-&gt; next_xbody_classical_pipeline_py
+  class next_xbody_classical_pipeline_py ext
+  next_xbody_scene_py{{&quot;&lt;small&gt;xbody/scene.py&lt;/small&gt;&lt;br/&gt;build_task, sample_layout&quot;}}
+  narm_job -.-&gt; next_xbody_scene_py
+  nlayouts -.-&gt; next_xbody_scene_py
+  class next_xbody_scene_py ext
+  next_xbody_stats_py{{&quot;&lt;small&gt;xbody/stats.py&lt;/small&gt;&lt;br/&gt;mcnemar_exact, wilson&quot;}}
+  nmain -.-&gt; next_xbody_stats_py
+  class next_xbody_stats_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>scripts/selfmodel_readout_route_b.py<span class="meta">60 lines · 3 blocks · imported by 0</span></h3>
+<p>Training-free self-model readout: compares the frozen Franka TD-MPC2 world model&#x27;s one-step latent prediction error on recorded trajectories from each body against the Franka home and a no-change baseline.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;10 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  none_step_errors[&quot;&lt;b&gt;one_step_errors&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L24–40 · 17 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Encodes observations with the frozen TD-MPC2 model, predicts next latents from…&lt;/small&gt;&quot;]
+  nmain[&quot;&lt;b&gt;main&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L43–56 · 14 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Loads named trajectory .npz files, computes one-step errors per body, and prints…&lt;/small&gt;&quot;]
+  nmain --&gt; none_step_errors
+  nmodule_setup --&gt; nmain
+  next_xbody_newt_agent_py{{&quot;&lt;small&gt;xbody/newt_agent.py&lt;/small&gt;&lt;br/&gt;FrozenNewtAgent&quot;}}
+  nmain -.-&gt; next_xbody_newt_agent_py
+  class next_xbody_newt_agent_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>scripts/selfmodel_sensors.py<span class="meta">247 lines · 13 blocks · imported by 0</span></h3>
+<p>Sensor-swap self-modeling benchmark comparing oracle, monocular, stereo and lidar hand-pose sensing across a realism ladder, measuring valid-frame rate, sensor pose error, model FK error and open-loop reach.</p>
+<pre class="mermaid">flowchart TD
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;33 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nrecord[&quot;&lt;b&gt;record&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L98–156 · 59 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Records a teleoperated trajectory on the real lab arm, logging encoder readings and…&lt;/small&gt;&quot;]
+  npose_err[&quot;&lt;b&gt;pose_err&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L159–160 · 2 lines&lt;/small&gt;&quot;]
+  nfk_errors[&quot;&lt;b&gt;fk_errors&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L163–168 · 6 lines&lt;/small&gt;&quot;]
+  nreach[&quot;&lt;b&gt;reach&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L171–185 · 15 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Open-loop reach test: solves IK on a model, runs the joints on the real arm, and…&lt;/small&gt;&quot;]
+  nrun_job[&quot;&lt;b&gt;run_job&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L188–221 · 34 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Per-seed worker that records logs, fits differential and absolute self-models per…&lt;/small&gt;&quot;]
+  nmain[&quot;&lt;b&gt;main&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L224–243 · 20 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Entry point dispatching run_job across seeds, sensors and realism levels in a pool and…&lt;/small&gt;&quot;]
+  subgraph nArm[&quot;class Arm · L56–95&quot;]
+    nArm___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L59–69 · 11 lines&lt;/small&gt;&quot;]
+    nArm_link_angles[&quot;&lt;b&gt;link_angles&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L71–79 · 9 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Joint compliance: the links sag under gravity away from what the motor-side encoders read.&lt;/small&gt;&quot;]
+    nArm_set[&quot;&lt;b&gt;set&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L81–84 · 4 lines&lt;/small&gt;&quot;]
+    nArm_frame[&quot;&lt;b&gt;frame&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L86–90 · 5 lines&lt;/small&gt;&quot;]
+    nArm_fk_joint[&quot;&lt;b&gt;fk_joint&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L92–95 · 4 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Pose of a frame when the joints read q_joint (encoder coordinates, true robot physics).&lt;/small&gt;&quot;]
+  end
+  nArm_fk_joint --&gt; nArm_frame
+  nArm_fk_joint --&gt; nArm_link_angles
+  nArm_fk_joint --&gt; nArm_set
+  nfk_errors --&gt; npose_err
+  nmain --&gt; nrun_job
+  nmodule_setup --&gt; nmain
+  nreach --&gt; npose_err
+  nrecord --&gt; nArm
+  nrun_job --&gt; nfk_errors
+  nrun_job --&gt; npose_err
+  nrun_job --&gt; nreach
+  nrun_job --&gt; nrecord
+  next_scripts_selfmodel_teleop_py{{&quot;&lt;small&gt;scripts/selfmodel_teleop.py&lt;/small&gt;&lt;br/&gt;teleop_commands&quot;}}
+  nrecord -.-&gt; next_scripts_selfmodel_teleop_py
+  class next_scripts_selfmodel_teleop_py ext
+  next_xbody_bodies_py{{&quot;&lt;small&gt;xbody/bodies.py&lt;/small&gt;&lt;br/&gt;tcp_frame&quot;}}
+  nrecord -.-&gt; next_xbody_bodies_py
+  class next_xbody_bodies_py ext
+  next_xbody_kinematics_py{{&quot;&lt;small&gt;xbody/kinematics.py&lt;/small&gt;&lt;br/&gt;Body&quot;}}
+  nrecord -.-&gt; next_xbody_kinematics_py
+  class next_xbody_kinematics_py ext
+  next_xbody_selfmodel_diff_py{{&quot;&lt;small&gt;xbody/selfmodel_diff.py&lt;/small&gt;&lt;br/&gt;fit_poe, ik, inv, pose, so3_exp, so3_log&quot;}}
+  nArm_frame -.-&gt; next_xbody_selfmodel_diff_py
+  nmodule_setup -.-&gt; next_xbody_selfmodel_diff_py
+  npose_err -.-&gt; next_xbody_selfmodel_diff_py
+  nreach -.-&gt; next_xbody_selfmodel_diff_py
+  nrecord -.-&gt; next_xbody_selfmodel_diff_py
+  nrun_job -.-&gt; next_xbody_selfmodel_diff_py
+  class next_xbody_selfmodel_diff_py ext
+  next_xbody_selfmodel_lab_py{{&quot;&lt;small&gt;xbody/selfmodel_lab.py&lt;/small&gt;&lt;br/&gt;build&quot;}}
+  nArm___init__ -.-&gt; next_xbody_selfmodel_lab_py
+  class next_xbody_selfmodel_lab_py ext
+  next_xbody_selfmodel_sensing_py{{&quot;&lt;small&gt;xbody/selfmodel_sensing.py&lt;/small&gt;&lt;br/&gt;BoardDetector, LidarLocalizer, Rig, degrade, lidar_dirs, lidar_scan…&quot;}}
+  nrecord -.-&gt; next_xbody_selfmodel_sensing_py
+  class next_xbody_selfmodel_sensing_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>scripts/selfmodel_teleop.py<span class="meta">332 lines · 20 blocks · imported by 2</span></h3>
+<p>Single-robot self-modeling pilot: teleoperates a mis-calibrated arm through its nominal model, logs encoders and noisy hand poses, and compares nominal, differential PoE fits, classical calibration, online Jacobian and a frozen TD-MPC2 readout on one-step, FK and reach metrics.</p>
+<pre class="mermaid">flowchart TD
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;28 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  n_links[&quot;&lt;b&gt;_links&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L55–60 · 6 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Bodies along the arm chain (one per arm joint) plus the TCP body: where calibration…&lt;/small&gt;&quot;]
+  nnominal_body[&quot;&lt;b&gt;nominal_body&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L63–66 · 4 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Builds the nominal kinematic Body from the unperturbed Menagerie model file.&lt;/small&gt;&quot;]
+  nreal_robot[&quot;&lt;b&gt;real_robot&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L69–87 · 19 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Creates a real arm by sampling link offsets, axis tilts, encoder and TCP offsets on…&lt;/small&gt;&quot;]
+  nT_of[&quot;&lt;b&gt;T_of&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L90–92 · 3 lines&lt;/small&gt;&quot;]
+  nmeasure[&quot;&lt;b&gt;measure&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L95–98 · 4 lines&lt;/small&gt;&quot;]
+  nteleop[&quot;&lt;b&gt;teleop&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L101–109 · 9 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Runs teleoperation on the real arm and logs encoder readings with measured hand poses.&lt;/small&gt;&quot;]
+  nteleop_commands[&quot;&lt;b&gt;teleop_commands&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L112–146 · 35 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Generates joint command trajectories for random or Cartesian teleoperation, solving IK…&lt;/small&gt;&quot;]
+  nnominal_J[&quot;&lt;b&gt;nominal_J&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L149–153 · 5 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Nominal spatial Jacobian at q (rotation rows scaled), for the calibration initialisation.&lt;/small&gt;&quot;]
+  none_step[&quot;&lt;b&gt;one_step&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L164–172 · 9 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Relative one-step error of predicted TCP position and rotation changes (same…&lt;/small&gt;&quot;]
+  none_step_local[&quot;&lt;b&gt;one_step_local&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L175–185 · 11 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;One-step prediction with a model-free recursive-least-squares online Jacobian.&lt;/small&gt;&quot;]
+  nfk_errors[&quot;&lt;b&gt;fk_errors&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L188–197 · 10 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Absolute FK position and orientation errors of a model against the real arm over…&lt;/small&gt;&quot;]
+  nreach[&quot;&lt;b&gt;reach&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L200–220 · 21 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Open-loop reach test on the real arm using IK solved on a model, with Wilson success…&lt;/small&gt;&quot;]
+  nrun_cell[&quot;&lt;b&gt;run_cell&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L223–247 · 25 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Evaluates all self-model variants for one seed/mode/noise cell: logs, fits, then…&lt;/small&gt;&quot;]
+  nmaniskill_same_data[&quot;&lt;b&gt;maniskill_same_data&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L250–299 · 50 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Evaluates the frozen TD-MPC2 latent self-model readout against fitted models on the…&lt;/small&gt;&quot;]
+  n_cell[&quot;&lt;b&gt;_cell&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L302–303 · 2 lines&lt;/small&gt;&quot;]
+  nmain[&quot;&lt;b&gt;main&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L306–328 · 23 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Entry point running all cells in a multiprocessing pool and writing results JSON.&lt;/small&gt;&quot;]
+  subgraph nNominalModel[&quot;class NominalModel · L156–161&quot;]
+    nNominalModel___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L157–158 · 2 lines&lt;/small&gt;&quot;]
+    nNominalModel_fk[&quot;&lt;b&gt;fk&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L160–161 · 2 lines&lt;/small&gt;&quot;]
+  end
+  nNominalModel_fk --&gt; nT_of
+  n_cell --&gt; nnominal_body
+  n_cell --&gt; nrun_cell
+  nfk_errors --&gt; nT_of
+  nmain --&gt; n_cell
+  nmain --&gt; nmaniskill_same_data
+  nmaniskill_same_data --&gt; nmeasure
+  nmodule_setup --&gt; nmain
+  nreach --&gt; nT_of
+  nreal_robot --&gt; n_links
+  nrun_cell --&gt; nNominalModel
+  nrun_cell --&gt; nfk_errors
+  nrun_cell --&gt; nnominal_J
+  nrun_cell --&gt; none_step
+  nrun_cell --&gt; none_step_local
+  nrun_cell --&gt; nreach
+  nrun_cell --&gt; nreal_robot
+  nrun_cell --&gt; nteleop
+  nteleop --&gt; nT_of
+  nteleop --&gt; nmeasure
+  nteleop --&gt; nteleop_commands
+  next_xbody_bodies_py{{&quot;&lt;small&gt;xbody/bodies.py&lt;/small&gt;&lt;br/&gt;tcp_frame&quot;}}
+  n_links -.-&gt; next_xbody_bodies_py
+  nnominal_body -.-&gt; next_xbody_bodies_py
+  nreal_robot -.-&gt; next_xbody_bodies_py
+  class next_xbody_bodies_py ext
+  next_xbody_kinematics_py{{&quot;&lt;small&gt;xbody/kinematics.py&lt;/small&gt;&lt;br/&gt;Body, solve_ik&quot;}}
+  nnominal_body -.-&gt; next_xbody_kinematics_py
+  nreal_robot -.-&gt; next_xbody_kinematics_py
+  nteleop_commands -.-&gt; next_xbody_kinematics_py
+  class next_xbody_kinematics_py ext
+  next_xbody_selfmodel_diff_py{{&quot;&lt;small&gt;xbody/selfmodel_diff.py&lt;/small&gt;&lt;br/&gt;LocalJacobian, delta_x, fit_poe, ik, pose, rotvec_batch…&quot;}}
+  nT_of -.-&gt; next_xbody_selfmodel_diff_py
+  nfk_errors -.-&gt; next_xbody_selfmodel_diff_py
+  nmaniskill_same_data -.-&gt; next_xbody_selfmodel_diff_py
+  nmeasure -.-&gt; next_xbody_selfmodel_diff_py
+  none_step -.-&gt; next_xbody_selfmodel_diff_py
+  none_step_local -.-&gt; next_xbody_selfmodel_diff_py
+  nreach -.-&gt; next_xbody_selfmodel_diff_py
+  nrun_cell -.-&gt; next_xbody_selfmodel_diff_py
+  nteleop_commands -.-&gt; next_xbody_selfmodel_diff_py
+  class next_xbody_selfmodel_diff_py ext
+  next_xbody_stats_py{{&quot;&lt;small&gt;xbody/stats.py&lt;/small&gt;&lt;br/&gt;wilson&quot;}}
+  nreach -.-&gt; next_xbody_stats_py
+  class next_xbody_stats_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>scripts/summarize_selfmodel_sensors.py<span class="meta">93 lines · 3 blocks · imported by 0</span></h3>
+<p>Summarizes the sensor-swap self-modeling benchmark cells into results/selfmodel_sensors/SUMMARY.md with Wilson intervals and paired McNemar comparisons.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;15 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  ncell_rows[&quot;&lt;b&gt;cell_rows&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L23–29 · 7 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Formats markdown table rows for a single benchmark cell.&lt;/small&gt;&quot;]
+  nmain[&quot;&lt;b&gt;main&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L32–89 · 58 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Reads the cells JSON and writes the sensor-swap self-model summary table with success…&lt;/small&gt;&quot;]
+  nmain --&gt; ncell_rows
+  nmodule_setup --&gt; nmain
+  next_xbody_stats_py{{&quot;&lt;small&gt;xbody/stats.py&lt;/small&gt;&lt;br/&gt;mcnemar_exact, wilson&quot;}}
+  nmain -.-&gt; next_xbody_stats_py
+  class next_xbody_stats_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>scripts/summarize_selfmodel_teleop.py<span class="meta">90 lines · 3 blocks · imported by 0</span></h3>
+<p>Summarizes the teleop self-model pilot across model variants (nominal, diff_only, diff_abs, calib) into SUMMARY.md, body-selectable via the SELFMODEL_BODY environment variable.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;15 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  npick[&quot;&lt;b&gt;pick&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L20–22 · 3 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Selects the cell matching a given model mode, step count and noise level.&lt;/small&gt;&quot;]
+  nmain[&quot;&lt;b&gt;main&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L25–86 · 62 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Builds the teleop self-model summary tables with Wilson intervals and McNemar tests…&lt;/small&gt;&quot;]
+  nmain --&gt; npick
+  nmodule_setup --&gt; nmain
+  next_xbody_stats_py{{&quot;&lt;small&gt;xbody/stats.py&lt;/small&gt;&lt;br/&gt;mcnemar_exact, wilson&quot;}}
+  nmain -.-&gt; next_xbody_stats_py
+  class next_xbody_stats_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>xbody/selfmodel_diff.py<span class="meta">283 lines · 34 blocks · imported by 5</span></h3>
+<p>Differential self-model that identifies an arm&#x27;s product-of-exponentials kinematics from teleop logs of encoder readings and measured hand poses, plus a model-free recursive-least-squares local Jacobian baseline and Lie-group helpers.</p>
+<pre class="mermaid">flowchart TD
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;3 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nhat[&quot;&lt;b&gt;hat&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L24–25 · 2 lines&lt;/small&gt;&quot;]
+  nso3_exp[&quot;&lt;b&gt;so3_exp&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L28–33 · 6 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Rodrigues exponential map from a rotation vector to an SO(3) matrix.&lt;/small&gt;&quot;]
+  nso3_log[&quot;&lt;b&gt;so3_log&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L36–45 · 10 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Logarithm map from a rotation matrix to its rotation vector, handling near-identity…&lt;/small&gt;&quot;]
+  nse3_exp[&quot;&lt;b&gt;se3_exp&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L48–56 · 9 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Exponential of a 6D screw times an angle, producing a 4x4 homogeneous transform.&lt;/small&gt;&quot;]
+  npose[&quot;&lt;b&gt;pose&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L59–62 · 4 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Builds a 4x4 homogeneous transform from a position and rotation.&lt;/small&gt;&quot;]
+  ninv[&quot;&lt;b&gt;inv&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L65–69 · 5 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Inverts a rigid 4x4 transform analytically.&lt;/small&gt;&quot;]
+  ntwist_of[&quot;&lt;b&gt;twist_of&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L72–74 · 3 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;(rotation vector, translation) of a relative transform: a 6-vector with rotation…&lt;/small&gt;&quot;]
+  nse3_exp_batch[&quot;&lt;b&gt;se3_exp_batch&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L77–87 · 11 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Vectorised screw exponentials for batches of joint angles.&lt;/small&gt;&quot;]
+  ninv_batch[&quot;&lt;b&gt;inv_batch&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L90–96 · 7 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Vectorised rigid-transform inversion over a batch.&lt;/small&gt;&quot;]
+  nrotvec_batch[&quot;&lt;b&gt;rotvec_batch&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L99–105 · 7 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Vectorised rotation-matrix to rotation-vector conversion.&lt;/small&gt;&quot;]
+  ntwists_batch[&quot;&lt;b&gt;twists_batch&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L108–109 · 2 lines&lt;/small&gt;&quot;]
+  nproject_rot[&quot;&lt;b&gt;project_rot&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L112–118 · 7 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Projects a near-rotation matrix onto SO(3) via SVD.&lt;/small&gt;&quot;]
+  nspatial_jacobian_ls[&quot;&lt;b&gt;spatial_jacobian_ls&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L219–228 · 10 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Estimates a spatial Jacobian at the reference pose from logged differential motions by…&lt;/small&gt;&quot;]
+  n_solve[&quot;&lt;b&gt;_solve&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L231–236 · 6 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Levenberg-Marquardt; robust=True switches to a soft-L1 loss (5 mm scale) so the…&lt;/small&gt;&quot;]
+  nfit_poe[&quot;&lt;b&gt;fit_poe&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L239–249 · 11 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;High-level fitter: initialises a PoEModel (from a nominal or estimated Jacobian), fits…&lt;/small&gt;&quot;]
+  ndelta_x[&quot;&lt;b&gt;delta_x&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L272–274 · 3 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Six-vector pose difference between two transforms mixing position and scaled rotation.&lt;/small&gt;&quot;]
+  nik[&quot;&lt;b&gt;ik&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L278–283 · 6 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Bounded least-squares inverse kinematics against an arbitrary forward-kinematics callable.&lt;/small&gt;&quot;]
+  subgraph nPoEModel[&quot;class PoEModel · L122–216&quot;]
+    nPoEModel___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L125–128 · 4 lines&lt;/small&gt;&quot;]
+    nPoEModel_screw[&quot;&lt;b&gt;screw&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L131–134 · 4 lines&lt;/small&gt;&quot;]
+    nPoEModel_encode[&quot;&lt;b&gt;encode&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L137–140 · 4 lines&lt;/small&gt;&quot;]
+    nPoEModel_screws[&quot;&lt;b&gt;screws&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L142–144 · 3 lines&lt;/small&gt;&quot;]
+    nPoEModel_product[&quot;&lt;b&gt;product&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L146–150 · 5 lines&lt;/small&gt;&quot;]
+    nPoEModel_fk[&quot;&lt;b&gt;fk&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L152–153 · 2 lines&lt;/small&gt;&quot;]
+    nPoEModel_products[&quot;&lt;b&gt;products&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L155–161 · 7 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Batched P(q) for an (N, n) array of configurations.&lt;/small&gt;&quot;]
+    nPoEModel_fit[&quot;&lt;b&gt;fit&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L163–178 · 16 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Differential fit of the screws on consecutive pairs (valid[k]: k -#gt; k+1 is one motion,…&lt;/small&gt;&quot;]
+    nPoEModel_set_M[&quot;&lt;b&gt;set_M&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L180–183 · 4 lines&lt;/small&gt;&quot;]
+    nPoEModel_refine_absolute[&quot;&lt;b&gt;refine_absolute&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L185–204 · 20 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Second stage: refine screws and M together on every logged absolute pose. Differences…&lt;/small&gt;&quot;]
+    nPoEModel_init_from_jacobian[&quot;&lt;b&gt;init_from_jacobian&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L206–216 · 11 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Screw initial guess from a 6xn spatial Jacobian estimate at q_ref (rotation rows…&lt;/small&gt;&quot;]
+  end
+  subgraph nLocalJacobian[&quot;class LocalJacobian · L253–269&quot;]
+    nLocalJacobian___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L257–260 · 4 lines&lt;/small&gt;&quot;]
+    nLocalJacobian_predict[&quot;&lt;b&gt;predict&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L262–263 · 2 lines&lt;/small&gt;&quot;]
+    nLocalJacobian_update[&quot;&lt;b&gt;update&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L265–269 · 5 lines&lt;/small&gt;&quot;]
+  end
+  nPoEModel_fit --&gt; nPoEModel_products
+  nPoEModel_fit --&gt; nPoEModel_set_M
+  nPoEModel_fit --&gt; n_solve
+  nPoEModel_fit --&gt; ninv_batch
+  nPoEModel_fit --&gt; ntwists_batch
+  nPoEModel_fk --&gt; nPoEModel_product
+  nPoEModel_init_from_jacobian --&gt; nPoEModel_encode
+  nPoEModel_product --&gt; nPoEModel_screws
+  nPoEModel_product --&gt; nse3_exp
+  nPoEModel_products --&gt; nPoEModel_screws
+  nPoEModel_products --&gt; nse3_exp_batch
+  nPoEModel_refine_absolute --&gt; nPoEModel_products
+  nPoEModel_refine_absolute --&gt; n_solve
+  nPoEModel_refine_absolute --&gt; npose
+  nPoEModel_refine_absolute --&gt; nrotvec_batch
+  nPoEModel_refine_absolute --&gt; nso3_exp
+  nPoEModel_screws --&gt; nPoEModel_screw
+  nPoEModel_set_M --&gt; nPoEModel_products
+  nPoEModel_set_M --&gt; ninv_batch
+  nPoEModel_set_M --&gt; npose
+  nPoEModel_set_M --&gt; nproject_rot
+  ndelta_x --&gt; nso3_log
+  nfit_poe --&gt; nPoEModel
+  nfit_poe --&gt; nspatial_jacobian_ls
+  nik --&gt; nso3_log
+  nse3_exp --&gt; nhat
+  nse3_exp --&gt; nso3_exp
+  nse3_exp_batch --&gt; nhat
+  nso3_exp --&gt; nhat
+  nspatial_jacobian_ls --&gt; ninv_batch
+  nspatial_jacobian_ls --&gt; ntwists_batch
+  ntwist_of --&gt; nso3_log
+  ntwists_batch --&gt; nrotvec_batch
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>xbody/selfmodel_lab.py<span class="meta">183 lines · 8 blocks · imported by 2</span></h3>
+<p>Builds a realistic self-modeling lab scene: a perturbed arm with a sensor head in a room with a ChArUco calibration board, clutter and walls, with per-body sensor config and realism levels.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;52 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nboard_image[&quot;&lt;b&gt;board_image&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L66–74 · 9 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Renders the ChArUco board image used as the calibration target texture.&lt;/small&gt;&quot;]
+  ncharuco[&quot;&lt;b&gt;charuco&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L77–79 · 3 lines&lt;/small&gt;&quot;]
+  n_quat_small[&quot;&lt;b&gt;_quat_small&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L82–86 · 5 lines&lt;/small&gt;&quot;]
+  n_mulq[&quot;&lt;b&gt;_mulq&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L89–92 · 4 lines&lt;/small&gt;&quot;]
+  n_chain_names[&quot;&lt;b&gt;_chain_names&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L109–115 · 7 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Robot base, the bodies of the arm joints and the TCP body (names), from the nominal model.&lt;/small&gt;&quot;]
+  nbuild[&quot;&lt;b&gt;build&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L118–176 · 59 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Generates the lab MJCF with a perturbed arm, sensor-mount errors, board and clutter,…&lt;/small&gt;&quot;]
+  nenv_geom_ids[&quot;&lt;b&gt;env_geom_ids&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L179–183 · 5 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Returns geom ids belonging to the environment rather than the robot, used for lidar…&lt;/small&gt;&quot;]
+  nbuild --&gt; n_chain_names
+  nbuild --&gt; n_mulq
+  nbuild --&gt; n_quat_small
+  nbuild --&gt; nboard_image
+  next_xbody_bodies_py{{&quot;&lt;small&gt;xbody/bodies.py&lt;/small&gt;&lt;br/&gt;robot_body_ids, tcp_frame&quot;}}
+  nbuild -.-&gt; next_xbody_bodies_py
+  nenv_geom_ids -.-&gt; next_xbody_bodies_py
+  class next_xbody_bodies_py ext
+  next_xbody_calibration_py{{&quot;&lt;small&gt;xbody/calibration.py&lt;/small&gt;&lt;br/&gt;chain_bodies&quot;}}
+  n_chain_names -.-&gt; next_xbody_calibration_py
+  class next_xbody_calibration_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>xbody/selfmodel_sensing.py<span class="meta">239 lines · 17 blocks · imported by 1</span></h3>
+<p>Sensor pipelines for the self-modeling lab that turn rendered data into measured sensor poses: mono ChArUco PnP, stereo triangulation with Kabsch alignment, and wrist-lidar point-to-plane ICP against a room map.</p>
+<pre class="mermaid">flowchart TD
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;7 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nintrinsics[&quot;&lt;b&gt;intrinsics&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L23–25 · 3 lines&lt;/small&gt;&quot;]
+  ndegrade[&quot;&lt;b&gt;degrade&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L56–68 · 13 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Applies lens distortion, exposure change, defocus and sensor noise to an ideal render…&lt;/small&gt;&quot;]
+  nmono_pose[&quot;&lt;b&gt;mono_pose&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L84–98 · 15 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Estimates the camera pose from one image via ChArUco corners and planar IPPE PnP with…&lt;/small&gt;&quot;]
+  nstereo_pose[&quot;&lt;b&gt;stereo_pose&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L101–121 · 21 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Triangulates id-matched corners from a calibrated stereo pair and aligns them to the…&lt;/small&gt;&quot;]
+  nkabsch[&quot;&lt;b&gt;kabsch&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L124–129 · 6 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Computes the least-squares rigid transform between two point sets.&lt;/small&gt;&quot;]
+  nlidar_dirs[&quot;&lt;b&gt;lidar_dirs&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L133–140 · 8 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Generates the ray direction pattern of the simulated wrist lidar.&lt;/small&gt;&quot;]
+  nlidar_scan[&quot;&lt;b&gt;lidar_scan&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L143–159 · 17 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Casts lidar rays against the room geometry with mj_multiRay and returns noisy points…&lt;/small&gt;&quot;]
+  nroom_map[&quot;&lt;b&gt;room_map&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L162–193 · 32 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Samples points and normals from the room geometry to build the ICP reference map.&lt;/small&gt;&quot;]
+  subgraph nRig[&quot;class Rig · L28–53&quot;]
+    nRig___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L31–53 · 23 lines&lt;/small&gt;&quot;]
+  end
+  subgraph nBoardDetector[&quot;class BoardDetector · L71–81&quot;]
+    nBoardDetector___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L72–75 · 4 lines&lt;/small&gt;&quot;]
+    nBoardDetector_corners[&quot;&lt;b&gt;corners&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L77–81 · 5 lines&lt;/small&gt;&quot;]
+  end
+  subgraph nLidarLocalizer[&quot;class LidarLocalizer · L196–239&quot;]
+    nLidarLocalizer___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L199–201 · 3 lines&lt;/small&gt;&quot;]
+    nLidarLocalizer_localize[&quot;&lt;b&gt;localize&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L203–239 · 37 lines&lt;/small&gt;&quot;]
+  end
+  nRig___init__ --&gt; nintrinsics
+  nstereo_pose --&gt; nkabsch
+  next_xbody_selfmodel_diff_py{{&quot;&lt;small&gt;xbody/selfmodel_diff.py&lt;/small&gt;&lt;br/&gt;inv, pose, so3_exp&quot;}}
+  nLidarLocalizer_localize -.-&gt; next_xbody_selfmodel_diff_py
+  nRig___init__ -.-&gt; next_xbody_selfmodel_diff_py
+  nmono_pose -.-&gt; next_xbody_selfmodel_diff_py
+  nstereo_pose -.-&gt; next_xbody_selfmodel_diff_py
+  class next_xbody_selfmodel_diff_py ext
+  next_xbody_selfmodel_lab_py{{&quot;&lt;small&gt;xbody/selfmodel_lab.py&lt;/small&gt;&lt;br/&gt;charuco&quot;}}
+  nBoardDetector___init__ -.-&gt; next_xbody_selfmodel_lab_py
+  class next_xbody_selfmodel_lab_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="layerhead"><span class="eyebrow">Evaluation and Analysis Scripts</span></div>
+<div class="file"><h3>scripts/check_registry.py<span class="meta">54 lines · 3 blocks · imported by 0</span></h3>
+<p>Phase 0 script that queries the Hugging Face API for every checkpoint in registry/checkpoints.yaml to record existence, gating and license, writing registry/checkpoints_status.yaml.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;9 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nhf_info[&quot;&lt;b&gt;hf_info&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L16–23 · 8 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Fetches Hugging Face model metadata for a repo, returning an error dict on HTTP or…&lt;/small&gt;&quot;]
+  nmain[&quot;&lt;b&gt;main&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L26–50 · 25 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Iterates registry entries, classifies each as available, gated, missing, file_missing…&lt;/small&gt;&quot;]
+  nmain --&gt; nhf_info
+  nmodule_setup --&gt; nmain
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>scripts/eval_classical.py<span class="meta">59 lines · 2 blocks · imported by 2</span></h3>
+<p>CLI entry for the full classical (S1) benchmark: runs N seeded episodes of one decision-tree layer configuration on Franka or SO-101 and writes Wilson-bounded success results.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;15 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nmain[&quot;&lt;b&gt;main&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L23–55 · 33 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Parses body/episode/layer overrides, samples seeded cube layouts, runs classical…&lt;/small&gt;&quot;]
+  nmodule_setup --&gt; nmain
+  next_xbody_classical_pipeline_py{{&quot;&lt;small&gt;xbody/classical/pipeline.py&lt;/small&gt;&lt;br/&gt;Episode&quot;}}
+  nmain -.-&gt; next_xbody_classical_pipeline_py
+  class next_xbody_classical_pipeline_py ext
+  next_xbody_scene_py{{&quot;&lt;small&gt;xbody/scene.py&lt;/small&gt;&lt;br/&gt;sample_layout&quot;}}
+  nmain -.-&gt; next_xbody_scene_py
+  class next_xbody_scene_py ext
+  next_xbody_stats_py{{&quot;&lt;small&gt;xbody/stats.py&lt;/small&gt;&lt;br/&gt;wilson&quot;}}
+  nmain -.-&gt; next_xbody_stats_py
+  class next_xbody_stats_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>scripts/eval_ilc.py<span class="meta">63 lines · 2 blocks · imported by 0</span></h3>
+<p>Evaluation script for iterative learning control (classical decision-tree layer 8): runs each classical layout K times carrying the learned ILC feedforward between trials and writes per-trial success and tracking RMS to results/classical.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;14 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nmain[&quot;&lt;b&gt;main&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L26–59 · 34 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;CLI entry that samples layouts, runs repeated Episode trials with a shared ILCMemory…&lt;/small&gt;&quot;]
+  nmodule_setup --&gt; nmain
+  next_xbody_classical_control_py{{&quot;&lt;small&gt;xbody/classical/control.py&lt;/small&gt;&lt;br/&gt;ILCMemory&quot;}}
+  nmain -.-&gt; next_xbody_classical_control_py
+  class next_xbody_classical_control_py ext
+  next_xbody_classical_pipeline_py{{&quot;&lt;small&gt;xbody/classical/pipeline.py&lt;/small&gt;&lt;br/&gt;Episode&quot;}}
+  nmain -.-&gt; next_xbody_classical_pipeline_py
+  class next_xbody_classical_pipeline_py ext
+  next_xbody_scene_py{{&quot;&lt;small&gt;xbody/scene.py&lt;/small&gt;&lt;br/&gt;sample_layout&quot;}}
+  nmain -.-&gt; next_xbody_scene_py
+  class next_xbody_scene_py ext
+  next_xbody_stats_py{{&quot;&lt;small&gt;xbody/stats.py&lt;/small&gt;&lt;br/&gt;mcnemar_exact, wilson&quot;}}
+  nmain -.-&gt; next_xbody_stats_py
+  class next_xbody_stats_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>scripts/eval_learned_mjx.py<span class="meta">123 lines · 3 blocks · imported by 0</span></h3>
+<p>Scores an MJX/Brax PPO-trained Franka policy inside the CPU MuJoCo classical harness, using the classical seeds and StageScorer so learned and classical numbers share one scoring path.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;17 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nload_policy[&quot;&lt;b&gt;load_policy&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L30–40 · 11 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Rebuilds Brax PPO networks from a checkpoint&#x27;s config.json and params.pkl and returns…&lt;/small&gt;&quot;]
+  nmain[&quot;&lt;b&gt;main&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L43–119 · 77 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Builds the CPU task scene, rolls out the learned policy with training-env observations…&lt;/small&gt;&quot;]
+  nmain --&gt; nload_policy
+  nmodule_setup --&gt; nmain
+  next_xbody_learned_mjx_pick_py{{&quot;&lt;small&gt;xbody/learned/mjx_pick.py&lt;/small&gt;&lt;br/&gt;FrankaPickPlacePost, default_config&quot;}}
+  nmain -.-&gt; next_xbody_learned_mjx_pick_py
+  class next_xbody_learned_mjx_pick_py ext
+  next_xbody_scene_py{{&quot;&lt;small&gt;xbody/scene.py&lt;/small&gt;&lt;br/&gt;build_task, sample_layout&quot;}}
+  nmain -.-&gt; next_xbody_scene_py
+  class next_xbody_scene_py ext
+  next_xbody_stages_py{{&quot;&lt;small&gt;xbody/stages.py&lt;/small&gt;&lt;br/&gt;StageScorer, StepState&quot;}}
+  nmain -.-&gt; next_xbody_stages_py
+  class next_xbody_stages_py ext
+  next_xbody_stats_py{{&quot;&lt;small&gt;xbody/stats.py&lt;/small&gt;&lt;br/&gt;wilson&quot;}}
+  nmain -.-&gt; next_xbody_stats_py
+  class next_xbody_stats_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>scripts/eval_route_b_home.py<span class="meta">66 lines · 2 blocks · imported by 1</span></h3>
+<p>Route B Gate 1 evaluation script measuring home success of each frozen Newt PickCube checkpoint on its native ManiSkill body, reporting Wilson confidence intervals.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;24 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nmain[&quot;&lt;b&gt;main&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L32–61 · 30 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Runs N episodes of a ManiSkill task with a FrozenNewtAgent on its home body and writes…&lt;/small&gt;&quot;]
+  nmodule_setup --&gt; nmain
+  next_xbody_newt_agent_py{{&quot;&lt;small&gt;xbody/newt_agent.py&lt;/small&gt;&lt;br/&gt;FrozenNewtAgent&quot;}}
+  nmain -.-&gt; next_xbody_newt_agent_py
+  class next_xbody_newt_agent_py ext
+  next_xbody_stats_py{{&quot;&lt;small&gt;xbody/stats.py&lt;/small&gt;&lt;br/&gt;wilson&quot;}}
+  nmain -.-&gt; next_xbody_stats_py
+  class next_xbody_stats_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>scripts/eval_route_b_r3.py<span class="meta">115 lines · 2 blocks · imported by 2</span></h3>
+<p>Route B rung R3 evaluation: drives the xArm6 with a frozen Franka TD-MPC2 PickCube policy, mapping Franka finger-width commands to Robotiq knuckle deltas, with a naive-gripper ablation and optional virtual-Franka proprioception (K+P).</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;22 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nmain[&quot;&lt;b&gt;main&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L36–111 · 76 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Parses CLI args, runs frozen-policy episodes on the xArm6 with gripper remapping and…&lt;/small&gt;&quot;]
+  nmodule_setup --&gt; nmain
+  next_scripts_eval_route_b_transfer_py{{&quot;&lt;small&gt;scripts/eval_route_b_transfer.py&lt;/small&gt;&lt;br/&gt;franka_twin&quot;}}
+  nmain -.-&gt; next_scripts_eval_route_b_transfer_py
+  class next_scripts_eval_route_b_transfer_py ext
+  next_xbody_kinematics_py{{&quot;&lt;small&gt;xbody/kinematics.py&lt;/small&gt;&lt;br/&gt;solve_ik&quot;}}
+  nmain -.-&gt; next_xbody_kinematics_py
+  class next_xbody_kinematics_py ext
+  next_xbody_newt_agent_py{{&quot;&lt;small&gt;xbody/newt_agent.py&lt;/small&gt;&lt;br/&gt;FrozenNewtAgent&quot;}}
+  nmain -.-&gt; next_xbody_newt_agent_py
+  class next_xbody_newt_agent_py ext
+  next_xbody_stats_py{{&quot;&lt;small&gt;xbody/stats.py&lt;/small&gt;&lt;br/&gt;wilson&quot;}}
+  nmain -.-&gt; next_xbody_stats_py
+  class next_xbody_stats_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>scripts/eval_route_b_transfer.py<span class="meta">217 lines · 10 blocks · imported by 3</span></h3>
+<p>Route B cross-body transfer (rung R6): frozen Franka TD-MPC2 PickCube policy controls the SO100 via differential IK (interface K) and optionally a virtual Franka twin supplying joint observations (K+P), with jaw aperture calibration and frame shifting.</p>
+<pre class="mermaid">flowchart TD
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;26 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  ncalibrate_jaw[&quot;&lt;b&gt;calibrate_jaw&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L104–115 · 12 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Measures SO100 jaw aperture across angles to build a width-to-angle lookup table for…&lt;/small&gt;&quot;]
+  nfranka_twin[&quot;&lt;b&gt;franka_twin&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L118–120 · 3 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Builds a kinematics Body for the Menagerie Franka Panda used as a virtual twin to…&lt;/small&gt;&quot;]
+  nmain[&quot;&lt;b&gt;main&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L123–213 · 91 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Runs transfer episodes: shifts SO100 scene frames, converts policy actions through IK…&lt;/small&gt;&quot;]
+  subgraph nSO100Kinematics[&quot;class SO100Kinematics · L42–101&quot;]
+    nSO100Kinematics___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L45–54 · 10 lines&lt;/small&gt;&quot;]
+    nSO100Kinematics_tcp_world[&quot;&lt;b&gt;tcp_world&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L56–59 · 4 lines&lt;/small&gt;&quot;]
+    nSO100Kinematics_approach_world[&quot;&lt;b&gt;approach_world&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L61–64 · 4 lines&lt;/small&gt;&quot;]
+    nSO100Kinematics_capture_axis[&quot;&lt;b&gt;capture_axis&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L66–71 · 6 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Pick the Fixed_Jaw axis that points most nearly down at reset; hqp-axis holds it…&lt;/small&gt;&quot;]
+    nSO100Kinematics_solve[&quot;&lt;b&gt;solve&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L73–101 · 29 lines&lt;/small&gt;&quot;]
+  end
+  nSO100Kinematics_solve --&gt; nSO100Kinematics_approach_world
+  nSO100Kinematics_solve --&gt; nSO100Kinematics_tcp_world
+  nmain --&gt; nSO100Kinematics
+  nmain --&gt; ncalibrate_jaw
+  nmain --&gt; nfranka_twin
+  nmodule_setup --&gt; nmain
+  next_xbody_kinematics_py{{&quot;&lt;small&gt;xbody/kinematics.py&lt;/small&gt;&lt;br/&gt;Body, solve_ik&quot;}}
+  nfranka_twin -.-&gt; next_xbody_kinematics_py
+  nmain -.-&gt; next_xbody_kinematics_py
+  class next_xbody_kinematics_py ext
+  next_xbody_newt_agent_py{{&quot;&lt;small&gt;xbody/newt_agent.py&lt;/small&gt;&lt;br/&gt;FrozenNewtAgent&quot;}}
+  nmain -.-&gt; next_xbody_newt_agent_py
+  class next_xbody_newt_agent_py ext
+  next_xbody_stats_py{{&quot;&lt;small&gt;xbody/stats.py&lt;/small&gt;&lt;br/&gt;wilson&quot;}}
+  nmain -.-&gt; next_xbody_stats_py
+  class next_xbody_stats_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>scripts/eval_s1.py<span class="meta">194 lines · 9 blocks · imported by 1</span></h3>
+<p>S1 classical pipeline and its one-layer variants (IK method, tracking, timing, servo stiffness) on any MuJoCo body; the default path doubles as the Gate 0 scripted expert.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;22 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nprofile[&quot;&lt;b&gt;profile&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L37–48 · 12 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Computes a time-scaling profile (trapezoidal or quintic) for normalized trajectory…&lt;/small&gt;&quot;]
+  nrun_episode[&quot;&lt;b&gt;run_episode&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L102–160 · 59 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Executes one scripted pick-and-place episode: grasp-yaw selection via IK, waypoint…&lt;/small&gt;&quot;]
+  nmain[&quot;&lt;b&gt;main&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L163–190 · 28 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Parses variant flags, runs seeded episodes per body and writes aggregate success with…&lt;/small&gt;&quot;]
+  subgraph nRobot[&quot;class Robot · L51–99&quot;]
+    nRobot___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L52–70 · 19 lines&lt;/small&gt;&quot;]
+    nRobot_reset[&quot;&lt;b&gt;reset&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L72–80 · 9 lines&lt;/small&gt;&quot;]
+    nRobot_jaws_touch[&quot;&lt;b&gt;jaws_touch&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L82–90 · 9 lines&lt;/small&gt;&quot;]
+    nRobot_state[&quot;&lt;b&gt;state&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L92–99 · 8 lines&lt;/small&gt;&quot;]
+  end
+  nRobot_state --&gt; nRobot_jaws_touch
+  nmain --&gt; nRobot
+  nmain --&gt; nrun_episode
+  nmodule_setup --&gt; nmain
+  nrun_episode --&gt; nprofile
+  next_xbody_bodies_py{{&quot;&lt;small&gt;xbody/bodies.py&lt;/small&gt;&lt;br/&gt;tcp_frame&quot;}}
+  nRobot___init__ -.-&gt; next_xbody_bodies_py
+  class next_xbody_bodies_py ext
+  next_xbody_kinematics_py{{&quot;&lt;small&gt;xbody/kinematics.py&lt;/small&gt;&lt;br/&gt;Body, solve_ik&quot;}}
+  nRobot___init__ -.-&gt; next_xbody_kinematics_py
+  nrun_episode -.-&gt; next_xbody_kinematics_py
+  class next_xbody_kinematics_py ext
+  next_xbody_scene_py{{&quot;&lt;small&gt;xbody/scene.py&lt;/small&gt;&lt;br/&gt;build, sample_layout&quot;}}
+  nRobot___init__ -.-&gt; next_xbody_scene_py
+  nmain -.-&gt; next_xbody_scene_py
+  class next_xbody_scene_py ext
+  next_xbody_stages_py{{&quot;&lt;small&gt;xbody/stages.py&lt;/small&gt;&lt;br/&gt;StageScorer, StepState&quot;}}
+  nRobot_state -.-&gt; next_xbody_stages_py
+  nrun_episode -.-&gt; next_xbody_stages_py
+  class next_xbody_stages_py ext
+  next_xbody_stats_py{{&quot;&lt;small&gt;xbody/stats.py&lt;/small&gt;&lt;br/&gt;wilson&quot;}}
+  nmain -.-&gt; next_xbody_stats_py
+  class next_xbody_stats_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>scripts/export_layouts.py<span class="meta">28 lines · 1 blocks · imported by 0</span></h3>
+<p>Exports the classical evaluation layouts (seeded cube positions, plate/post geometry, home pose) per body to JSON so MJX and Isaac routes start from identical scenes.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;22 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  next_xbody_scene_py{{&quot;&lt;small&gt;xbody/scene.py&lt;/small&gt;&lt;br/&gt;sample_layout&quot;}}
+  nmodule_setup -.-&gt; next_xbody_scene_py
+  class next_xbody_scene_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>scripts/summarize_classical.py<span class="meta">100 lines · 3 blocks · imported by 0</span></h3>
+<p>Aggregates the full classical method grid into SUMMARY.md and summary.csv: per decision-tree layer success on Franka and SO-101, retention, stage reached, contacts, and Holm-corrected paired tests against each body&#x27;s default.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;14 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nlayer_of[&quot;&lt;b&gt;layer_of&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L23–32 · 10 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Maps a changed pipeline config key to its decision-tree layer for grouping results.&lt;/small&gt;&quot;]
+  nmain[&quot;&lt;b&gt;main&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L35–96 · 62 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Loads classical result JSONs, computes Wilson intervals, retention and McNemar…&lt;/small&gt;&quot;]
+  nmain --&gt; nlayer_of
+  nmodule_setup --&gt; nmain
+  next_xbody_stats_py{{&quot;&lt;small&gt;xbody/stats.py&lt;/small&gt;&lt;br/&gt;mcnemar_exact, wilson&quot;}}
+  nmain -.-&gt; next_xbody_stats_py
+  class next_xbody_stats_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>scripts/summarize_phase0.py<span class="meta">176 lines · 5 blocks · imported by 0</span></h3>
+<p>Produces the Phase 0 summary (SUMMARY.md and summary.json): cross-body retention, same-seed paired tests and the self-model error vs success correlation, parsed from result files and logs.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;13 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nepisodes_from_log[&quot;&lt;b&gt;episodes_from_log&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L21–32 · 12 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Parses per-episode outcomes and stages from an evaluation log file.&lt;/small&gt;&quot;]
+  ncell[&quot;&lt;b&gt;cell&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L35–39 · 5 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Builds a summary cell (success rate, Wilson CI, stage stats) for one condition&#x27;s episodes.&lt;/small&gt;&quot;]
+  nfmt_ci[&quot;&lt;b&gt;fmt_ci&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L42–43 · 2 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Formats a confidence interval tuple for markdown output.&lt;/small&gt;&quot;]
+  nmain[&quot;&lt;b&gt;main&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L46–172 · 127 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Gathers Phase 0 results, computes retention and stage retention, McNemar and Wilcoxon…&lt;/small&gt;&quot;]
+  nmain --&gt; ncell
+  nmain --&gt; nepisodes_from_log
+  nmain --&gt; nfmt_ci
+  nmodule_setup --&gt; nmain
+  next_xbody_stats_py{{&quot;&lt;small&gt;xbody/stats.py&lt;/small&gt;&lt;br/&gt;holm, mcnemar_exact, retention, stage_retention, wilcoxon_stage, wilson&quot;}}
+  ncell -.-&gt; next_xbody_stats_py
+  nmain -.-&gt; next_xbody_stats_py
+  class next_xbody_stats_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>scripts/test_k_interface.py<span class="meta">66 lines · 5 blocks · imported by 0</span></h3>
+<p>Phase 0 check of interface K: samples top-down grasp targets over the task region and reports IK reach rate and orientation residual per method for the Franka and SO-101.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;10 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nso101[&quot;&lt;b&gt;so101&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L18–27 · 10 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Loads the Menagerie SO-101 model and builds a Body with a canonical TCP frame rotated…&lt;/small&gt;&quot;]
+  nfranka[&quot;&lt;b&gt;franka&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L30–32 · 3 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Builds a Body for the Menagerie Franka Panda with its hand TCP offset.&lt;/small&gt;&quot;]
+  nrun[&quot;&lt;b&gt;run&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L35–43 · 9 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Solves IK for a grid of top-down grasp targets with a given method and summarizes…&lt;/small&gt;&quot;]
+  nmain[&quot;&lt;b&gt;main&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L46–62 · 17 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Runs the K interface reach check for each body and IK method and prints results.&lt;/small&gt;&quot;]
+  nmain --&gt; nfranka
+  nmain --&gt; nrun
+  nmain --&gt; nso101
+  nmodule_setup --&gt; nmain
+  next_xbody_kinematics_py{{&quot;&lt;small&gt;xbody/kinematics.py&lt;/small&gt;&lt;br/&gt;Body, solve_ik&quot;}}
+  nfranka -.-&gt; next_xbody_kinematics_py
+  nrun -.-&gt; next_xbody_kinematics_py
+  nso101 -.-&gt; next_xbody_kinematics_py
+  class next_xbody_kinematics_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>scripts/test_planners.py<span class="meta">71 lines · 2 blocks · imported by 0</span></h3>
+<p>Phase 0 check of layer 4 that runs every motion planner on the cube-to-plate transit past the post for both Franka and SO-101 using the mesh world model, reporting success, time, path length and collision checks.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;18 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nmain[&quot;&lt;b&gt;main&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L24–67 · 44 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Iterates both bodies and every registered planner (optionally filtered), solving IK…&lt;/small&gt;&quot;]
+  nmodule_setup --&gt; nmain
+  next_xbody_bodies_py{{&quot;&lt;small&gt;xbody/bodies.py&lt;/small&gt;&lt;br/&gt;robot_body_ids, tcp_frame&quot;}}
+  nmain -.-&gt; next_xbody_bodies_py
+  class next_xbody_bodies_py ext
+  next_xbody_classical_ik_py{{&quot;&lt;small&gt;xbody/classical/ik.py&lt;/small&gt;&lt;br/&gt;EndpointSolver&quot;}}
+  nmain -.-&gt; next_xbody_classical_ik_py
+  class next_xbody_classical_ik_py ext
+  next_xbody_classical_planning_py{{&quot;&lt;small&gt;xbody/classical/planning.py&lt;/small&gt;&lt;br/&gt;Space, path_length&quot;}}
+  nmain -.-&gt; next_xbody_classical_planning_py
+  class next_xbody_classical_planning_py ext
+  next_xbody_classical_worldmodel_py{{&quot;&lt;small&gt;xbody/classical/worldmodel.py&lt;/small&gt;&lt;br/&gt;RobotPoints, WorldModel&quot;}}
+  nmain -.-&gt; next_xbody_classical_worldmodel_py
+  class next_xbody_classical_worldmodel_py ext
+  next_xbody_kinematics_py{{&quot;&lt;small&gt;xbody/kinematics.py&lt;/small&gt;&lt;br/&gt;Body&quot;}}
+  nmain -.-&gt; next_xbody_kinematics_py
+  class next_xbody_kinematics_py ext
+  next_xbody_scene_py{{&quot;&lt;small&gt;xbody/scene.py&lt;/small&gt;&lt;br/&gt;build_task&quot;}}
+  nmain -.-&gt; next_xbody_scene_py
+  class next_xbody_scene_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>scripts/test_world_models.py<span class="meta">78 lines · 3 blocks · imported by 0</span></h3>
+<p>Phase 0 check of layers 1-2 that measures cube pose estimation error and each world representation&#x27;s clearance at free and colliding configurations on both bodies.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;16 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nsetup[&quot;&lt;b&gt;setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L21–29 · 9 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Builds the classical task scene for a body and returns model, data and a kinematic…&lt;/small&gt;&quot;]
+  nmain[&quot;&lt;b&gt;main&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L32–74 · 43 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Estimates cube pose from perception and compares clearance values of each world…&lt;/small&gt;&quot;]
+  nmain --&gt; nsetup
+  nmodule_setup --&gt; nmain
+  next_xbody_bodies_py{{&quot;&lt;small&gt;xbody/bodies.py&lt;/small&gt;&lt;br/&gt;robot_body_ids, tcp_frame&quot;}}
+  nmain -.-&gt; next_xbody_bodies_py
+  nsetup -.-&gt; next_xbody_bodies_py
+  class next_xbody_bodies_py ext
+  next_xbody_classical_perception_py{{&quot;&lt;small&gt;xbody/classical/perception.py&lt;/small&gt;&lt;br/&gt;Perceiver, estimate_cube_pose, obstacle_points&quot;}}
+  nmain -.-&gt; next_xbody_classical_perception_py
+  class next_xbody_classical_perception_py ext
+  next_xbody_classical_worldmodel_py{{&quot;&lt;small&gt;xbody/classical/worldmodel.py&lt;/small&gt;&lt;br/&gt;RobotPoints, WorldModel&quot;}}
+  nmain -.-&gt; next_xbody_classical_worldmodel_py
+  class next_xbody_classical_worldmodel_py ext
+  next_xbody_kinematics_py{{&quot;&lt;small&gt;xbody/kinematics.py&lt;/small&gt;&lt;br/&gt;Body, solve_ik&quot;}}
+  nmain -.-&gt; next_xbody_kinematics_py
+  nsetup -.-&gt; next_xbody_kinematics_py
+  class next_xbody_kinematics_py ext
+  next_xbody_scene_py{{&quot;&lt;small&gt;xbody/scene.py&lt;/small&gt;&lt;br/&gt;build_task&quot;}}
+  nsetup -.-&gt; next_xbody_scene_py
+  class next_xbody_scene_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="layerhead"><span class="eyebrow">GPU Training Routes</span></div>
+<div class="file"><h3>isaac/onehand_isaac/__init__.py<span class="meta">12 lines · 1 blocks · imported by 1</span></h3>
+<p>Package init for the OneHand Isaac Lab tasks; importing it registers the OneHand-Franka-PickPlacePost-v0 gymnasium environment with its env config and rsl_rl PPO config entry points.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;10 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>isaac/onehand_isaac/agents/rsl_rl_ppo_cfg.py<span class="meta">18 lines · 2 blocks · imported by 2</span></h3>
+<p>rsl_rl PPO runner configuration for the Isaac Lab Franka pick-place-post task, sized to match the MJX training budget (~147M steps).</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;2 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  subgraph nPPORunnerCfg[&quot;class PPORunnerCfg · L7–18&quot;]
+    nPPORunnerCfg_body[&quot;&lt;small&gt;Isaac Lab configclass extending RslRlOnPolicyRunnerCfg with 1500 iterations x 24…&lt;/small&gt;&quot;]
+  end
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>isaac/onehand_isaac/pick_place_post_env.py<span class="meta">206 lines · 13 blocks · imported by 2</span></h3>
+<p>Isaac Lab DirectRLEnv port of the benchmark task where a Franka picks a 3 cm cube and places it on a plate behind a post, mirroring the MJX env scene, 49-dim observations, actions and staged rewards using layouts_franka.json.</p>
+<pre class="mermaid">flowchart TD
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;17 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  subgraph nPickPlacePostEnvCfg[&quot;class PickPlacePostEnvCfg · L34–75&quot;]
+    nPickPlacePostEnvCfg_body[&quot;&lt;small&gt;Environment config: 0.002 s physics with decimation 10, 8 s episodes, 8-D action/49-D…&lt;/small&gt;&quot;]
+  end
+  subgraph nPickPlacePostEnv[&quot;class PickPlacePostEnv · L78–206&quot;]
+    nPickPlacePostEnv___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L81–97 · 17 lines&lt;/small&gt;&quot;]
+    nPickPlacePostEnv__setup_scene[&quot;&lt;b&gt;_setup_scene&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L99–111 · 13 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Spawns the robot, cube, post and plate (plus optional tiled cameras), clones…&lt;/small&gt;&quot;]
+    nPickPlacePostEnv__tcp[&quot;&lt;b&gt;_tcp&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L114–118 · 5 lines&lt;/small&gt;&quot;]
+    nPickPlacePostEnv__cube[&quot;&lt;b&gt;_cube&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L120–121 · 2 lines&lt;/small&gt;&quot;]
+    nPickPlacePostEnv__pre_physics_step[&quot;&lt;b&gt;_pre_physics_step&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L124–129 · 6 lines&lt;/small&gt;&quot;]
+    nPickPlacePostEnv__apply_action[&quot;&lt;b&gt;_apply_action&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L131–132 · 2 lines&lt;/small&gt;&quot;]
+    nPickPlacePostEnv__get_observations[&quot;&lt;b&gt;_get_observations&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L134–149 · 16 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Builds the 49-number policy observation (joint state, TCP, cube pose, goal-relative…&lt;/small&gt;&quot;]
+    nPickPlacePostEnv__get_rewards[&quot;&lt;b&gt;_get_rewards&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L151–176 · 26 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Computes the staged shaped reward: reach, hold, lift, transport, place bonuses,…&lt;/small&gt;&quot;]
+    nPickPlacePostEnv__get_dones[&quot;&lt;b&gt;_get_dones&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L178–181 · 4 lines&lt;/small&gt;&quot;]
+    nPickPlacePostEnv__reset_idx[&quot;&lt;b&gt;_reset_idx&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L183–206 · 24 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Resets selected environments, placing the cube at random or at seeded evaluation…&lt;/small&gt;&quot;]
+  end
+  nPickPlacePostEnv___init__ --&gt; nPickPlacePostEnvCfg
+  nPickPlacePostEnv__get_dones --&gt; nPickPlacePostEnv__cube
+  nPickPlacePostEnv__get_observations --&gt; nPickPlacePostEnv__cube
+  nPickPlacePostEnv__get_observations --&gt; nPickPlacePostEnv__tcp
+  nPickPlacePostEnv__get_rewards --&gt; nPickPlacePostEnv__cube
+  nPickPlacePostEnv__get_rewards --&gt; nPickPlacePostEnv__tcp
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>isaac/scripts/run.py<span class="meta">122 lines · 4 blocks · imported by 0</span></h3>
+<p>CLI entry point that launches Isaac Sim and either trains PPO on the pick-place-post task or evaluates a checkpoint on seeded classical layouts with protocol.yaml staged-success scoring, writing results in the classical result format.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;28 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nmake_env[&quot;&lt;b&gt;make_env&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L42–49 · 8 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Builds the PickPlacePostEnvCfg with requested env count and seed, optionally enabling…&lt;/small&gt;&quot;]
+  ntrain[&quot;&lt;b&gt;train&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L52–59 · 8 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Trains the policy with rsl_rl OnPolicyRunner using PPORunnerCfg and logs to logs/rsl_rl.&lt;/small&gt;&quot;]
+  nevaluate[&quot;&lt;b&gt;evaluate&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L62–117 · 56 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Loads a checkpoint, runs one env per seeded layout with finger-cube contact sensors,…&lt;/small&gt;&quot;]
+  nevaluate --&gt; nmake_env
+  nmodule_setup --&gt; nevaluate
+  nmodule_setup --&gt; ntrain
+  ntrain --&gt; nmake_env
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>scripts/train_mjx_ppo.py<span class="meta">78 lines · 2 blocks · imported by 0</span></h3>
+<p>CLI that trains a Brax PPO policy on the MJX Franka pick-place-post task with gpu (MuJoCo Warp) or CPU smoke presets, saving params, config and progress logs under checkpoints/learned/.</p>
+<pre class="mermaid">flowchart LR
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;19 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  nmain[&quot;&lt;b&gt;main&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L30–74 · 45 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Parses preset/seed args, builds the MJX environment, runs Brax PPO training with…&lt;/small&gt;&quot;]
+  nmodule_setup --&gt; nmain
+  next_xbody_learned_mjx_pick_py{{&quot;&lt;small&gt;xbody/learned/mjx_pick.py&lt;/small&gt;&lt;br/&gt;FrankaPickPlacePost, default_config&quot;}}
+  nmain -.-&gt; next_xbody_learned_mjx_pick_py
+  class next_xbody_learned_mjx_pick_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+<div class="file"><h3>xbody/learned/mjx_pick.py<span class="meta">194 lines · 14 blocks · imported by 2</span></h3>
+<p>GPU-trainable MuJoCo Playground/MJX version of the classical Franka pick-and-place-behind-post task, with staged shaping reward and observations reused by the CPU scorer.</p>
+<pre class="mermaid">flowchart TD
+  nmodule_setup[(&quot;&lt;b&gt;module setup&lt;/b&gt;&lt;br/&gt;&lt;small&gt;14 top-level lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Imports, constants and configuration read at import time&lt;/small&gt;&quot;)]
+  ndefault_config[&quot;&lt;b&gt;default_config&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L34–47 · 14 lines&lt;/small&gt;&lt;br/&gt;&lt;small&gt;Returns the ConfigDict of timing, episode length, action scaling, reward weights and…&lt;/small&gt;&quot;]
+  subgraph nFrankaPickPlacePost[&quot;class FrankaPickPlacePost · L50–194&quot;]
+    nFrankaPickPlacePost___init__[&quot;&lt;b&gt;__init__&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L51–96 · 46 lines&lt;/small&gt;&quot;]
+    nFrankaPickPlacePost_xml_path[&quot;&lt;b&gt;xml_path&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L100–101 · 2 lines&lt;/small&gt;&quot;]
+    nFrankaPickPlacePost_action_size[&quot;&lt;b&gt;action_size&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L104–105 · 2 lines&lt;/small&gt;&quot;]
+    nFrankaPickPlacePost_mj_model[&quot;&lt;b&gt;mj_model&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L108–109 · 2 lines&lt;/small&gt;&quot;]
+    nFrankaPickPlacePost_mjx_model[&quot;&lt;b&gt;mjx_model&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L112–113 · 2 lines&lt;/small&gt;&quot;]
+    nFrankaPickPlacePost_reset[&quot;&lt;b&gt;reset&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L116–127 · 12 lines&lt;/small&gt;&quot;]
+    nFrankaPickPlacePost_step[&quot;&lt;b&gt;step&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L129–147 · 19 lines&lt;/small&gt;&quot;]
+    nFrankaPickPlacePost__tcp[&quot;&lt;b&gt;_tcp&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L150–152 · 3 lines&lt;/small&gt;&quot;]
+    nFrankaPickPlacePost__held[&quot;&lt;b&gt;_held&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L154–157 · 4 lines&lt;/small&gt;&quot;]
+    nFrankaPickPlacePost__reward[&quot;&lt;b&gt;_reward&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L159–183 · 25 lines&lt;/small&gt;&quot;]
+    nFrankaPickPlacePost__obs[&quot;&lt;b&gt;_obs&lt;/b&gt;&lt;br/&gt;&lt;small&gt;L185–194 · 10 lines&lt;/small&gt;&quot;]
+  end
+  nFrankaPickPlacePost___init__ --&gt; ndefault_config
+  nFrankaPickPlacePost__obs --&gt; nFrankaPickPlacePost__tcp
+  nFrankaPickPlacePost__reward --&gt; nFrankaPickPlacePost__held
+  nFrankaPickPlacePost__reward --&gt; nFrankaPickPlacePost__tcp
+  nFrankaPickPlacePost_reset --&gt; nFrankaPickPlacePost__obs
+  nFrankaPickPlacePost_step --&gt; nFrankaPickPlacePost__obs
+  nFrankaPickPlacePost_step --&gt; nFrankaPickPlacePost__reward
+  next_xbody_bodies_py{{&quot;&lt;small&gt;xbody/bodies.py&lt;/small&gt;&lt;br/&gt;robot_body_ids&quot;}}
+  nFrankaPickPlacePost___init__ -.-&gt; next_xbody_bodies_py
+  class next_xbody_bodies_py ext
+  next_xbody_scene_py{{&quot;&lt;small&gt;xbody/scene.py&lt;/small&gt;&lt;br/&gt;build_task&quot;}}
+  nFrankaPickPlacePost___init__ -.-&gt; next_xbody_scene_py
+  class next_xbody_scene_py ext
+  classDef ext stroke-dasharray:4 3</pre></div>
+</div>
